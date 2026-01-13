@@ -24,6 +24,6 @@ model products {
   image        String
   features     String[]
   acronym      String?
-  composition  Json?
+  composition  Json     @default("{}")
   uuid         String   @id(map: "produtos_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
 }
