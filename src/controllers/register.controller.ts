@@ -16,7 +16,10 @@ class RegisterController {
     } catch (err) {
       return res
         .status(500)
-        .json({ message: responseMessages.catchErrorMessage });
+        .json({
+          message: responseMessages.catchErrorMessage,
+          error: (err as Error).message,
+        });
     }
   }
 
@@ -33,9 +36,10 @@ class RegisterController {
         register: newRegister,
       });
     } catch (err) {
-      return res
-        .status(500)
-        .json({ message: responseMessages.catchErrorMessage });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
     }
   }
 
@@ -55,9 +59,10 @@ class RegisterController {
         .status(200)
         .json({ message: "Registro deletado com sucesso. " });
     } catch (err) {
-      return res
-        .status(500)
-        .json({ message: responseMessages.catchErrorMessage });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
     }
   }
 
@@ -82,9 +87,10 @@ class RegisterController {
         update: updatedRegister,
       });
     } catch (err) {
-      return res
-        .status(500)
-        .json({ message: responseMessages.catchErrorMessage });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
     }
   }
 }
