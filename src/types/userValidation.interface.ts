@@ -15,7 +15,7 @@ export function successfulValidation(
   return validation.success === true && validation.user !== undefined;
 }
 
-export function passwordSuccessfulValidation(
+export function hasValidPassword(
   validation: IUserValidation
 ): validation is IUserValidation & { success: true; user: IUser } {
   return validation.success === true && validation.user !== undefined;
