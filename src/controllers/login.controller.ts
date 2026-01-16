@@ -6,7 +6,7 @@ import type { IUser } from "../types/models.interface.js";
 class LoginController {
   async userLogin(req: Request, res: Response) {
     try {
-      const userLoged: IUser = req.authenticadedUser;
+      const userLoged: IUser = req.authenticatedUser;
 
       const token = jwt.sign(
         { user_id: userLoged.user_id, email: userLoged.email },
