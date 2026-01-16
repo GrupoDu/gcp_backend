@@ -2,18 +2,13 @@ import type { NextFunction, Request, Response } from "express";
 import bcrypt from "bcrypt";
 import { prisma } from "../../lib/prisma.js";
 
-type loginValues = {
-  email: string;
-  password: string;
-};
-
 export async function validateUser(
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> {
   try {
-    const { email, password }: loginValues = req.body;
+    const { email, password }: { email: string; password: string } = req.body;
 
     const userTryingToLogin = await prisma.user.findFirst({
       where: {
