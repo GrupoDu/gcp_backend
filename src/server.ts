@@ -6,6 +6,7 @@ import UserRoutes from "./routes/user.routes.js";
 import GoalRoutes from "./routes/goal.routes.js";
 import RegisterRoutes from "./routes/register.routes.js";
 import EmployeeRoutes from "./routes/employee.routes.js";
+import LoginRoutes from "./routes/login.routes.js";
 
 dotenv.config();
 const app = express();
@@ -18,6 +19,7 @@ app.use("/users", UserRoutes);
 app.use("/goals", GoalRoutes);
 app.use("/registers", RegisterRoutes);
 app.use("/employees", EmployeeRoutes);
+app.use("/login", LoginRoutes);
 
 app.get("/", (req: Request, res: Response) => res.json({ status: "ok" }));
 
