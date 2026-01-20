@@ -2,13 +2,18 @@ import type { Request, Response } from "express";
 import { responseMessages } from "../constants/messages.constants.js";
 import { prisma } from "../../lib/prisma.js";
 import type { IEmployee } from "../types/models.interface.js";
+import type EmployeeService from "../services/employee.service.js";
+import type { IEmployeeResponse } from "../types/employee.interface.js";
 
 class EmployeeController {
+  constructor(private employeeService: EmployeeService) {}
+
   async getAllEmployeesData(req: Request, res: Response): Promise<Response> {
     try {
-      const allEmployeesData: IEmployee[] = await prisma.employee.findMany();
+      const allEmployeesData: IEmployeeResponse[] =
+        await this.employeeService.getAllEmployeesData();
 
-      return res.status(200).json(allEmployeesData);
+      return res.status(200).json({ employees: allEmployeesData });
     } catch (err) {
       return res.status(500).json({
         message: responseMessages.catchErrorMessage,
@@ -21,9 +26,8 @@ class EmployeeController {
     try {
       const newEmployeeData = req.body;
 
-      const newEmployee: IEmployee = await prisma.employee.create({
-        data: newEmployeeData,
-      });
+      const newEmployee: IEmployeeResponse =
+        await this.employeeService.registerNewEmployee(newEmployeeData);
 
       return res.status(201).json({
         message: "Funcionário adicionado ao sistema.",
@@ -41,13 +45,7 @@ class EmployeeController {
     try {
       const { uuid } = req.params;
 
-      const employeeToBeRemoved = {
-        where: {
-          employee_id: uuid as string,
-        },
-      };
-
-      await prisma.employee.delete(employeeToBeRemoved);
+      await this.employeeService.removeEmployeeData(uuid as string);
 
       return res
         .status(200)
@@ -65,16 +63,11 @@ class EmployeeController {
       const updateEmployeeValues = req.body;
       const { uuid } = req.params;
 
-      const employeeToBeUpdated = {
-        where: {
-          employee_id: uuid as string,
-        },
-        data: updateEmployeeValues,
-      };
-
-      const updatedEmployee: IEmployee = await prisma.employee.update(
-        employeeToBeUpdated
-      );
+      const updatedEmployee: IEmployeeResponse =
+        await this.employeeService.updateEmployeeData(
+          updateEmployeeValues,
+          uuid as string,
+        );
 
       return res.status(200).json({
         message: "Dados do funcionário atualizados.",
