@@ -1,42 +1,40 @@
 import type { Request, Response } from "express";
 import { responseMessages } from "../constants/messages.constants.js";
-import type { IGoal } from "../types/models.interface.js";
-import { prisma } from "../../lib/prisma.js";
+import type GoalService from "../services/goal.service.js";
+import type { IGoalResponse } from "../types/goal.interface.js";
 
 class GoalController {
+  constructor(private goalService: GoalService) {}
+
   async getAllGoalsData(req: Request, res: Response): Promise<Response> {
     try {
-      const allGoalsData: IGoal[] = await prisma.goal.findMany();
+      const allGoalsData: IGoalResponse[] =
+        await this.goalService.getAllGoalsData();
 
       return res.status(200).json(allGoalsData);
     } catch (err) {
-      return res
-        .status(500)
-        .json({
-          message: responseMessages.catchErrorMessage,
-          error: (err as Error).message,
-        });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
     }
   }
 
   async createNewGoal(req: Request, res: Response): Promise<Response> {
     try {
-      const { newGoalInfos } = req.body;
+      const newGoalInfos = req.body;
 
-      const newGoal: IGoal = await prisma.goal.create({
-        data: newGoalInfos,
-      });
+      const newGoal: IGoalResponse =
+        await this.goalService.createNewGoal(newGoalInfos);
 
       return res
         .status(201)
         .json({ message: "Meta criada com sucess.", goal: newGoal });
     } catch (err) {
-      return res
-        .status(500)
-        .json({
-          message: responseMessages.catchErrorMessage,
-          error: (err as Error).message,
-        });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
     }
   }
 
@@ -44,22 +42,14 @@ class GoalController {
     try {
       const { uuid } = req.params;
 
-      const goalToBeRemoved = {
-        where: {
-          goal_id: uuid as string,
-        },
-      };
-
-      await prisma.goal.delete(goalToBeRemoved);
+      await this.goalService.deleteGoal(uuid as string);
 
       return res.status(200).json({ message: "Meta removida com sucesso." });
     } catch (err) {
-      return res
-        .status(500)
-        .json({
-          message: responseMessages.catchErrorMessage,
-          error: (err as Error).message,
-        });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
     }
   }
 
@@ -68,25 +58,19 @@ class GoalController {
       const { uuid } = req.params;
       const updateGoalValues = req.body;
 
-      const goalToBeUpdated = {
-        where: {
-          goal_id: uuid as string,
-        },
-        data: updateGoalValues,
-      };
-
-      const updatedGoal = await prisma.goal.update(goalToBeUpdated);
+      const updatedGoal: IGoalResponse = await this.goalService.updateGoal(
+        updateGoalValues,
+        uuid as string,
+      );
 
       return res
         .status(200)
         .json({ message: "Dados de meta atualizado.", update: updatedGoal });
     } catch (err) {
-      return res
-        .status(500)
-        .json({
-          message: responseMessages.catchErrorMessage,
-          error: (err as Error).message,
-        });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
     }
   }
 }
