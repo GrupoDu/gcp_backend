@@ -19,16 +19,6 @@ export interface IRegister {
   client_uuid: string;
 }
 
-export interface IGoal {
-  goal_id: string;
-  created_at: Date;
-  title: string;
-  description: string | null;
-  goal_type: string;
-  deadline: Date;
-  employee_goal: string | null;
-}
-
 export interface IEmployee {
   employee_id: string;
   name: string;
