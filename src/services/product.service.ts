@@ -1,14 +1,15 @@
 import { responseMessages } from "../constants/messages.constants.js";
-import type { IProduct } from "../types/models.interface.js";
+import type { IProductResponse } from "../types/product.interface.js";
 import type { IProductInputData } from "../types/product.interface.js";
 import type { PrismaClient } from "@prisma/client";
 
 class ProductService {
   constructor(private prisma: PrismaClient) {}
 
-  async getAllProductsData(): Promise<IProduct[]> {
+  async getAllProductsData(): Promise<IProductResponse[]> {
     try {
-      const allProducts: IProduct[] = await this.prisma.products.findMany();
+      const allProducts: IProductResponse[] =
+        await this.prisma.products.findMany();
 
       return allProducts;
     } catch (err) {
@@ -18,7 +19,7 @@ class ProductService {
 
   async registerNewProduct(
     newProductData: IProductInputData,
-  ): Promise<IProduct> {
+  ): Promise<IProductResponse> {
     try {
       const { name, description, product_type, image } = newProductData;
 
@@ -26,7 +27,7 @@ class ProductService {
         throw new Error(responseMessages.fillAllFieldMessage);
       }
 
-      const newProduct: IProduct = await this.prisma.products.create({
+      const newProduct: IProductResponse = await this.prisma.products.create({
         data: newProductData,
       });
 
@@ -39,18 +40,19 @@ class ProductService {
   async updateProductData(
     productNewData: IProductInputData,
     productUuid: string,
-  ): Promise<IProduct> {
+  ): Promise<IProductResponse> {
     try {
       if (!productNewData || !productUuid) {
         throw new Error(responseMessages.fillAllFieldMessage);
       }
 
-      const updatedProduct: IProduct = await this.prisma.products.update({
-        where: {
-          uuid: productUuid,
-        },
-        data: productNewData,
-      });
+      const updatedProduct: IProductResponse =
+        await this.prisma.products.update({
+          where: {
+            uuid: productUuid,
+          },
+          data: productNewData,
+        });
 
       return updatedProduct;
     } catch (err) {
