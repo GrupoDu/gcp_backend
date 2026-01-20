@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { responseMessages } from "../constants/messages.constants.js";
-import type { IUserResponse } from "../types/user.interface.js";
+import type { IUserResponse, IUserUpdate } from "../types/user.interface.js";
 import type UserService from "../services/user.service.js";
 
 class UserController {

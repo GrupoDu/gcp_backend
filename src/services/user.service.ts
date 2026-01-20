@@ -1,6 +1,10 @@
 import type { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import type { IUser, IUserResponse } from "../types/user.interface.js";
+import type {
+  IUserCreate,
+  IUserResponse,
+  IUserUpdate,
+} from "../types/user.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
 
 class UserService {
@@ -16,7 +20,7 @@ class UserService {
     return allUsersData;
   }
 
-  async registerNewUser(userInfos: IUser): Promise<IUserResponse> {
+  async registerNewUser(userInfos: IUserCreate): Promise<IUserResponse> {
     const saltRounds = process.env.SALT_ROUNDS;
 
     if (!saltRounds) {
@@ -46,19 +50,25 @@ class UserService {
     return newUser;
   }
 
-  async updateUserData(
-    userNewData: IUser,
-    userUuid: string,
-  ): Promise<IUserResponse> {
-    if (!userNewData || !userUuid) {
+  async updateUserData(userNewData: IUserUpdate): Promise<IUserResponse> {
+    if (!userNewData.user_id) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
+    const userUpdateFields: Record<string, string> = {};
+
+    if (userNewData.name !== undefined)
+      userUpdateFields.name = userNewData.name;
+    if (userNewData.email !== undefined)
+      userUpdateFields.email = userNewData.email;
+    if (userNewData.user_type !== undefined)
+      userUpdateFields.user_type = userNewData.user_type;
+
     const updatedUser: IUserResponse = await this.prisma.user.update({
       where: {
-        user_id: userUuid as string,
+        user_id: userNewData.user_id as string,
       },
-      data: userNewData,
+      data: userUpdateFields,
     });
 
     return updatedUser;
