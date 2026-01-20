@@ -1,19 +1,23 @@
 import express, { type Request, type Response } from "express";
 import UserController from "../controllers/user.controller.js";
+import UserService from "../services/user.service.js";
+import { prisma } from "../../lib/prisma.js";
 
 const router = express.Router();
+const userService = new UserService(prisma);
+const userController = new UserController(userService);
 
 router.get("/", (req: Request, res: Response) =>
-  new UserController().getAllUsers(req, res)
+  userController.getAllUsers(req, res),
 );
 router.post("/", (req: Request, res: Response) =>
-  new UserController().createNewUser(req, res)
+  userController.createNewUser(req, res),
 );
 router.delete("/:uuid", (req: Request, res: Response) =>
-  new UserController().deleteUser(req, res)
+  userController.deleteUser(req, res),
 );
 router.put("/:uuid", (req: Request, res: Response) =>
-  new UserController().updateUserData(req, res)
+  userController.updateUserData(req, res),
 );
 
 export default router;
