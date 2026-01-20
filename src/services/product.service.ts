@@ -7,71 +7,54 @@ class ProductService {
   constructor(private prisma: PrismaClient) {}
 
   async getAllProductsData(): Promise<IProductResponse[]> {
-    try {
-      const allProducts: IProductResponse[] =
-        await this.prisma.products.findMany();
+    const allProducts: IProductResponse[] =
+      await this.prisma.products.findMany();
 
-      return allProducts;
-    } catch (err) {
-      throw new Error((err as Error).message);
-    }
+    return allProducts;
   }
 
   async registerNewProduct(
     newProductData: IProductInputData,
   ): Promise<IProductResponse> {
-    try {
-      const { name, description, product_type, image } = newProductData;
+    const { name, description, product_type, image } = newProductData;
 
-      if (!name || !description || !product_type || !image) {
-        throw new Error(responseMessages.fillAllFieldMessage);
-      }
-
-      const newProduct: IProductResponse = await this.prisma.products.create({
-        data: newProductData,
-      });
-
-      return newProduct;
-    } catch (err) {
-      throw new Error((err as Error).message);
+    if (!name || !description || !product_type || !image) {
+      throw new Error(responseMessages.fillAllFieldMessage);
     }
+
+    const newProduct: IProductResponse = await this.prisma.products.create({
+      data: newProductData,
+    });
+
+    return newProduct;
   }
 
   async updateProductData(
     productNewData: IProductInputData,
     productUuid: string,
   ): Promise<IProductResponse> {
-    try {
-      if (!productNewData || !productUuid) {
-        throw new Error(responseMessages.fillAllFieldMessage);
-      }
-
-      const updatedProduct: IProductResponse =
-        await this.prisma.products.update({
-          where: {
-            uuid: productUuid,
-          },
-          data: productNewData,
-        });
-
-      return updatedProduct;
-    } catch (err) {
-      throw new Error((err as Error).message);
+    if (!productNewData || !productUuid) {
+      throw new Error(responseMessages.fillAllFieldMessage);
     }
+
+    const updatedProduct: IProductResponse = await this.prisma.products.update({
+      where: {
+        uuid: productUuid,
+      },
+      data: productNewData,
+    });
+
+    return updatedProduct;
   }
 
   async deleteProduct(productUuid: string): Promise<string> {
-    try {
-      await this.prisma.products.delete({
-        where: {
-          uuid: productUuid,
-        },
-      });
+    await this.prisma.products.delete({
+      where: {
+        uuid: productUuid,
+      },
+    });
 
-      return "Produto excluido com sucesso";
-    } catch (err) {
-      throw new Error((err as Error).message);
-    }
+    return "Produto excluido com sucesso";
   }
 }
 
