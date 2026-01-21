@@ -5,7 +5,7 @@ import type {
   IEmployeeUpdate,
 } from "../types/employee.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
-import verifyFieldstoUpdate from "../utils/verifyFieldsToUpdate.utils.js";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 
 class EmployeeService {
   constructor(private prisma: PrismaClient) {}
@@ -40,7 +40,7 @@ class EmployeeService {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
-    const updateFields = verifyFieldstoUpdate(employeeNewData);
+    const updateFields = removeUndefinedUpdateFields(employeeNewData);
 
     if (updateFields.length < 1) throw new Error("Nenhum campo fornecido.");
 

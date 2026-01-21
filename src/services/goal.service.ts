@@ -5,7 +5,7 @@ import type {
   IGoalUpdate,
 } from "../types/goal.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
-import verifyFieldstoUpdate from "../utils/verifyFieldsToUpdate.utils.js";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 
 class GoalService {
   constructor(private prisma: PrismaClient) {}
@@ -72,7 +72,7 @@ class GoalService {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
-    const updateFields = verifyFieldstoUpdate(goalData);
+    const updateFields = removeUndefinedUpdateFields(goalData);
 
     if (updateFields.length < 1) throw new Error("Nenhum campo fornecido");
 

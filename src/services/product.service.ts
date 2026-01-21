@@ -5,7 +5,7 @@ import type {
   IProductUpdate,
 } from "../types/product.interface.js";
 import type { PrismaClient } from "@prisma/client";
-import verifyFieldstoUpdate from "../utils/verifyFieldsToUpdate.utils.js";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 
 class ProductService {
   constructor(private prisma: PrismaClient) {}
@@ -36,7 +36,7 @@ class ProductService {
   ): Promise<IProduct> {
     if (!productUuid) throw new Error(responseMessages.fillAllFieldMessage);
 
-    const updateFields = verifyFieldstoUpdate(productNewData);
+    const updateFields = removeUndefinedUpdateFields(productNewData);
 
     if (updateFields.length < 1) throw new Error("Nenhum campo fornecido");
 
