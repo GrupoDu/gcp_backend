@@ -60,10 +60,13 @@ class ProductController {
 
   async updateProductData(req: Request, res: Response): Promise<Response> {
     try {
-      const { productNewData } = req.body;
+      const { productUuid, productNewData } = req.body;
 
       const updatedProduct: IProduct =
-        await this.productService.updateProductData(productNewData);
+        await this.productService.updateProductData(
+          productNewData,
+          productUuid,
+        );
 
       return res.status(200).json({
         message: "Produto atualizado com sucesso.",
