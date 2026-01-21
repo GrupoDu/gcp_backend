@@ -6,6 +6,7 @@ import type {
   IUserUpdate,
 } from "../types/user.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 
 class UserService {
   constructor(private prisma: PrismaClient) {}
@@ -50,25 +51,21 @@ class UserService {
     return newUser;
   }
 
-  async updateUserData(userNewData: IUserUpdate): Promise<IUserResponse> {
-    if (!userNewData.user_id) {
+  async updateUserData(
+    userNewData: IUserUpdate,
+    userUuid: string,
+  ): Promise<IUserResponse> {
+    if (!userUuid) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
-    const userUpdateFields: Record<string, string> = {};
-
-    if (userNewData.name !== undefined)
-      userUpdateFields.name = userNewData.name;
-    if (userNewData.email !== undefined)
-      userUpdateFields.email = userNewData.email;
-    if (userNewData.user_type !== undefined)
-      userUpdateFields.user_type = userNewData.user_type;
+    const updateFields = removeUndefinedUpdateFields(userNewData);
 
     const updatedUser: IUserResponse = await this.prisma.user.update({
       where: {
-        user_id: userNewData.user_id as string,
+        user_id: userUuid,
       },
-      data: userUpdateFields,
+      data: updateFields,
     });
 
     return updatedUser;
