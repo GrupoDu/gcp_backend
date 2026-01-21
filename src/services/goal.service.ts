@@ -2,7 +2,6 @@ import type { PrismaClient } from "@prisma/client";
 import type {
   IEmployeeGoal,
   IGoal,
-  IGoalResponse,
   IGoalUpdate,
 } from "../types/goal.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
@@ -11,8 +10,8 @@ import verifyFieldstoUpdate from "../utils/verifyFieldsToUpdate.utils.js";
 class GoalService {
   constructor(private prisma: PrismaClient) {}
 
-  async getAllGoalsData(): Promise<IGoalResponse[]> {
-    const allGoalsData: IGoalResponse[] = await this.prisma.goal.findMany();
+  async getAllGoalsData(): Promise<IGoal[]> {
+    const allGoalsData: IGoal[] = await this.prisma.goal.findMany();
 
     if (!allGoalsData) {
       throw new Error("Nenhuma meta encontrada.");
@@ -21,26 +20,25 @@ class GoalService {
     return allGoalsData;
   }
 
-  async createNewGoal(newGoalData: IGoal): Promise<IGoalResponse> {
+  async createNewGoal(newGoalData: IGoal): Promise<IGoal> {
     if (!newGoalData) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
     if (newGoalData.goal_type === "Funcionário") {
-      const newEmployeeGoal: IGoalResponse =
-        await this.createEmployeeGoal(newGoalData);
+      const newEmployeeGoal: IGoal = await this.createEmployeeGoal(newGoalData);
 
       return newEmployeeGoal;
     }
 
-    const newGoal: IGoalResponse = await this.prisma.goal.create({
+    const newGoal: IGoal = await this.prisma.goal.create({
       data: newGoalData,
     });
 
     return newGoal;
   }
 
-  async createEmployeeGoal(newGoalData: IGoal): Promise<IGoalResponse> {
+  async createEmployeeGoal(newGoalData: IGoal): Promise<IGoal> {
     if (newGoalData.goal_type !== "Funcionário") {
       throw new Error("Tipo de meta inválido.");
     }
@@ -49,7 +47,7 @@ class GoalService {
       data: newGoalData,
     });
 
-    return newEmployeeGoal as IGoalResponse;
+    return newEmployeeGoal as IGoal;
   }
 
   async deleteGoal(goalUuid: string): Promise<string> {
@@ -69,7 +67,7 @@ class GoalService {
   async updateGoalData(
     goalData: IGoalUpdate,
     goalUuid: string,
-  ): Promise<IGoalResponse> {
+  ): Promise<IGoal> {
     if (!goalUuid) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
@@ -78,7 +76,7 @@ class GoalService {
 
     if (updateFields.length < 1) throw new Error("Nenhum campo fornecido");
 
-    const updatedGoal: IGoalResponse = await this.prisma.goal.update({
+    const updatedGoal: IGoal = await this.prisma.goal.update({
       where: {
         goal_id: goalUuid as string,
       },
