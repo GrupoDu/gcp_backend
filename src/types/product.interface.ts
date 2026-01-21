@@ -1,20 +1,24 @@
 import type { Prisma } from "@prisma/client";
 
-interface IProduct {
+export interface IProduct {
+  uuid: string;
   name: string;
   description: string;
   product_type: string;
+  created_at: Date;
   image: string;
   features?: string[];
   acronym?: string | null;
   composition?: Prisma.JsonValue;
 }
 
-export interface IProductInputData extends Omit<IProduct, "composition"> {
+export interface IProductCreate extends Omit<IProduct, "composition"> {
   composition?: Prisma.InputJsonValue;
 }
 
-export interface IProductResponse extends IProduct {
+export interface IProductUpdate extends Partial<
+  Omit<IProduct, "composition" | "uuid" | "created_at">
+> {
   uuid: string;
-  created_at: Date;
+  composition?: Prisma.InputJsonValue;
 }
