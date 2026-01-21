@@ -58,7 +58,7 @@ class GoalController {
       const { uuid } = req.params;
       const updateGoalValues = req.body;
 
-      const updatedGoal: IGoalResponse = await this.goalService.updateGoal(
+      const updatedGoal: IGoalResponse = await this.goalService.updateGoalData(
         updateGoalValues,
         uuid as string,
       );
