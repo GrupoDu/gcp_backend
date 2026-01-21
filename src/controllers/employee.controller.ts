@@ -1,16 +1,14 @@
 import type { Request, Response } from "express";
 import { responseMessages } from "../constants/messages.constants.js";
-import { prisma } from "../../lib/prisma.js";
-import type { IEmployee } from "../types/models.interface.js";
 import type EmployeeService from "../services/employee.service.js";
-import type { IEmployeeResponse } from "../types/employee.interface.js";
+import type { IEmployee } from "../types/employee.interface.js";
 
 class EmployeeController {
   constructor(private employeeService: EmployeeService) {}
 
   async getAllEmployeesData(req: Request, res: Response): Promise<Response> {
     try {
-      const allEmployeesData: IEmployeeResponse[] =
+      const allEmployeesData: IEmployee[] =
         await this.employeeService.getAllEmployeesData();
 
       return res.status(200).json({ employees: allEmployeesData });
@@ -26,7 +24,7 @@ class EmployeeController {
     try {
       const newEmployeeData = req.body;
 
-      const newEmployee: IEmployeeResponse =
+      const newEmployee: IEmployee =
         await this.employeeService.registerNewEmployee(newEmployeeData);
 
       return res.status(201).json({
@@ -63,7 +61,7 @@ class EmployeeController {
       const updateEmployeeValues = req.body;
       const { uuid } = req.params;
 
-      const updatedEmployee: IEmployeeResponse =
+      const updatedEmployee: IEmployee =
         await this.employeeService.updateEmployeeData(
           updateEmployeeValues,
           uuid as string,

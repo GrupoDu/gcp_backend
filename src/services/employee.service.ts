@@ -1,16 +1,17 @@
 import type { PrismaClient } from "@prisma/client";
 import type {
   IEmployee,
-  IEmployeeResponse,
+  IEmployeeCreate,
+  IEmployeeUpdate,
 } from "../types/employee.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
+import verifyFieldstoUpdate from "../utils/verifyFieldsToUpdate.utils.js";
 
 class EmployeeService {
   constructor(private prisma: PrismaClient) {}
 
-  async getAllEmployeesData(): Promise<IEmployeeResponse[]> {
-    const allEmployeesData: IEmployeeResponse[] =
-      await this.prisma.employee.findMany();
+  async getAllEmployeesData(): Promise<IEmployee[]> {
+    const allEmployeesData: IEmployee[] = await this.prisma.employee.findMany();
 
     if (!allEmployeesData) {
       throw new Error("Nenhum funcionário encontrado.");
@@ -19,14 +20,12 @@ class EmployeeService {
     return allEmployeesData;
   }
 
-  async registerNewEmployee(
-    employeeData: IEmployee,
-  ): Promise<IEmployeeResponse> {
+  async registerNewEmployee(employeeData: IEmployeeCreate): Promise<IEmployee> {
     if (!employeeData) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
-    const newEmployee: IEmployeeResponse = await this.prisma.employee.create({
+    const newEmployee: IEmployee = await this.prisma.employee.create({
       data: employeeData,
     });
 
@@ -34,20 +33,23 @@ class EmployeeService {
   }
 
   async updateEmployeeData(
-    employeeNewData: IEmployee,
+    employeeNewData: IEmployeeUpdate,
     employeeUuid: string,
-  ): Promise<IEmployeeResponse> {
-    if (!employeeNewData || !employeeUuid) {
+  ): Promise<IEmployee> {
+    if (!employeeUuid) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
-    const updatedEmployee: IEmployeeResponse =
-      await this.prisma.employee.update({
-        where: {
-          employee_id: employeeUuid as string,
-        },
-        data: employeeNewData,
-      });
+    const updateFields = verifyFieldstoUpdate(employeeNewData);
+
+    if (updateFields.length < 1) throw new Error("Nenhum campo fornecido.");
+
+    const updatedEmployee: IEmployee = await this.prisma.employee.update({
+      where: {
+        employee_id: employeeUuid as string,
+      },
+      data: updateFields,
+    });
 
     return updatedEmployee;
   }
