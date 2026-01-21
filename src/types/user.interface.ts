@@ -6,9 +6,7 @@ interface IUser {
   user_type: string;
 }
 
-export interface IUserUpdate extends Partial<IUser> {
-  user_id: string;
-}
+export interface IUserUpdate extends Partial<Omit<IUser, "user_id">> {}
 
 export interface IUserCreate extends Omit<IUser, "user_id"> {}
 
