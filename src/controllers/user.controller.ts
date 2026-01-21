@@ -58,10 +58,12 @@ class UserController {
 
   async updateUserData(req: Request, res: Response): Promise<Response> {
     try {
-      const updateInfos = req.body;
+      const { uuid, updateInfos } = req.body;
 
-      const updatedUser: IUserResponse =
-        await this.userService.updateUserData(updateInfos);
+      const updatedUser: IUserResponse = await this.userService.updateUserData(
+        updateInfos,
+        uuid,
+      );
 
       return res.status(200).json({
         message: "Usuário editado com successo.",
