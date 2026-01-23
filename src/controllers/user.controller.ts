@@ -1,10 +1,6 @@
 import type { Request, Response } from "express";
 import { responseMessages } from "../constants/messages.constants.js";
-import type {
-  IUserCreate,
-  IUserResponse,
-  IUserUpdate,
-} from "../types/user.interface.js";
+import type { IUserCreate, IUserPublic } from "../types/user.interface.js";
 import type UserService from "../services/user.service.js";
 
 class UserController {
@@ -12,8 +8,7 @@ class UserController {
 
   async getAllUsers(req: Request, res: Response): Promise<Response> {
     try {
-      const allUsers: IUserResponse[] =
-        await this.userService.getAllUsersData();
+      const allUsers: IUserPublic[] = await this.userService.getAllUsersData();
 
       return res.status(200).json({ users: allUsers });
     } catch (err) {
@@ -28,7 +23,7 @@ class UserController {
     try {
       const newUserInfos: IUserCreate = req.body;
 
-      const newUser: IUserResponse =
+      const newUser: IUserPublic =
         await this.userService.registerNewUser(newUserInfos);
 
       return res
@@ -60,7 +55,7 @@ class UserController {
     try {
       const { uuid, updateInfos } = req.body;
 
-      const updatedUser: IUserResponse = await this.userService.updateUserData(
+      const updatedUser: IUserPublic = await this.userService.updateUserData(
         updateInfos,
         uuid,
       );
