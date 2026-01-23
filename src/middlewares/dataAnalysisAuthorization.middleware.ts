@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import type { IJwtPayload } from "../types/jwtPayload.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
 
-export function dataAnalysisValidationMiddleware(
+export function dataAnalysisAuthorizationMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,
