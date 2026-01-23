@@ -2,7 +2,7 @@ import type { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
 import type {
   IUserCreate,
-  IUserResponse,
+  IUserPublic,
   IUserUpdate,
 } from "../types/user.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
@@ -11,8 +11,8 @@ import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.ut
 class UserService {
   constructor(private prisma: PrismaClient) {}
 
-  async getAllUsersData(): Promise<IUserResponse[]> {
-    const allUsersData: IUserResponse[] = await this.prisma.user.findMany();
+  async getAllUsersData(): Promise<IUserPublic[]> {
+    const allUsersData: IUserPublic[] = await this.prisma.user.findMany();
 
     if (!allUsersData) {
       throw new Error("Nenhum usuário encontrado.");
@@ -21,7 +21,7 @@ class UserService {
     return allUsersData;
   }
 
-  async registerNewUser(userInfos: IUserCreate): Promise<IUserResponse> {
+  async registerNewUser(userInfos: IUserCreate): Promise<IUserPublic> {
     const saltRounds = process.env.SALT_ROUNDS;
 
     if (!saltRounds) {
@@ -39,7 +39,7 @@ class UserService {
 
     const hashPassword = await bcrypt.hash(userInfos.password, saltRounds);
 
-    const newUser: IUserResponse = await this.prisma.user.create({
+    const newUser: IUserPublic = await this.prisma.user.create({
       data: {
         name: userInfos.name,
         email: userInfos.email,
@@ -54,14 +54,14 @@ class UserService {
   async updateUserData(
     userNewData: IUserUpdate,
     userUuid: string,
-  ): Promise<IUserResponse> {
+  ): Promise<IUserPublic> {
     if (!userUuid) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
     const updateFields = removeUndefinedUpdateFields(userNewData);
 
-    const updatedUser: IUserResponse = await this.prisma.user.update({
+    const updatedUser: IUserPublic = await this.prisma.user.update({
       where: {
         user_id: userUuid,
       },
