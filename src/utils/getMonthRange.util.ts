@@ -1,5 +1,7 @@
-export function getMonthRange(): { actualMonth: Date; nextMonth: Date } {
-  const today = new Date();
+export function getMonthRange(today: Date): {
+  actualMonth: Date;
+  nextMonth: Date;
+} {
   const actualMonth: Date = new Date(today.getFullYear(), today.getMonth(), 1);
   const nextMonth: Date = new Date(
     today.getFullYear(),
