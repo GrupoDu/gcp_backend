@@ -10,13 +10,14 @@ class AuthController {
     try {
       const { email, password } = req.body;
 
-      const userLoged: IUserPublic = await this.authService.userLogin(
+      const userLogged: IUserPublic = await this.authService.userLogin(
         email,
         password,
       );
 
       const token = await this.authService.generateAccessToken(
-        userLoged.user_id,
+        userLogged.user_id,
+        userLogged.user_type,
       );
 
       return res.status(200).json({
