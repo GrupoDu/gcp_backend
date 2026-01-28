@@ -36,19 +36,39 @@ describe("Testes de update de registro.", () => {
     registerService = new RegisterService(prisma);
   });
 
-  it("Deve editar nome de um registro.", async () => {
-    const mockedUpdateRegister = mockedRegisterFactory({
-      title: "Update de nome",
+  it("Deve editar título do registro.", async () => {
+    const mockedTitleUpdateRegister = mockedRegisterFactory({
+      title: "Update de título",
     });
 
-    prisma.register.update.mockResolvedValue(mockedUpdateRegister);
+    prisma.register.update.mockResolvedValue(mockedTitleUpdateRegister);
 
     const updateRegister = await registerService.updateRegisterData(
-      mockedUpdateRegister,
+      mockedTitleUpdateRegister,
       "550e8400-e29b-41d4-a716-446655440000",
     );
 
-    expect(updateRegister.title).toBe("Update de nome");
+    expect(updateRegister.title).toBe("Update de título");
+    expect(updateRegister.register_id).toBe(
+      "550e8400-e29b-41d4-a716-446655440000",
+    );
+  });
+
+  it("Deve editar descrição do registro.", async () => {
+    const mockedDescriptionUpdateRegister = mockedRegisterFactory({
+      description: "Atualizando a descrição desse registro.",
+    });
+
+    prisma.register.update.mockResolvedValue(mockedDescriptionUpdateRegister);
+
+    const updateRegister = await registerService.updateRegisterData(
+      mockedDescriptionUpdateRegister,
+      "550e8400-e29b-41d4-a716-446655440000",
+    );
+
+    expect(updateRegister.description).toBe(
+      "Atualizando a descrição desse registro.",
+    );
     expect(updateRegister.register_id).toBe(
       "550e8400-e29b-41d4-a716-446655440000",
     );
