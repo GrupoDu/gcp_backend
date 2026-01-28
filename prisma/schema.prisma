@@ -64,15 +64,16 @@ model register {
   status                                          String    @default("Pendente")
   product_quantity                                Decimal   @db.Decimal
   delivered_at                                    DateTime? @db.Date
-  cut_assistant                                   String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  fold_assistant                                  String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  finishing_assistant                             String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  paint_assistant                                 String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  employee_uuid                                   String?   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  product_uuid                                    String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  client_uuid                                     String    @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cut_assistant                                   String?   @db.Uuid
+  fold_assistant                                  String?   @db.Uuid
+  finishing_assistant                             String?   @db.Uuid
+  paint_assistant                                 String?   @db.Uuid
+  employee_uuid                                   String?   @db.Uuid
+  product_uuid                                    String    @db.Uuid
+  client_uuid                                     String    @db.Uuid
   description                                     String?
   deliver_observation                             String?
+  is_delivered                                    Boolean   @default(false)
   user                                            user      @relation(fields: [client_uuid], references: [user_id], onDelete: SetNull)
   employee_register_cut_assistantToemployee       employee? @relation("register_cut_assistantToemployee", fields: [cut_assistant], references: [employee_id])
   employee_register_employee_uuidToemployee       employee? @relation("register_employee_uuidToemployee", fields: [employee_uuid], references: [employee_id])
