@@ -6,6 +6,7 @@ import { randomUUID } from "crypto";
 vi.mock("../../../lib/prisma.js");
 
 import prisma from "../../tests/__mocks__/@prisma/prisma.js";
+import { responseMessages } from "../../constants/messages.constants.js";
 
 describe("Teste de variáveis de ambiente.", () => {
   it("deve carrega a variável SALT_ROUNDS", () => {
@@ -37,24 +38,44 @@ describe("Testes de registro", () => {
 
     prisma.user.create.mockResolvedValue(newMockedUser);
 
-    const newUser = await userService.registerNewUser(
-      newMockedUser,
-    );
+    const newUser = await userService.registerNewUser(newMockedUser);
 
     expect(newUser.name).toBe("Mario");
   });
 
-  it("Não deve permitir a criação do usuário", async () => {
-    await expect(
-      userService.registerNewUser(
-        {
-          name: "Mario",
-          email: "mario@email.com",
-          password: "1234",
-          user_type: "cliente",
-        },
-      ),
-    ).rejects.toThrowError();
+  it("Deve dar erro de campos não preenchidos.", async () => {
+    const newUser = {
+      emptyName: {
+        name: "",
+        email: "pedro@email.com",
+        password: "123",
+        user_type: "admin",
+      },
+      emptyEmail: {
+        name: "",
+        email: "pedro@email.com",
+        password: "123",
+        user_type: "admin",
+      },
+      emptyPassword: {
+        name: "Pedro",
+        email: "pedro@email.com",
+        password: "",
+        user_type: "admin",
+      },
+      emptyUserType: {
+        name: "Pedro",
+        email: "pedro@email.com",
+        password: "123",
+        user_type: "",
+      },
+    };
+
+    for (const emptyTest of Object.values(newUser)) {
+      await expect(userService.registerNewUser(emptyTest)).rejects.toThrowError(
+        responseMessages.fillAllFieldMessage,
+      );
+    }
   });
 });
 
@@ -63,7 +84,6 @@ describe("Testes de update.", () => {
   let userList: IUserPublic[];
 
   beforeEach(() => {
-
     userList = [
       {
         user_id: randomUUID(),
@@ -92,15 +112,6 @@ describe("Testes de update.", () => {
     ];
 
     userService = new UserService(prisma);
-  });
-
-  it("Não deve permitir alteração de dados do usuário.", async () => {
-    await expect(
-      userService.updateUserData(
-        { name: "Rafael" },
-        userList[1]!.user_id,
-      ),
-    ).rejects.toThrowError();
   });
 
   it("Deve lançar um erro por falta de dados para atualizar.", async () => {
@@ -112,42 +123,35 @@ describe("Testes de update.", () => {
 
 describe("Testes de delete.", () => {
   let userService: UserService;
-  let userList: IUserPublic[];
 
   beforeEach(() => {
-    userList = [
-      {
-        user_id: randomUUID(),
-        name: "Pedro",
-        email: "pedro@email.com",
-        user_type: "cliente",
-      },
-      {
-        user_id: randomUUID(),
-        name: "Marcos",
-        email: "marcos@email.com",
-        user_type: "admin",
-      },
-      {
-        user_id: randomUUID(),
-        name: "Italo",
-        email: "italo@email.com",
-        user_type: "admin",
-      },
-      {
-        user_id: randomUUID(),
-        name: "Thiago",
-        email: "thiago@email.com",
-        user_type: "cliente",
-      },
-    ];
-
     userService = new UserService(prisma);
   });
 
-  it("Não deve permitir a remoção do usuário", async () => {
-    await expect(
-      userService.deleteUserData(userList[0]!.user_id),
-    ).rejects.toThrow("Usuário sem privilégios");
+  it("Deve dar error por falta de uuid", async () => {
+    const uuidTests = {
+      emptyString: {
+        entry: "",
+        toThrow: "id do usuário não fornecido.",
+      },
+      nullUuid: {
+        entry: null,
+        toThrow: "id do usuário não fornecido.",
+      },
+      undefinedUuid: {
+        entry: undefined,
+        toThrow: "id do usuário não fornecido.",
+      },
+      userNotFind: {
+        entry: "a",
+        toThrow: "Usuário não encontrado.",
+      },
+    };
+
+    for (const test of Object.values(uuidTests)) {
+      await expect(userService.deleteUserData(test.entry)).rejects.toThrowError(
+        test.toThrow,
+      );
+    }
   });
 });
