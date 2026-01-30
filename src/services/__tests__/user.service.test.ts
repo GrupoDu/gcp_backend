@@ -184,6 +184,6 @@ describe("Testes de delete.", () => {
 
     await expect(
       userService.deleteUserData(userList[0]!.user_id, jwtSpyMock),
-    ).rejects.toThrowError();
+    ).rejects.toThrow("Usuário sem privilégios");
   });
 });
