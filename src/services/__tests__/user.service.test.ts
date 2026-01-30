@@ -59,8 +59,8 @@ describe("Testes de registro", () => {
       user_type: "Cliente",
     });
 
-    expect(async () => {
-      await userService.registerNewUser(
+    await expect(
+      userService.registerNewUser(
         {
           name: "Mario",
           email: "mario@email.com",
@@ -68,8 +68,8 @@ describe("Testes de registro", () => {
           user_type: "Cliente",
         },
         jwtSpyMock,
-      );
-    }).toThrowError;
+      ),
+    ).rejects.toThrowError();
   });
 });
 
@@ -111,20 +111,30 @@ describe("Testes de update.", () => {
     userService = new UserService(prisma);
   });
 
-  // Passou, mas da erro pois procura os dados diretamente no banco de dados
-  it("Não deve permitir alteração de dados do usuário.", () => {
+  it("Não deve permitir alteração de dados do usuário.", async () => {
     jwtSpyMock.mockReturnValue({
       user_id: "fake-id",
       user_type: "Cliente",
     });
 
-    expect(async () => {
-      await userService.updateUserData(
+    await expect(
+      userService.updateUserData(
         { name: "Rafael" },
         userList[1]!.user_id,
         jwtSpyMock,
-      );
-    }).toThrowError;
+      ),
+    ).rejects.toThrowError();
+  });
+
+  it("Deve lançar um erro por falta de dados para atualizar.", async () => {
+    jwtSpyMock.mockReturnValue({
+      user_id: "fake-id",
+      user_type: "Admin",
+    });
+
+    await expect(
+      userService.updateUserData({}, userList[1]!.user_id, jwtSpyMock),
+    ).rejects.toThrowError();
   });
 });
 
@@ -166,14 +176,14 @@ describe("Testes de delete.", () => {
     userService = new UserService(prisma);
   });
 
-  it("Não deve permitir a remoção do usuário", () => {
+  it("Não deve permitir a remoção do usuário", async () => {
     jwtSpyMock.mockReturnValue({
       user_id: "fake-id",
       user_type: "Cliente",
     });
 
-    expect(async () => {
-      await userService.deleteUserData(userList[0]!.user_id, jwtSpyMock);
-    }).toThrowError;
+    await expect(
+      userService.deleteUserData(userList[0]!.user_id, jwtSpyMock),
+    ).rejects.toThrowError();
   });
 });
