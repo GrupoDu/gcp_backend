@@ -74,7 +74,8 @@ class GoalService {
 
     const updateFields = removeUndefinedUpdateFields(goalData);
 
-    if (updateFields.length < 1) throw new Error("Nenhum campo fornecido");
+    if (Object.keys(updateFields).length < 1)
+      throw new Error("Nenhum campo fornecido");
 
     const updatedGoal: IGoal = await this.prisma.goal.update({
       where: {
