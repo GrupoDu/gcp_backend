@@ -6,7 +6,7 @@ import { randomUUID } from "node:crypto";
 vi.mock("../../../lib/prisma.ts");
 import prisma from "../../tests/__mocks__/@prisma/prisma.js";
 
-describe("Testes de produtos.", () => {
+describe("Testes de criação de produtos.", () => {
   let productService: ProductService;
   let productList: IProduct[];
 
@@ -59,6 +59,16 @@ describe("Testes de produtos.", () => {
     expect(newProduct.name).toBe("Produto de teste");
   });
 
+  it("Não deve permitir criação de produto.", () => {});
+});
+
+describe("Teste de atualização de produto.", () => {
+  let productService: ProductService;
+
+  beforeEach(() => {
+    productService = new ProductService(prisma);
+  });
+
   it("Deve conseguir atualizar um produto.", async () => {
     const mockUpdatedProduct = {
       created_at: new Date(),
@@ -89,5 +99,21 @@ describe("Testes de produtos.", () => {
         "550e8400-e29b-41d4-a716-446655440000",
       ),
     ).rejects.toThrow("Nenhum campo fornecido");
+  });
+});
+
+describe("Testes de delete de produto.", () => {
+  let productService: ProductService;
+
+  beforeEach(() => {
+    productService = new ProductService(prisma);
+  });
+
+  it("Deve conseguir remover um produto.", async () => {
+    const deletedProduct = await productService.deleteProduct(
+      "550e8400-e29b-41d4-a716-446655440000",
+    );
+
+    expect(deletedProduct).toBe("Produto excluido com sucesso");
   });
 });
