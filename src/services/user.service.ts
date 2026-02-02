@@ -8,6 +8,7 @@ import type {
 } from "../types/user.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
+import { isEmailFormatValid } from "../utils/emailFormatValidator.util.js";
 
 class UserService {
   constructor(private prisma: PrismaClient) {}
@@ -37,6 +38,8 @@ class UserService {
     ) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
+
+    isEmailFormatValid(userInfos.email);
 
     const saltRoundsNumber = parseInt(saltRounds, 10);
 
