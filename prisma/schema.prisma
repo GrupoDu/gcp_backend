@@ -52,6 +52,7 @@ model goal {
   goal_type     String
   deadline      DateTime  @db.Date
   employee_goal String?   @db.Uuid
+  goal_status   Boolean   @default(false)
   employee      employee? @relation(fields: [employee_goal], references: [employee_id])
 }
 
