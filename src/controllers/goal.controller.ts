@@ -8,7 +8,7 @@ class GoalController {
 
   async getAllGoalsData(req: Request, res: Response): Promise<Response> {
     try {
-      const allGoalsData: IGoal[] = await this.goalService.getAllGoalsData();
+      const allGoalsData = await this.goalService.getAllGoalsData();
 
       return res.status(200).json(allGoalsData);
     } catch (err) {
@@ -23,7 +23,7 @@ class GoalController {
     try {
       const newGoalInfos = req.body;
 
-      const newGoal: IGoal = await this.goalService.createNewGoal(newGoalInfos);
+      const newGoal = await this.goalService.createNewGoal(newGoalInfos);
 
       return res
         .status(201)
@@ -55,7 +55,7 @@ class GoalController {
     try {
       const { uuid, updateGoalValues } = req.body;
 
-      const updatedGoal: IGoal = await this.goalService.updateGoalData(
+      const updatedGoal = await this.goalService.updateGoalData(
         updateGoalValues,
         uuid as string,
       );
