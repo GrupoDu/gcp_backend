@@ -22,6 +22,18 @@ class RegisterService {
     return allRegistersData;
   }
 
+  async getRegisterData(register_id: string) {
+    const registerData = await this.prisma.register.findUnique({
+      where: {
+        register_id,
+      },
+    });
+
+    if (!registerData) throw new Error("Registro não encontrado.");
+
+    return registerData;
+  }
+
   async createNewRegister(registerData: IRegisterCreate): Promise<IRegister> {
     if (!registerData) throw new Error(responseMessages.fillAllFieldMessage);
 

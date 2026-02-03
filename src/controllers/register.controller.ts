@@ -26,6 +26,25 @@ class RegisterController {
     }
   }
 
+  async getRegisterData(req: Request, res: Response): Promise<Response> {
+    const { uuid } = req.params;
+
+    try {
+      if (!uuid) throw new Error("id do registro não informado.");
+
+      const registerData = await this.registerService.getRegisterData(
+        uuid as string,
+      );
+
+      return res.status(200).json(registerData);
+    } catch (err) {
+      return res.status(500).json({
+        message: "Erro interno de servidor.",
+        error: (err as Error).message,
+      });
+    }
+  }
+
   async createNewRegister(req: Request, res: Response): Promise<Response> {
     try {
       const newRegisterData: IRegister = req.body;
