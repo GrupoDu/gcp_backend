@@ -14,6 +14,9 @@ router.get("/", adminAuthMiddleware, (req: Request, res: Response) =>
 router.post("/", adminAuthMiddleware, (req: Request, res: Response) =>
   userController.createNewUser(req, res),
 );
+router.get("/:uuid", adminAuthMiddleware, (req: Request, res: Response) =>
+  userController.getUserData(req, res),
+);
 router.delete("/:uuid", adminAuthMiddleware, (req: Request, res: Response) =>
   userController.deleteUser(req, res),
 );
