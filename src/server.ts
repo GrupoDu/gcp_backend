@@ -22,7 +22,7 @@ app.use("/goals", GoalRoutes);
 app.use("/registers", RegisterRoutes);
 app.use("/employees", EmployeeRoutes);
 app.use("/login", AuthRoutes);
-app.use("/employees/analysis", EmployeeAnalysisRoutes);
+app.use("/employees-analysis", EmployeeAnalysisRoutes);
 app.use("/registers-analysis", RegistersAnalysisRoutes);
 
 app.get("/", (req: Request, res: Response) => res.json({ status: "ok" }));
