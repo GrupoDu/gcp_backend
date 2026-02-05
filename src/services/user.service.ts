@@ -22,6 +22,18 @@ class UserService {
     return allUsersData;
   }
 
+  async getUserData(user_id: string): Promise<IUserPublic> {
+    const userData = await this.prisma.user.findUnique({
+      where: {
+        user_id,
+      },
+    });
+
+    if (!userData) throw new Error("Usuário não encontrado.");
+
+    return userData;
+  }
+
   async registerNewUser(userInfos: IUserCreate): Promise<IUserPublic> {
     const saltRounds = process.env.SALT_ROUNDS;
 
