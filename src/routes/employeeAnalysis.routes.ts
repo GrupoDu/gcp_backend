@@ -13,7 +13,8 @@ const employeeAnalysisController = new EmployeeAnalysisController(
 router.get(
   "/",
   dataAnalysisAuthorizationMiddleware,
-  employeeAnalysisController.getEmployeeActivityAnalysis,
+  (req: Request, res: Response) =>
+    employeeAnalysisController.getEmployeeActivityAnalysis(req, res),
 );
 
 export default router;
