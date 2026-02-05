@@ -34,10 +34,10 @@ class RegisterService {
     return registerData;
   }
 
-  async createNewRegister(registerData: IRegisterCreate): Promise<IRegister> {
+  async createNewRegister(registerData: IRegisterCreate) {
     if (!registerData) throw new Error(responseMessages.fillAllFieldMessage);
 
-    const newRegister: IRegister = await this.prisma.register.create({
+    const newRegister = await this.prisma.register.create({
       data: registerData,
     });
 
