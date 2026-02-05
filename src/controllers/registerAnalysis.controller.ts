@@ -27,7 +27,7 @@ class RegisterAnalysisController {
           .json({ message: "Não houve registros não entregues esse mês" });
       }
 
-      return res.status(200).json(dataAnalysisAuthorizationMiddleware);
+      return res.status(200).json(registersDataAnalysis);
     } catch (err) {
       return res
         .status(500)
