@@ -16,7 +16,7 @@ router.post("/", adminAuthMiddleware, (req: Request, res: Response) =>
   registerController.createNewRegister(req, res),
 );
 router.get("/:uuid", adminAuthMiddleware, (req: Request, res: Response) =>
-  registerController.createNewRegister(req, res),
+  registerController.getRegisterData(req, res),
 );
 router.delete("/:uuid", adminAuthMiddleware, (req: Request, res: Response) =>
   registerController.removeRegisterData(req, res),
