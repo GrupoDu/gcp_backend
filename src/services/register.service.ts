@@ -1,5 +1,4 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
-import jwt from "jsonwebtoken";
 import type {
   IRegister,
   IRegisterCreate,
@@ -8,6 +7,7 @@ import type {
 import { responseMessages } from "../constants/messages.constants.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 import dotenv from "dotenv";
+import type { IEmployee } from "../types/employee.interface.js";
 
 dotenv.config();
 
@@ -17,17 +17,19 @@ class RegisterService {
   async getAllRegistersData(): Promise<IRegister[]> {
     const allRegistersData: IRegister[] = await this.prisma.register.findMany();
 
-    if (!allRegistersData) throw new Error("Nenhum registro encontrado.");
+    if (allRegistersData.length < 1)
+      throw new Error("Nenhum registro encontrado.");
 
     return allRegistersData;
   }
 
   async getRegisterData(register_id: string) {
-    const registerData = await this.prisma.register.findUnique({
-      where: {
-        register_id,
-      },
-    });
+    const registerData: IRegister | null =
+      await this.prisma.register.findUnique({
+        where: {
+          register_id,
+        },
+      });
 
     if (!registerData) throw new Error("Registro não encontrado.");
 
@@ -37,7 +39,7 @@ class RegisterService {
   async createNewRegister(registerData: IRegisterCreate) {
     if (!registerData) throw new Error(responseMessages.fillAllFieldMessage);
 
-    const newRegister = await this.prisma.register.create({
+    const newRegister: IRegister = await this.prisma.register.create({
       data: registerData,
     });
 
