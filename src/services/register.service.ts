@@ -7,7 +7,6 @@ import type {
 import { responseMessages } from "../constants/messages.constants.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 import dotenv from "dotenv";
-import type { IEmployee } from "../types/employee.interface.js";
 
 dotenv.config();
 
