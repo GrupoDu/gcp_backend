@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "../../generated/prisma/client.js";
 import type { IEmployeeProductionAnalysis } from "../types/dataAnalysis.interface.js";
 import { cacheInstance } from "../utils/cache.util.js";
 import type { IEmployee } from "../types/employee.interface.js";

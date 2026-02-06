@@ -4,7 +4,7 @@ import type {
   IProductCreate,
   IProductUpdate,
 } from "../types/product.interface.js";
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "../../generated/prisma/client.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 
 class ProductService {

@@ -4,8 +4,8 @@ export interface IGoal {
   description: string | null;
   goal_type: string;
   deadline: Date;
-  employee_goal?: string | null;
-  goal_status: boolean;
+  employee_goal?: never;
+  goal_status: string;
 }
 
 export interface IEmployeeGoal extends Omit<IGoal, "employee_goal"> {

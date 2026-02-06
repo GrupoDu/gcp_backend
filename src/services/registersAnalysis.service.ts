@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import type { PrismaClient } from "../../generated/prisma/client.js";
 import { getMonthRange } from "../utils/getMonthRange.util.js";
 import type { IProductionAnalysis } from "../types/dataAnalysis.interface.js";
 

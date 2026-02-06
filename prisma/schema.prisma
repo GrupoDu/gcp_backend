@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output   = "../node_modules/.prisma/client"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -52,8 +52,8 @@ model goal {
   goal_type     String
   deadline      DateTime  @db.Date
   employee_goal String?   @db.Uuid
-  goal_status   Boolean   @default(false)
-  employee      employee? @relation(fields: [employee_goal], references: [employee_id])
+  goal_status   String    @default("Pendente")
+  employee      employee? @relation(fields: [employee_goal], references: [employee_id], onDelete: Cascade)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

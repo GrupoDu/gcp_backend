@@ -1,4 +1,4 @@
-import type { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/prisma/client.js";
 import bcrypt from "bcrypt";
 import type {
   IUserCreate,
