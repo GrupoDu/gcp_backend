@@ -8,7 +8,7 @@ class UserController {
 
   async getAllUsers(req: Request, res: Response): Promise<Response> {
     try {
-      const allUsers: IUserPublic[] = await this.userService.getAllUsersData();
+      const allUsers = await this.userService.getAllUsersData();
 
       return res.status(200).json({ users: allUsers });
     } catch (err) {
