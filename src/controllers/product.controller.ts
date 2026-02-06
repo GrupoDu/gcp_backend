@@ -8,8 +8,7 @@ class ProductController {
 
   async getAllProductsData(req: Request, res: Response): Promise<Response> {
     try {
-      const allProducts: IProduct[] =
-        await this.productService.getAllProductsData();
+      const allProducts = await this.productService.getAllProductsData();
 
       return res.status(200).json({ data: allProducts });
     } catch (err) {
@@ -24,7 +23,7 @@ class ProductController {
     try {
       const productInfos = req.body;
 
-      const newProduct: IProduct =
+      const newProduct =
         await this.productService.registerNewProduct(productInfos);
 
       return res
@@ -62,11 +61,10 @@ class ProductController {
     try {
       const { productUuid, productNewData } = req.body;
 
-      const updatedProduct: IProduct =
-        await this.productService.updateProductData(
-          productNewData,
-          productUuid,
-        );
+      const updatedProduct = await this.productService.updateProductData(
+        productNewData,
+        productUuid,
+      );
 
       return res.status(200).json({
         message: "Produto atualizado com sucesso.",

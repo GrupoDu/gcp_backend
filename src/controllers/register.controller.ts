@@ -14,7 +14,7 @@ class RegisterController {
     res: Response,
   ): Promise<Response> {
     try {
-      const allProductionRegisters: IRegister[] =
+      const allProductionRegisters =
         await this.registerService.getAllRegistersData();
 
       return res.status(200).json({ registers: allProductionRegisters });
@@ -47,9 +47,9 @@ class RegisterController {
 
   async createNewRegister(req: Request, res: Response): Promise<Response> {
     try {
-      const newRegisterData: IRegister = req.body;
+      const newRegisterData = req.body;
 
-      const newRegister: IRegister =
+      const newRegister =
         await this.registerService.createNewRegister(newRegisterData);
 
       return res.status(201).json({
@@ -88,14 +88,13 @@ class RegisterController {
 
   async updateRegister(req: Request, res: Response): Promise<Response> {
     try {
-      const updateRegisterValues: IRegisterUpdate = req.body;
+      const updateRegisterValues = req.body;
       const { uuid } = req.params;
 
-      const updatedRegister: IRegister =
-        await this.registerService.updateRegisterData(
-          updateRegisterValues,
-          uuid as string,
-        );
+      const updatedRegister = await this.registerService.updateRegisterData(
+        updateRegisterValues,
+        uuid as string,
+      );
 
       return res.status(200).json({
         message: "Registro atualizado com sucesso.",

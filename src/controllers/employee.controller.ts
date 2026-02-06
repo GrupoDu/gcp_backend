@@ -8,8 +8,7 @@ class EmployeeController {
 
   async getAllEmployeesData(req: Request, res: Response): Promise<Response> {
     try {
-      const allEmployeesData: IEmployee[] =
-        await this.employeeService.getAllEmployeesData();
+      const allEmployeesData = await this.employeeService.getAllEmployeesData();
 
       return res.status(200).json({ employees: allEmployeesData });
     } catch (err) {
@@ -24,7 +23,7 @@ class EmployeeController {
     try {
       const newEmployeeData = req.body;
 
-      const newEmployee: IEmployee =
+      const newEmployee =
         await this.employeeService.registerNewEmployee(newEmployeeData);
 
       return res.status(201).json({
@@ -61,11 +60,10 @@ class EmployeeController {
       const updateEmployeeValues = req.body;
       const { uuid } = req.params;
 
-      const updatedEmployee: IEmployee =
-        await this.employeeService.updateEmployeeData(
-          updateEmployeeValues,
-          uuid as string,
-        );
+      const updatedEmployee = await this.employeeService.updateEmployeeData(
+        updateEmployeeValues,
+        uuid as string,
+      );
 
       return res.status(200).json({
         message: "Dados do funcionário atualizados.",

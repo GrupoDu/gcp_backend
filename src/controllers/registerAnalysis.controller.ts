@@ -12,7 +12,7 @@ class RegisterAnalysisController {
     res: Response,
   ): Promise<Response> {
     try {
-      const registersDataAnalysis: IProductionAnalysis =
+      const registersDataAnalysis =
         await this.registerAnalysisService.registerDataAnalysis();
 
       if (registersDataAnalysis.deliveredRegisterQuantity < 0) {
