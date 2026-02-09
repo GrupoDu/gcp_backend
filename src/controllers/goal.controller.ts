@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { responseMessages } from "../constants/messages.constants.js";
 import type GoalService from "../services/goal.service.js";
-import type { IGoal } from "../types/goal.interface.js";
 
 class GoalController {
   constructor(private goalService: GoalService) {}
