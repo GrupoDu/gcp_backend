@@ -13,14 +13,13 @@ export function adminAuthMiddleware(
   try {
     const token = getToken(req, res);
 
-    if (token === null) throw new Error("Token inválido.");
-
-    if (typeof token !== "string")
-      throw new Error("Formato de token inválido.");
-
     if (!process.env.JWT_SECRET) throw new Error("SECRET faltando.");
+    if (!token) throw new Error("Token não fornecido.");
 
-    const payload = jwt.verify(token, process.env.JWT_SECRET) as IUserPublic;
+    const payload = jwt.verify(
+      token,
+      process.env.JWT_SECRET,
+    ) as unknown as IUserPublic;
 
     if (payload.user_type !== "admin") {
       return res.status(403).json({ message: "não autorizado." });
@@ -49,16 +48,13 @@ export function adminAuthMiddleware(
   }
 }
 
-function getToken(req: Request, res: Response): string | null | undefined {
-  const authHeader = req.headers.authorization;
+function getToken(req: Request, res: Response): string {
+  const auth = req.cookies?.token;
 
-  if (!authHeader) {
+  if (!auth) {
+    console.log("Cookie token não encontrado. req.cookies:", req.cookies);
     throw new Error("TOKEN_NOT_PROVIDED");
   }
 
-  if (!authHeader.startsWith("Bearer ")) {
-    throw new Error("INVALID_TOKEN_FORMAT");
-  }
-
-  return authHeader.split(" ")[1];
+  return auth;
 }
