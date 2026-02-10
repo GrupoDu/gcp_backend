@@ -22,13 +22,14 @@ class AuthController {
       const MINUTES = 60;
       const SECONDS = 60;
       const MILLISECONDS = 1000;
+      const sevenDaysMaxAge = DAYS * HOURS * MINUTES * SECONDS * MILLISECONDS;
 
       return res
         .status(200)
         .cookie("token", token, {
           httpOnly: true,
           sameSite: env === "production" ? "lax" : "strict",
-          maxAge: DAYS * HOURS * MINUTES * SECONDS * MILLISECONDS, // 7 dias
+          maxAge: sevenDaysMaxAge,
           path: "/",
         })
         .json({
