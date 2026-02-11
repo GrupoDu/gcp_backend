@@ -6,6 +6,7 @@ import type {
 } from "../types/goal.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
+import { isValidDate } from "../utils/isValidDate.js";
 
 class GoalService {
   constructor(private prisma: PrismaClient) {}
@@ -24,6 +25,8 @@ class GoalService {
     if (!newGoalData) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
+
+    isValidDate(newGoalData.deadline.toISOString());
 
     if (newGoalData.goal_type === "Funcionário") {
       const newEmployeeGoal: IGoal = await this.createEmployeeGoal(newGoalData);
