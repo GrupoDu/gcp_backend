@@ -35,6 +35,8 @@ model employee {
   employee_id                                     String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                                            String
   employee_type                                   String
+  delivered_activities_quantity                   Decimal    @default(0) @db.Decimal
+  not_delivered_activities_quantity               Decimal    @default(0) @db.Decimal
   goal                                            goal[]
   register_register_cut_assistantToemployee       register[] @relation("register_cut_assistantToemployee")
   register_register_employee_uuidToemployee       register[] @relation("register_employee_uuidToemployee")
