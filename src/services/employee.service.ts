@@ -11,7 +11,7 @@ class EmployeeService {
   constructor(private prisma: PrismaClient) {}
 
   async getAllEmployeesData(): Promise<IEmployee[]> {
-    const allEmployeesData: IEmployee[] = await this.prisma.employee.findMany();
+    const allEmployeesData: IEmployee[] = await this.prisma.employees.findMany();
 
     if (!allEmployeesData) {
       throw new Error("Nenhum funcionário encontrado.");
@@ -22,7 +22,7 @@ class EmployeeService {
 
   async getEmployeeData(employeeUuid: string): Promise<IEmployee> {
     const employeeData: IEmployee | null =
-      await this.prisma.employee.findUnique({
+      await this.prisma.employees.findUnique({
         where: {
           employee_id: employeeUuid,
         },
@@ -30,6 +30,8 @@ class EmployeeService {
           employee_id: true,
           name: true,
           employee_type: true,
+          delivered_activities_quantity: true,
+          not_delivered_activities_quantity: true,
         },
       });
 
@@ -43,7 +45,7 @@ class EmployeeService {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
-    const newEmployee: IEmployee = await this.prisma.employee.create({
+    const newEmployee: IEmployee = await this.prisma.employees.create({
       data: employeeData,
     });
 
@@ -62,7 +64,7 @@ class EmployeeService {
 
     if (updateFields.length < 1) throw new Error("Nenhum campo fornecido.");
 
-    const updatedEmployee: IEmployee = await this.prisma.employee.update({
+    const updatedEmployee: IEmployee = await this.prisma.employees.update({
       where: {
         employee_id: employeeUuid as string,
       },
@@ -77,13 +79,30 @@ class EmployeeService {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
-    await this.prisma.employee.delete({
+    await this.prisma.employees.delete({
       where: {
         employee_id: employeeUuid,
       },
     });
 
     return "Funcionário removido do sistema.";
+  }
+
+  async updateEmployeeActivitiesQuantity(
+    employeeUuid: string,
+  ): Promise<IEmployee> {
+    const updatedEmployee: IEmployee = await this.prisma.employees.update({
+      where: {
+        employee_id: employeeUuid as string,
+      },
+      data: {
+        delivered_activities_quantity: {
+          increment: 1,
+        },
+      },
+    });
+
+    return updatedEmployee;
   }
 }
 

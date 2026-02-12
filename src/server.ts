@@ -4,11 +4,11 @@ import dotenv from "dotenv";
 import ProductRoutes from "./routes/product.routes.js";
 import UserRoutes from "./routes/user.routes.js";
 import GoalRoutes from "./routes/goal.routes.js";
-import RegisterRoutes from "./routes/register.routes.js";
+import ProductionOrderRoutes from "./routes/productionOrder.routes.js";
 import EmployeeRoutes from "./routes/employee.routes.js";
 import AuthRoutes from "./routes/auth.routes.js";
 import EmployeeAnalysisRoutes from "./routes/employeeAnalysis.routes.js";
-import RegistersAnalysisRoutes from "./routes/registerAnalysis.routes.js";
+import ProductionOrderAnalysisRoutes from "./routes/productionOrderAnalysis.routes.js";
 import AnualAnaylsisRoutes from "./routes/anualAnalysis.router.js";
 import cookieParser from "cookie-parser";
 
@@ -30,13 +30,13 @@ app.use(
 app.use("/products", ProductRoutes);
 app.use("/users", UserRoutes);
 app.use("/goals", GoalRoutes);
-app.use("/registers", RegisterRoutes);
+app.use("/productionOrder", ProductionOrderRoutes);
 app.use("/employees", EmployeeRoutes);
 app.use("/login", AuthRoutes);
 app.use("/employees-analysis", EmployeeAnalysisRoutes);
-app.use("/registers-analysis", RegistersAnalysisRoutes);
-app.use("/anual-analysis", AnualAnaylsisRoutes);
+app.use("/productionOrderAnalysis", ProductionOrderAnalysisRoutes);
+app.use("/anualAnalysis", AnualAnaylsisRoutes);
 
-app.get("/", (req: Request, res: Response) => res.json({ status: "ok" }));
+app.get("/status", (req: Request, res: Response) => res.json({ status: "ok" }));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

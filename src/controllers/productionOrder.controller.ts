@@ -1,9 +1,9 @@
 import type { Request, Response } from "express";
-import type RegisterService from "../services/register.service.js";
+import type ProductionOrderService from "../services/productionOrder.service.js";
 import { responseMessages } from "../constants/messages.constants.js";
 
-class RegisterController {
-  constructor(private registerService: RegisterService) {}
+class ProductionOrderController {
+  constructor(private productionOrderService: ProductionOrderService) {}
 
   async getAllProductionRegisters(
     req: Request,
@@ -11,7 +11,7 @@ class RegisterController {
   ): Promise<Response> {
     try {
       const allProductionRegisters =
-        await this.registerService.getAllRegistersData();
+        await this.productionOrderService.getAllProductionOrders();
 
       return res.status(200).json(allProductionRegisters);
     } catch (err) {
@@ -22,17 +22,18 @@ class RegisterController {
     }
   }
 
-  async getRegisterData(req: Request, res: Response): Promise<Response> {
+  async getProductionOrderById(req: Request, res: Response): Promise<Response> {
     const { uuid } = req.params;
 
     try {
       if (!uuid) throw new Error("id do registro não informado.");
 
-      const registerData = await this.registerService.getRegisterData(
-        uuid as string,
-      );
+      const targetTask =
+        await this.productionOrderService.getProductionOrderById(
+          uuid as string,
+        );
 
-      return res.status(200).json(registerData);
+      return res.status(200).json(targetTask);
     } catch (err) {
       return res.status(500).json({
         message: "Erro interno de servidor.",
@@ -41,16 +42,21 @@ class RegisterController {
     }
   }
 
-  async createNewRegister(req: Request, res: Response): Promise<Response> {
+  async createNewProductionOrder(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
     try {
-      const newRegisterData = req.body;
+      const newTaskValues = req.body;
 
-      const newRegister =
-        await this.registerService.createNewRegister(newRegisterData);
+      const newTask =
+        await this.productionOrderService.createNewProductionOrder(
+          newTaskValues,
+        );
 
       return res.status(201).json({
-        message: "Registro criado com sucesso.",
-        register: newRegister,
+        message: "Ordem de produção criado com sucesso.",
+        register: newTask,
       });
     } catch (err) {
       return res.status(500).json({
@@ -60,7 +66,7 @@ class RegisterController {
     }
   }
 
-  async removeRegisterData(req: Request, res: Response): Promise<Response> {
+  async removeTask(req: Request, res: Response): Promise<Response> {
     try {
       const { uuid } = req.params;
 
@@ -69,11 +75,11 @@ class RegisterController {
           .status(422)
           .json({ message: responseMessages.fillAllFieldMessage });
 
-      await this.registerService.removeRegisterData(uuid as string);
+      await this.productionOrderService.removeProductionOrder(uuid as string);
 
       return res
         .status(200)
-        .json({ message: "Registro deletado com sucesso. " });
+        .json({ message: "Ordem de produção deletada com sucesso. " });
     } catch (err) {
       return res.status(500).json({
         message: responseMessages.catchErrorMessage,
@@ -82,19 +88,20 @@ class RegisterController {
     }
   }
 
-  async updateRegister(req: Request, res: Response): Promise<Response> {
+  async updateProductionOrder(req: Request, res: Response): Promise<Response> {
     try {
-      const updateRegisterValues = req.body;
+      const ProductionOrderNewValues = req.body;
       const { uuid } = req.params;
 
-      const updatedRegister = await this.registerService.updateRegisterData(
-        updateRegisterValues,
-        uuid as string,
-      );
+      const updatedProductionOrder =
+        await this.productionOrderService.updateProductionOrder(
+          ProductionOrderNewValues,
+          uuid as string,
+        );
 
       return res.status(200).json({
         message: "Registro atualizado com sucesso.",
-        update: updatedRegister,
+        update: updatedProductionOrder,
       });
     } catch (err) {
       return res.status(500).json({
@@ -105,4 +112,4 @@ class RegisterController {
   }
 }
 
-export default RegisterController;
+export default ProductionOrderController;

@@ -33,7 +33,7 @@ class AuthService {
   }
 
   private async checkIfUserExists(email: string): Promise<IUserWithPassword> {
-    const userTryingToLogin = await this.prisma.user.findFirst({
+    const userTryingToLogin = await this.prisma.users.findFirst({
       where: {
         email: email,
       },

@@ -92,12 +92,12 @@ class EmployeeAnalysisService {
     employee_id: string,
     status: string,
   ): Promise<number> {
-    const employeeDeliveredRegisters: number = await this.prisma.register.count(
+    const employeeDeliveredRegisters: number = await this.prisma.production_order.count(
       {
         where: {
           employee_uuid: employee_id,
-          status: status,
-          deadline: {
+          production_order_status: status,
+          production_order_deadline: {
             gte: getMonthRange(this.getTodayDate()).actualMonth,
             lt: getMonthRange(this.getTodayDate()).nextMonth,
           },
@@ -109,7 +109,7 @@ class EmployeeAnalysisService {
   }
 
   private async getEmployeeData(employee_id: string): Promise<IEmployee> {
-    const employeeData = await this.prisma.employee.findUnique({
+    const employeeData = await this.prisma.employees.findUnique({
       where: {
         employee_id: employee_id,
       },

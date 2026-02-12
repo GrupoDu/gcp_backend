@@ -1,9 +1,9 @@
 export interface IGoal {
   goal_id: string;
-  title: string;
-  description: string | null;
+  goal_title: string;
+  goal_description: string | null;
   goal_type: string;
-  deadline: Date;
+  goal_deadline: Date;
   employee_goal: string | null;
   goal_status: string;
 }

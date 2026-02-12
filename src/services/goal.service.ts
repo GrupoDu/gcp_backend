@@ -6,12 +6,13 @@ import type {
 } from "../types/goal.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
+import { isValidDate } from "../utils/isValidDate.js";
 
 class GoalService {
   constructor(private prisma: PrismaClient) {}
 
   async getAllGoalsData() {
-    const allGoalsData: IGoal[] = await this.prisma.goal.findMany();
+    const allGoalsData: IGoal[] = await this.prisma.goals.findMany();
 
     if (!allGoalsData) {
       throw new Error("Nenhuma meta encontrada.");
@@ -25,13 +26,15 @@ class GoalService {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
+    isValidDate(newGoalData.goal_deadline.toString());
+
     if (newGoalData.goal_type === "Funcionário") {
       const newEmployeeGoal: IGoal = await this.createEmployeeGoal(newGoalData);
 
       return newEmployeeGoal;
     }
 
-    const newGoal = await this.prisma.goal.create({
+    const newGoal = await this.prisma.goals.create({
       data: newGoalData,
     });
 
@@ -43,7 +46,7 @@ class GoalService {
       throw new Error("Tipo de meta inválido.");
     }
 
-    const newEmployeeGoal: IEmployeeGoal = await this.prisma.goal.create({
+    const newEmployeeGoal: IEmployeeGoal = await this.prisma.goals.create({
       data: newGoalData,
     });
 
@@ -55,7 +58,7 @@ class GoalService {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
-    const deletedGoal = await this.prisma.goal.delete({
+    const deletedGoal = await this.prisma.goals.delete({
       where: {
         goal_id: goalUuid,
       },
@@ -76,7 +79,7 @@ class GoalService {
     if (Object.keys(updateFields).length < 1)
       throw new Error("Nenhum campo fornecido");
 
-    const updatedGoal = await this.prisma.goal.update({
+    const updatedGoal = await this.prisma.goals.update({
       where: {
         goal_id: goalUuid as string,
       },

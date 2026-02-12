@@ -92,6 +92,30 @@ class EmployeeController {
       });
     }
   }
+
+  async updateEmployeeActivityQuantity(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    try {
+      const { uuid } = req.params;
+
+      const updatedEmployeeActivity =
+        await this.employeeService.updateEmployeeActivitiesQuantity(
+          uuid as string,
+        );
+
+      return res.status(200).json({
+        message: "Quantidade de atividades atualizada.",
+        udpate: updatedEmployeeActivity,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
+    }
+  }
 }
 
 export default EmployeeController;

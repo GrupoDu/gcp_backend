@@ -1,9 +1,8 @@
 import express from "express";
 import { type Request, type Response } from "express";
-import RegisterAnalysisService from "../services/registersAnalysis.service.js";
+import RegisterAnalysisService from "../services/productionOrderAnalysis.service.js";
 import { prisma } from "../../lib/prisma.js";
-import RegisterAnalysisController from "../controllers/registerAnalysis.controller.js";
-import { dataAnalysisAuthorizationMiddleware } from "../middlewares/dataAnalysisAuthorization.middleware.js";
+import RegisterAnalysisController from "../controllers/productionOrderAnalysis.controller.js";
 import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.js";
 
 const router = express.Router();
@@ -12,11 +11,8 @@ const registerAnalysisController = new RegisterAnalysisController(
   registerAnalysisService,
 );
 
-router.get(
-  "/",
-  adminAuthMiddleware,
-  (req: Request, res: Response) =>
-    registerAnalysisController.getRegistersDataAnalysis(req, res),
+router.get("/", adminAuthMiddleware, (req: Request, res: Response) =>
+  registerAnalysisController.getProductionOrderAnalysis(req, res),
 );
 
 export default router;

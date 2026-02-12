@@ -13,7 +13,7 @@ class UserService {
   constructor(private prisma: PrismaClient) {}
 
   async getAllUsersData(): Promise<IUserPublic[]> {
-    const allUsersData: IUserPublic[] = await this.prisma.user.findMany({
+    const allUsersData: IUserPublic[] = await this.prisma.users.findMany({
       select: {
         email: true,
         name: true,
@@ -30,7 +30,7 @@ class UserService {
   }
 
   async getUserData(user_id: string): Promise<IUserPublic> {
-    const userData = await this.prisma.user.findUnique({
+    const userData = await this.prisma.users.findUnique({
       where: {
         user_id,
       },
@@ -72,7 +72,7 @@ class UserService {
       saltRoundsNumber,
     );
 
-    const newUser: IUserPublic = await this.prisma.user.create({
+    const newUser: IUserPublic = await this.prisma.users.create({
       data: {
         name: userInfos.name,
         email: userInfos.email,
@@ -97,7 +97,7 @@ class UserService {
     if (Object.keys(updateFields).length < 1)
       throw new Error("Nenhum campo fornecido");
 
-    const updatedUser: IUserPublic = await this.prisma.user.update({
+    const updatedUser: IUserPublic = await this.prisma.users.update({
       where: {
         user_id: userUuid,
       },
@@ -114,7 +114,7 @@ class UserService {
   async deleteUserData(userUuid: string): Promise<string> {
     if (!userUuid) throw new Error("id do usuário não fornecido.");
 
-    const deletedUser = await this.prisma.user.delete({
+    const deletedUser = await this.prisma.users.delete({
       where: {
         user_id: userUuid,
       },
