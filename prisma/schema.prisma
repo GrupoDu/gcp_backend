@@ -41,6 +41,7 @@ model employees {
   employee_type                                                    String
   delivered_activities_quantity                                    Decimal            @default(0) @db.Decimal
   not_delivered_activities_quantity                                Decimal            @default(0) @db.Decimal
+  products_produced_quantity                                       Decimal            @default(0) @db.Decimal
   goals                                                            goals[]
   production_order_production_order_cut_assistantToemployees       production_order[] @relation("production_order_cut_assistantToemployees")
   production_order_production_order_employee_uuidToemployees       production_order[] @relation("production_order_employee_uuidToemployees")
@@ -90,6 +91,7 @@ model production_order {
   client_uuid                                               String     @db.Uuid
   production_order_description                              String?
   deliver_observation                                       String?
+  delivered_product_quantity                                Decimal    @default(0) @db.Decimal
   users                                                     users      @relation(fields: [client_uuid], references: [user_id], onDelete: Cascade, map: "register_client_uuid_fkey")
   employees_production_order_cut_assistantToemployees       employees? @relation("production_order_cut_assistantToemployees", fields: [cut_assistant], references: [employee_id], map: "register_cut_assistant_fkey")
   employees_production_order_employee_uuidToemployees       employees? @relation("production_order_employee_uuidToemployees", fields: [employee_uuid], references: [employee_id], map: "register_employee_uuid_fkey")
