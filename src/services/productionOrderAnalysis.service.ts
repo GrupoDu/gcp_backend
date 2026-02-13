@@ -1,6 +1,7 @@
 import type { PrismaClient } from "../../generated/prisma/client.js";
 import { getMonthRange } from "../utils/getMonthRange.util.js";
 import type { IProductionAnalysis } from "../types/dataAnalysis.interface.js";
+import { getTodayDate } from "../utils/getTodayDate.js";
 
 class ProductionOrderAnalysisService {
   constructor(private prisma: PrismaClient) {}
@@ -16,8 +17,8 @@ class ProductionOrderAnalysisService {
       deliveredRegisterQuantity: delivered,
       notDeliveredRegisterQuantity: notDelivered,
       pendingRegisterQuantity: pending,
-      actualMonth: getMonthRange(this.getTodayDate()).actualMonth,
-      nextMonth: getMonthRange(this.getTodayDate()).nextMonth,
+      actualMonth: getMonthRange(getTodayDate()).actualMonth,
+      nextMonth: getMonthRange(getTodayDate()).nextMonth,
     };
 
     return fullDataAnalysis;
@@ -29,8 +30,8 @@ class ProductionOrderAnalysisService {
         where: {
           production_order_status: "Entregue",
           production_order_deadline: {
-            gte: getMonthRange(this.getTodayDate()).actualMonth,
-            lt: getMonthRange(this.getTodayDate()).nextMonth,
+            gte: getMonthRange(getTodayDate()).actualMonth,
+            lt: getMonthRange(getTodayDate()).nextMonth,
           },
         },
       },
@@ -45,8 +46,8 @@ class ProductionOrderAnalysisService {
         where: {
           production_order_status: "Não entregue",
           production_order_deadline: {
-            gte: getMonthRange(this.getTodayDate()).actualMonth,
-            lt: getMonthRange(this.getTodayDate()).nextMonth,
+            gte: getMonthRange(getTodayDate()).actualMonth,
+            lt: getMonthRange(getTodayDate()).nextMonth,
           },
         },
       });
@@ -60,17 +61,13 @@ class ProductionOrderAnalysisService {
         where: {
           production_order_status: "Pendente",
           production_order_deadline: {
-            gte: getMonthRange(this.getTodayDate()).actualMonth,
-            lt: getMonthRange(this.getTodayDate()).nextMonth,
+            gte: getMonthRange(getTodayDate()).actualMonth,
+            lt: getMonthRange(getTodayDate()).nextMonth,
           },
         },
       });
 
     return notDeliveredRegistersQuantity;
-  }
-
-  private getTodayDate() {
-    return new Date();
   }
 }
 
