@@ -9,6 +9,7 @@ import EmployeeRoutes from "./routes/employee.routes.js";
 import AuthRoutes from "./routes/auth.routes.js";
 import EmployeeAnalysisRoutes from "./routes/employeeAnalysis.routes.js";
 import ProductionOrderAnalysisRoutes from "./routes/productionOrderAnalysis.routes.js";
+import GoalsAnalysisRoutes from "./routes/goalsAnalysis.routes.js";
 import AnualAnaylsisRoutes from "./routes/anualAnalysis.router.js";
 import cookieParser from "cookie-parser";
 
@@ -36,6 +37,7 @@ app.use("/login", AuthRoutes);
 app.use("/employees-analysis", EmployeeAnalysisRoutes);
 app.use("/productionOrderAnalysis", ProductionOrderAnalysisRoutes);
 app.use("/anualAnalysis", AnualAnaylsisRoutes);
+app.use("/goalsAnalysis", GoalsAnalysisRoutes);
 
 app.get("/status", (req: Request, res: Response) => res.json({ status: "ok" }));
 
