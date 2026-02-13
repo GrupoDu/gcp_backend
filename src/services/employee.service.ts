@@ -11,7 +11,8 @@ class EmployeeService {
   constructor(private prisma: PrismaClient) {}
 
   async getAllEmployeesData(): Promise<IEmployee[]> {
-    const allEmployeesData: IEmployee[] = await this.prisma.employees.findMany();
+    const allEmployeesData: IEmployee[] =
+      await this.prisma.employees.findMany();
 
     if (!allEmployeesData) {
       throw new Error("Nenhum funcionário encontrado.");
@@ -32,6 +33,7 @@ class EmployeeService {
           employee_type: true,
           delivered_activities_quantity: true,
           not_delivered_activities_quantity: true,
+          products_produced_quantity: true,
         },
       });
 
@@ -88,7 +90,7 @@ class EmployeeService {
     return "Funcionário removido do sistema.";
   }
 
-  async updateEmployeeActivitiesQuantity(
+  async incrementEmployeeActivitiesQuantity(
     employeeUuid: string,
   ): Promise<IEmployee> {
     const updatedEmployee: IEmployee = await this.prisma.employees.update({
@@ -98,6 +100,28 @@ class EmployeeService {
       data: {
         delivered_activities_quantity: {
           increment: 1,
+        },
+      },
+    });
+
+    return updatedEmployee;
+  }
+
+  async incrementEmployeeProductsProducedQuantity(
+    employeeUuid: string,
+    productProducedQuantity: number,
+  ): Promise<IEmployee> {
+    if (!productProducedQuantity) {
+      throw new Error(responseMessages.fillAllFieldMessage);
+    }
+
+    const updatedEmployee: IEmployee = await this.prisma.employees.update({
+      where: {
+        employee_id: employeeUuid as string,
+      },
+      data: {
+        products_produced_quantity: {
+          increment: productProducedQuantity as number,
         },
       },
     });
