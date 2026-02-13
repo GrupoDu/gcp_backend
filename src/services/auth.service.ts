@@ -18,8 +18,6 @@ class AuthService {
     if (!saltRounds)
       throw new Error("Variável de ambiente SALT_ROUNDS não encontrada.");
 
-    if (!email || !password) throw new Error("Preencha todos os campos.");
-
     const userTryingToLogin: IUserWithPassword =
       await this.checkIfUserExists(email);
 
