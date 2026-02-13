@@ -12,19 +12,19 @@ const productionOrderController = new ProductionOrderController(
   productionOrderService,
 );
 
-router.get("/", authMiddleware, (req: Request, res: Response) =>
+router.get("/", (req: Request, res: Response) =>
   productionOrderController.getAllProductionRegisters(req, res),
 );
 router.post("/", adminAuthMiddleware, (req: Request, res: Response) =>
   productionOrderController.createNewProductionOrder(req, res),
 );
-router.get("/:uuid", authMiddleware, (req: Request, res: Response) =>
+router.get("/:uuid", (req: Request, res: Response) =>
   productionOrderController.getProductionOrderById(req, res),
 );
 router.delete("/:uuid", adminAuthMiddleware, (req: Request, res: Response) =>
   productionOrderController.removeTask(req, res),
 );
-router.put("/:uuid", authMiddleware, (req: Request, res: Response) =>
+router.put("/:uuid", (req: Request, res: Response) =>
   productionOrderController.updateProductionOrder(req, res),
 );
 
