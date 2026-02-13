@@ -93,7 +93,7 @@ class EmployeeController {
     }
   }
 
-  async updateEmployeeActivityQuantity(
+  async incrementEmployeeActivityQuantity(
     req: Request,
     res: Response,
   ): Promise<Response> {
@@ -101,13 +101,39 @@ class EmployeeController {
       const { uuid } = req.params;
 
       const updatedEmployeeActivity =
-        await this.employeeService.updateEmployeeActivitiesQuantity(
+        await this.employeeService.incrementEmployeeActivitiesQuantity(
           uuid as string,
         );
 
       return res.status(200).json({
         message: "Quantidade de atividades atualizada.",
         udpate: updatedEmployeeActivity,
+      });
+    } catch (err) {
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
+    }
+  }
+
+  async incrementEmployeeProductsProducedQuantity(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    try {
+      const { uuid } = req.params;
+      const { productsQuantity } = req.body;
+
+      const updatedEmployee =
+        await this.employeeService.incrementEmployeeProductsProducedQuantity(
+          uuid as string,
+          productsQuantity,
+        );
+
+      return res.status(200).json({
+        message: "Quantidade de produtos produzidos atualizada.",
+        udpate: updatedEmployee,
       });
     } catch (err) {
       return res.status(500).json({
