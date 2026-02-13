@@ -9,7 +9,7 @@ const router = express.Router();
 const goalService = new GoalService(prisma);
 const goalController = new GoalController(goalService);
 
-router.get("/", authMiddleware, (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
   goalController.getAllGoalsData(req, res);
 });
 router.post("/", adminAuthMiddleware, (req: Request, res: Response) => {
