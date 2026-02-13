@@ -17,11 +17,12 @@ export interface IProductionOrder {
   employee_uuid?: string | null;
   product_uuid: string;
   client_uuid: string;
+  delivered_product_quantity?: Decimal;
 }
 
 export interface IProductionOrderCreate extends Omit<
   IProductionOrder,
-  "production_order_id" | "created_at"
+  "production_order_id" | "created_at" | "delivered_product_quantity"
 > {}
 
 export interface IProductionOrderUpdate extends Partial<
