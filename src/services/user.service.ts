@@ -49,7 +49,7 @@ class UserService {
     return allSupervisors;
   }
 
-  async getUserData(user_id: string): Promise<IUserPublic> {
+  async getUserById(user_id: string): Promise<IUserPublic> {
     if (!user_id) throw new Error("ID do usuário não fornecido.");
 
     const userData = await this.prisma.users.findUnique({
