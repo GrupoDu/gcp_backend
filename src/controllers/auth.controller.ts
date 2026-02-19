@@ -26,6 +26,8 @@ class AuthController {
         user_type,
       );
 
+      const { user_id, ...userWithoutId } = userLogged;
+
       const token = await this.authService.generateAccessToken(
         userLogged.user_id,
         userLogged.user_type,
@@ -48,6 +50,7 @@ class AuthController {
         })
         .json({
           message: `Usuário logado com sucesso.`,
+          user: userWithoutId,
         });
     } catch (err) {
       return res.status(500).json({
