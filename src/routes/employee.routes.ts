@@ -8,7 +8,7 @@ const router: Router = express.Router();
 const employeeService = new EmployeeService(prisma);
 const employeeController = new EmployeeController(employeeService);
 
-router.get("/", adminAuthMiddleware, (req: Request, res: Response) => {
+router.get("/", (req: Request, res: Response) => {
   employeeController.getAllEmployeesData(req, res);
 });
 router.post("/", adminAuthMiddleware, (req: Request, res: Response) => {
