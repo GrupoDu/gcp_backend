@@ -11,10 +11,20 @@ class AuthController {
 
   async userLogin(req: Request, res: Response) {
     try {
-      const { email, password } = req.body;
+      const { email, password, user_type } = req.body;
       const env = process.env.NODE_ENV;
 
-      const userLogged = await this.authService.userLogin(email, password);
+      if (!email || !password || !user_type) {
+        return res
+          .status(400)
+          .json({ message: responseMessages.fillAllFieldMessage });
+      }
+
+      const userLogged = await this.authService.userLogin(
+        email,
+        password,
+        user_type,
+      );
 
       const token = await this.authService.generateAccessToken(
         userLogged.user_id,
