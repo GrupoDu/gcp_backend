@@ -1,10 +1,10 @@
 import express from "express";
-import type { Request, Response } from "express";
+import type { Request, Response, Router } from "express";
 import GoalsAnalysisController from "../controllers/goalsAnalysis.controller.ts";
 import GoalsAnalysisService from "../services/goalsAnalysis.service.ts";
 import { prisma } from "../../lib/prisma.ts";
 
-const router = express.Router();
+const router: Router = express.Router();
 const goalsAnalysisService = new GoalsAnalysisService(prisma);
 const goalsAnalysisController = new GoalsAnalysisController(
   goalsAnalysisService,

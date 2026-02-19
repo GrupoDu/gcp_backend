@@ -3,7 +3,11 @@ import { responseMessages } from "../constants/messages.constants.ts";
 import type GoalsAnalysisService from "../services/goalsAnalysis.service.ts";
 
 class GoalsAnalysisController {
-  constructor(private goalsAnalysisService: GoalsAnalysisService) {}
+  private goalsAnalysisService: GoalsAnalysisService;
+  
+  constructor(goalsAnalysisService: GoalsAnalysisService) {
+    this.goalsAnalysisService = goalsAnalysisService;
+  }
 
   async getGoalsAnalysis(req: Request, res: Response) {
     try {

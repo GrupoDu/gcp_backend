@@ -3,7 +3,11 @@ import { responseMessages } from "../constants/messages.constants.ts";
 import type EmployeeAnalysisService from "../services/employeeAnalysis.service.ts";
 
 class EmployeeAnalysisController {
-  constructor(private employeeAnalysisService: EmployeeAnalysisService) {}
+  private employeeAnalysisService: EmployeeAnalysisService;
+  
+  constructor(employeeAnalysisService: EmployeeAnalysisService) {
+    this.employeeAnalysisService = employeeAnalysisService;
+  }
 
   async getEmployeeActivityAnalysis(
     req: Request,

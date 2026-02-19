@@ -11,7 +11,11 @@ import dotenv from "dotenv";
 dotenv.config();
 
 class ProductionOrderService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;  
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async getAllProductionOrders(): Promise<IProductionOrder[]> {
     const allproductionorders: IProductionOrder[] =

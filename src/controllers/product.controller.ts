@@ -3,7 +3,11 @@ import { responseMessages } from "../constants/messages.constants.ts";
 import type ProductService from "../services/product.service.ts";
 
 class ProductController {
-  constructor(private productService: ProductService) {}
+  private productService: ProductService;
+  
+  constructor(productService: ProductService) {
+    this.productService = productService;
+  }
 
   async getAllProductsData(req: Request, res: Response): Promise<Response> {
     try {

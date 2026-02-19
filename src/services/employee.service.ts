@@ -8,7 +8,11 @@ import { responseMessages } from "../constants/messages.constants.ts";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
 
 class EmployeeService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;  
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async getAllEmployeesData(): Promise<IEmployee[]> {
     const allEmployeesData: IEmployee[] =

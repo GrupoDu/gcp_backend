@@ -8,7 +8,11 @@ import type { PrismaClient } from "../../generated/prisma/client.ts";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
 
 class ProductService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;  
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async getAllProductsData(): Promise<IProduct[]> {
     const allProducts: IProduct[] = await this.prisma.products.findMany();

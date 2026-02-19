@@ -3,7 +3,11 @@ import { responseMessages } from "../constants/messages.constants.ts";
 import type AuthService from "../services/auth.service.ts";
 
 class AuthController {
-  constructor(private authService: AuthService) {}
+  private authService: AuthService;
+
+  constructor(authService: AuthService) {
+    this.authService = authService;
+  }
 
   async userLogin(req: Request, res: Response) {
     try {

@@ -4,7 +4,7 @@
   "description": "Esse repositório guarda todo o backend do **Gerenciador de Controle de Produção**.\r #### [Repositório geral do GCP](https://github.com/GrupoDu/gerenciador_de_controle_de_producao?tab=GPL-3.0-1-ov-file#readme).\r ## Rodando o projeto",
   "main": "server.js",
   "scripts": {
-    "dev": "tsc && node dist/src/server.js",
+    "dev": "nodemon src/server.ts",
     "test": "vitest"
   },
   "repository": {

@@ -10,7 +10,7 @@ import AuthRoutes from "./routes/auth.routes.ts";
 import EmployeeAnalysisRoutes from "./routes/employeeAnalysis.routes.ts";
 import ProductionOrderAnalysisRoutes from "./routes/productionOrderAnalysis.routes.ts";
 import GoalsAnalysisRoutes from "./routes/goalsAnalysis.routes.ts";
-import AnualAnaylsisRoutes from "./routes/anualAnalysis.router.ts";
+import AnualAnaylsisRoutes from "./routes/anualAnalysis.routes.ts";
 import cookieParser from "cookie-parser";
 
 dotenv.config();

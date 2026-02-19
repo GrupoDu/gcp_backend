@@ -3,7 +3,11 @@ import { responseMessages } from "../constants/messages.constants.ts";
 import type UserService from "../services/user.service.ts";
 
 class UserController {
-  constructor(private userService: UserService) {}
+  private userService: UserService;
+  
+  constructor(userService: UserService) {
+    this.userService = userService;
+  }
 
   async getAllUsers(req: Request, res: Response): Promise<Response> {
     try {

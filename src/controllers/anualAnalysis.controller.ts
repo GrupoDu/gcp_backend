@@ -4,7 +4,11 @@ import type { IAnualAnalysis } from "../types/anualAnalysis.interface.ts";
 import { responseMessages } from "../constants/messages.constants.ts";
 
 class AnualAnalysisController {
-  constructor(private anualAnalysisService: AnualAnalysisService) {}
+  private anualAnalysisService: AnualAnalysisService;
+  
+  constructor(anualAnalysisService: AnualAnalysisService) {
+    this.anualAnalysisService = anualAnalysisService;
+  }
 
   async getAllAnualAnalysisService(req: Request, res: Response) {
     try {

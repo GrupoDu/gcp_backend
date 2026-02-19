@@ -3,7 +3,11 @@ import type RegisterAnalysisService from "../services/productionOrderAnalysis.se
 import { responseMessages } from "../constants/messages.constants.ts";
 
 class ProductionOrderAnalysisController {
-  constructor(private registerAnalysisService: RegisterAnalysisService) {}
+  private registerAnalysisService: RegisterAnalysisService;
+  
+  constructor(registerAnalysisService: RegisterAnalysisService) {
+    this.registerAnalysisService = registerAnalysisService;
+  }
 
   async getProductionOrderAnalysis(
     req: Request,

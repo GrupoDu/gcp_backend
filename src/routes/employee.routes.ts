@@ -1,10 +1,10 @@
-import express, { type Request, type Response } from "express";
+import express, { Router, type Request, type Response } from "express";
 import EmployeeController from "../controllers/employee.controller.ts";
 import { prisma } from "../../lib/prisma.ts";
 import EmployeeService from "../services/employee.service.ts";
 import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.ts";
 
-const router = express.Router();
+const router: Router = express.Router();
 const employeeService = new EmployeeService(prisma);
 const employeeController = new EmployeeController(employeeService);
 

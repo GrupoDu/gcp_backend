@@ -1,11 +1,11 @@
 import express from "express";
 import ProductionOrderController from "../controllers/productionOrder.controller.ts";
-import type { Request, Response } from "express";
+import type { Request, Response, Router } from "express";
 import ProductionOrderService from "../services/productionOrder.service.ts";
 import { prisma } from "../../lib/prisma.ts";
 import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.ts";
 
-const router = express.Router();
+const router: Router = express.Router();
 const productionOrderService = new ProductionOrderService(prisma);
 const productionOrderController = new ProductionOrderController(
   productionOrderService,

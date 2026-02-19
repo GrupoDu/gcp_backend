@@ -4,7 +4,11 @@ import type { IProductionAnalysis } from "../types/dataAnalysis.interface.ts";
 import { getTodayDate } from "../utils/getTodayDate.ts";
 
 class ProductionOrderAnalysisService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;  
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async registerDataAnalysis(): Promise<IProductionAnalysis> {
     const [delivered, notDelivered, pending] = await Promise.all([

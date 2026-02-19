@@ -1,9 +1,13 @@
-import type { PrismaClient } from "../../generated/prisma/client.js";
-import type { IGoal } from "../types/goal.interface.js";
-import { getTodayDate } from "../utils/getTodayDate.js";
+import type { PrismaClient } from "../../generated/prisma/client.ts";
+import type { IGoal } from "../types/goal.interface.ts";
+import { getTodayDate } from "../utils/getTodayDate.ts";
 
 class GoalsAnalysisService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;  
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async getGoalsAnalysis() {
     const allGoals: IGoal[] = await this.prisma.goals.findMany({

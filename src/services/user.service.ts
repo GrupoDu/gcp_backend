@@ -10,7 +10,11 @@ import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.ut
 import { isEmailFormatValid } from "../utils/emailFormatValidator.util.ts";
 
 class UserService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async getAllUsersData(): Promise<IUserPublic[]> {
     const allUsersData: IUserPublic[] = await this.prisma.users.findMany({

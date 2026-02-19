@@ -3,7 +3,11 @@ import { responseMessages } from "../constants/messages.constants.ts";
 import type EmployeeService from "../services/employee.service.ts";
 
 class EmployeeController {
-  constructor(private employeeService: EmployeeService) {}
+  private employeeService: EmployeeService;
+  
+  constructor(employeeService: EmployeeService) {
+    this.employeeService = employeeService;
+  }
 
   async getAllEmployeesData(req: Request, res: Response): Promise<Response> {
     try {

@@ -3,7 +3,11 @@ import type ProductionOrderService from "../services/productionOrder.service.ts"
 import { responseMessages } from "../constants/messages.constants.ts";
 
 class ProductionOrderController {
-  constructor(private productionOrderService: ProductionOrderService) {}
+  private productionOrderService: ProductionOrderService;
+  
+  constructor(productionOrderService: ProductionOrderService) {
+    this.productionOrderService = productionOrderService;
+  }
 
   async getAllProductionRegisters(
     req: Request,

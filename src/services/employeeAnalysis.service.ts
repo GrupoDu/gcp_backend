@@ -6,10 +6,13 @@ import { getMonthRange } from "../utils/getMonthRange.util.ts";
 import { getTodayDate } from "../utils/getTodayDate.ts";
 
 class EmployeeAnalysisService {
+  private prisma: PrismaClient;  
   private readonly CACHE_TTL = 300;
   private readonly CACHE_PREFIX = "employee_analysis";
 
-  constructor(private prisma: PrismaClient) {}
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async employeeActivityAnalysis(
     employee_id: string,

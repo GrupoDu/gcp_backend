@@ -9,7 +9,11 @@ import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.ut
 import { isValidDate } from "../utils/isValidDate.ts";
 
 class GoalService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async getAllGoalsData() {
     const allGoalsData: IGoal[] = await this.prisma.goals.findMany();

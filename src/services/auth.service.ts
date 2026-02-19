@@ -10,7 +10,11 @@ import type {
 dotenv.config();
 
 class AuthService {
-  constructor(private prisma: PrismaClient) {}
+  private prisma: PrismaClient;  
+
+  constructor(prisma: PrismaClient) {
+    this.prisma = prisma;
+  }
 
   async userLogin(email: string, password: string): Promise<IUserPublic> {
     const saltRounds = process.env.SALT_ROUNDS || 10;
