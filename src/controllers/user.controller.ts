@@ -22,22 +22,20 @@ class UserController {
     }
   }
 
-  async getUserData(req: Request, res: Response): Promise<Response> {
+  async getUserById(req: Request, res: Response): Promise<Response> {
     try {
       const { uuid } = req.params;
 
       if (!uuid) throw new Error("ID do usuário faltando.");
 
-      const userData = await this.userService.getUserData(uuid as string);
+      const userData = await this.userService.getUserById(uuid as string);
 
       return res.status(200).json(userData);
     } catch (err) {
-      return res
-        .status(500)
-        .json({
-          message: responseMessages.catchErrorMessage,
-          error: (err as Error).message,
-        });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
     }
   }
 
