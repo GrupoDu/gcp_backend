@@ -10,20 +10,24 @@ import type {
 dotenv.config();
 
 class AuthService {
-  private prisma: PrismaClient;  
+  private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
 
-  async userLogin(email: string, password: string): Promise<IUserPublic> {
+  async userLogin(
+    email: string,
+    password: string,
+    user_type: string,
+  ): Promise<IUserPublic> {
     const saltRounds = process.env.SALT_ROUNDS || 10;
 
     if (!saltRounds)
       throw new Error("Variável de ambiente SALT_ROUNDS não encontrada.");
 
     const userTryingToLogin: IUserWithPassword =
-      await this.checkIfUserExists(email);
+      await this.checkIfUserExists(email, user_type);
 
     if (!this.isPasswordMatch(password, userTryingToLogin.password)) {
       throw new Error("Credenciais inválidas.");
@@ -34,10 +38,11 @@ class AuthService {
     return userPublic;
   }
 
-  private async checkIfUserExists(email: string): Promise<IUserWithPassword> {
+  private async checkIfUserExists(email: string, user_type: string): Promise<IUserWithPassword> {
     const userTryingToLogin = await this.prisma.users.findFirst({
       where: {
         email: email,
+        user_type: user_type,
       },
       select: {
         user_id: true,
