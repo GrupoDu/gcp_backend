@@ -26,8 +26,10 @@ class AuthService {
     if (!saltRounds)
       throw new Error("Variável de ambiente SALT_ROUNDS não encontrada.");
 
-    const userTryingToLogin: IUserWithPassword =
-      await this.checkIfUserExists(email, user_type);
+    const userTryingToLogin: IUserWithPassword = await this.checkIfUserExists(
+      email,
+      user_type,
+    );
 
     if (!this.isPasswordMatch(password, userTryingToLogin.password)) {
       throw new Error("Credenciais inválidas.");
@@ -38,7 +40,10 @@ class AuthService {
     return userPublic;
   }
 
-  private async checkIfUserExists(email: string, user_type: string): Promise<IUserWithPassword> {
+  private async checkIfUserExists(
+    email: string,
+    user_type: string,
+  ): Promise<IUserWithPassword> {
     const userTryingToLogin = await this.prisma.users.findFirst({
       where: {
         email: email,
