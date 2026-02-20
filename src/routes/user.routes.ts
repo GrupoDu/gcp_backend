@@ -17,6 +17,9 @@ router.post("/", adminAuthMiddleware, (req: Request, res: Response) =>
 router.get("/supervisors", (req: Request, res: Response) =>
   userController.getAllSupervisorsUser(req, res),
 );
+router.get("/validator", (req: Request, res: Response) =>
+  userController.tokenValidator(req, res),
+);
 router.get("/:uuid", adminAuthMiddleware, (req: Request, res: Response) =>
   userController.getUserById(req, res),
 );
