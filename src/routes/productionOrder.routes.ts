@@ -14,7 +14,7 @@ const productionOrderController = new ProductionOrderController(
 router.get("/", (req: Request, res: Response) =>
   productionOrderController.getAllProductionRegisters(req, res),
 );
-router.post("/", adminAuthMiddleware, (req: Request, res: Response) =>
+router.post("/", (req: Request, res: Response) =>
   productionOrderController.createNewProductionOrder(req, res),
 );
 router.get("/:uuid", (req: Request, res: Response) =>
