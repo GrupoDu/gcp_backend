@@ -5,7 +5,7 @@ import { responseMessages } from "../constants/messages.constants.ts";
 
 class AnualAnalysisController {
   private anualAnalysisService: AnualAnalysisService;
-  
+
   constructor(anualAnalysisService: AnualAnalysisService) {
     this.anualAnalysisService = anualAnalysisService;
   }
@@ -20,6 +20,20 @@ class AnualAnalysisController {
       }
 
       return res.status(200).json(anualAnalysisData);
+    } catch (err) {
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: (err as Error).message,
+      });
+    }
+  }
+
+  async updateDeliveredAnualAnalysis(req: Request, res: Response) {
+    try {
+      const anualAnalysisUpdateResponse: string =
+        await this.anualAnalysisService.updateDeliveredMontlyAnalysis();
+
+      return res.status(200).json({ message: anualAnalysisUpdateResponse });
     } catch (err) {
       return res.status(500).json({
         message: responseMessages.catchErrorMessage,

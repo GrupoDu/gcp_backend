@@ -2,7 +2,7 @@ import type { PrismaClient } from "../../generated/prisma/client.js";
 import type { IAnualAnalysis } from "../types/anualAnalysis.interface.js";
 
 class AnualAnalysisService {
-  private prisma: PrismaClient;  
+  private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
@@ -13,6 +13,26 @@ class AnualAnalysisService {
       await this.prisma.anualAnalysis.findMany();
 
     return montlyAnalysisDate;
+  }
+
+  async updateDeliveredMontlyAnalysis() {
+    const MONTH = new Date().getMonth() + 1;
+    const YEAR = new Date().getFullYear();
+
+    const updatedAnalysis = await this.prisma.anualAnalysis.updateMany({
+      where: {
+        month: MONTH,
+        year: YEAR,
+      },
+      data: {
+        delivered: { increment: 1 },
+      },
+    });
+
+    if (updatedAnalysis.count < 1)
+      throw new Error("Nenhuma analise encontrada.");
+
+    return "Analise mensal atualizada com sucesso.";
   }
 }
 
