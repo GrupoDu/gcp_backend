@@ -23,13 +23,9 @@ router.delete("/:uuid", adminAuthMiddleware, (req: Request, res: Response) => {
 router.put("/:uuid", adminAuthMiddleware, (req: Request, res: Response) => {
   employeeController.updateEmployeeData(req, res);
 });
-router.put(
-  "/activity/:uuid",
-  adminAuthMiddleware,
-  (req: Request, res: Response) => {
-    employeeController.incrementEmployeeActivityQuantity(req, res);
-  },
-);
+router.put("/activity/:uuid", (req: Request, res: Response) => {
+  employeeController.incrementEmployeeActivityQuantity(req, res);
+});
 router.put(
   "/producedQuantity/:uuid",
   adminAuthMiddleware,
