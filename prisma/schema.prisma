@@ -100,3 +100,13 @@ model production_order {
   employees_production_order_paint_assistantToemployees     employees? @relation("production_order_paint_assistantToemployees", fields: [paint_assistant], references: [employee_id], map: "register_paint_assistant_fkey")
   products                                                  products   @relation(fields: [product_uuid], references: [uuid], onDelete: SetNull, map: "register_product_uuid_fkey")
 }
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model refresh_tokens {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  token      String   @unique
+  user_uuid  String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  expires_at DateTime @db.Date
+  revoked    Boolean
+}
