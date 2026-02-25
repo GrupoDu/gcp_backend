@@ -14,7 +14,6 @@ class AuthService {
     this.prisma = prisma;
   }
 
-  // ==================== LOGIN (MODIFICADO) ====================
   async userLogin(
     email: string,
     password: string,
@@ -45,7 +44,6 @@ class AuthService {
     };
   }
 
-  // ==================== GERAÇÃO DE TOKENS ====================
   async generateAccessToken(
     user_id: string,
     user_type: string,
@@ -53,7 +51,6 @@ class AuthService {
     const secret = process.env.JWT_SECRET;
     if (!secret) throw new Error("JWT_SECRET não definida.");
 
-    // Access token com expiração curta (ex: 15 minutos)
     return jwt.sign({ user_id, user_type }, secret, { expiresIn: "15m" });
   }
 
@@ -61,7 +58,6 @@ class AuthService {
     const secret = process.env.REFRESH_SECRET;
     if (!secret) throw new Error("REFRESH_SECRET não definida.");
 
-    // Refresh token com expiração longa (ex: 7 dias)
     return jwt.sign({ user_id }, secret, { expiresIn: "7d" });
   }
 
@@ -151,7 +147,6 @@ class AuthService {
     }
   }
 
-  // ==================== REVOGAÇÃO ====================
   async revokeRefreshToken(refreshToken: string): Promise<void> {
     await this.prisma.refresh_tokens.update({
       where: { token: refreshToken },
@@ -169,7 +164,6 @@ class AuthService {
     });
   }
 
-  // ==================== MÉTODOS AUXILIARES (já existentes) ====================
   private async checkIfUserExists(
     email: string,
     user_type: string,
