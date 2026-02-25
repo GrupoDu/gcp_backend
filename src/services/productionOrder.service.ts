@@ -20,7 +20,9 @@ class ProductionOrderService {
 
   async getAllProductionOrders(): Promise<IProductionOrder[]> {
     const allproductionorders: IProductionOrder[] =
-      await this.prisma.production_order.findMany();
+      await this.prisma.production_order.findMany({
+        orderBy: { production_order_status: "desc" },
+      });
 
     if (allproductionorders.length < 1)
       throw new Error("Nenhuma ordem de produção encontrada.");
@@ -85,8 +87,8 @@ class ProductionOrderService {
 
     this.verifyDeliveredProductQuantity(
       productionOrderUpdatedFields.delivered_product_quantity,
-      productionOrderUpdatedFields.requested_product_quantity
-    ) 
+      productionOrderUpdatedFields.requested_product_quantity,
+    );
 
     const updatedProductionOrder: IProductionOrder =
       await this.prisma.production_order.update({
