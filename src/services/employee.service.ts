@@ -8,15 +8,18 @@ import { responseMessages } from "../constants/messages.constants.ts";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
 
 class EmployeeService {
-  private prisma: PrismaClient;  
+  private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;
   }
 
   async getAllEmployeesData(): Promise<IEmployee[]> {
-    const allEmployeesData: IEmployee[] =
-      await this.prisma.employees.findMany();
+    const allEmployeesData: IEmployee[] = await this.prisma.employees.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    });
 
     if (!allEmployeesData) {
       throw new Error("Nenhum funcionário encontrado.");
