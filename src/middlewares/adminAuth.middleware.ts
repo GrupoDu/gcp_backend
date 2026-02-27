@@ -1,10 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import type { IUserPayload, IUserPublic } from "../types/user.interface.ts";
-import { tryAccessToken } from "../utils/tryAccessToken.ts";
-import { tryRefreshToken } from "../utils/tryRefreshToken.ts";
-import { getTokenMiddleware } from "./getToken.middleware.ts";
+import type { IUserPublic } from "../types/user.interface.ts";
+import { tokenErrorCases } from "../utils/tokenErrorCases.ts";
 
 dotenv.config();
 
@@ -32,15 +29,18 @@ export function adminAuthMiddleware(
     next();
   } catch (err) {
     const error = err as Error;
+    const { isTokenExpiredError, isTokenInvalidError } = tokenErrorCases(error);
 
-    if (error instanceof jwt.TokenExpiredError) {
-      return res
+    if (isTokenExpiredError) {
+      res
         .status(401)
         .json({ message: "Token expirado. Faça login novamente." });
+      return;
     }
 
-    if (error instanceof jwt.JsonWebTokenError) {
-      return res.status(401).json({ message: "Token inválido." });
+    if (isTokenInvalidError) {
+      res.status(401).json({ message: "Token inválido." });
+      return;
     }
 
     return res

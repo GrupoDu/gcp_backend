@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import { tokenErrorCases } from "../utils/tokenErrorCases.ts";
 
 export async function accessTokenMiddleware(
   req: Request,
@@ -23,7 +23,10 @@ export async function accessTokenMiddleware(
     req.tokenResponse = { token: token, payload: null };
     next();
   } catch (err) {
-    if (err instanceof jwt.TokenExpiredError) {
+    const error = err as Error;
+    const { isTokenExpiredError, isTokenInvalidError } = tokenErrorCases(error);
+
+    if (isTokenExpiredError) {
       res.status(401).json({
         message: "Token de acesso expirado.",
         code: "TOKEN_EXPIRED",
@@ -31,7 +34,7 @@ export async function accessTokenMiddleware(
       return;
     }
 
-    if (err instanceof jwt.JsonWebTokenError) {
+    if (isTokenInvalidError) {
       res.status(401).json({
         message: "Token de acesso inválido.",
       });
