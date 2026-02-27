@@ -18,7 +18,7 @@ class TrelloApiController {
   //       error: (err as Error).message,
   //     });
   //   }
-  // }  
+  // }
 
   async createFeedbackCard(req: Request, res: Response): Promise<Response> {
     try {

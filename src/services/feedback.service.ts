@@ -11,8 +11,9 @@ class FeedbackService {
 
   // async getAllLists() {
   //   const ListID = process.env.TRELLO_LIST_ID || "";
+  //   const boardID = process.env.TRELLO_BOARD_ID || "";
 
-  //   const lists = await this.trello.list.search(ListID);
+  //   const lists = await this.trello.board.searchLists(boardID);
   //   return lists;
   // }
 
