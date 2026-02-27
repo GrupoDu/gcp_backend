@@ -20,11 +20,8 @@ router.post("/refresh", (req: Request, res: Response) =>
 router.get("/verify", accessTokenMiddleware, (req: Request, res: Response) =>
   authController.isTokenStillValid(req, res),
 );
-router.post(
-  "/logout",
-  getTokenMiddleware,
-  accessTokenMiddleware,
-  (req: Request, res: Response) => authController.userLogout(req, res),
+router.post("/logout", getTokenMiddleware, (req: Request, res: Response) =>
+  authController.userLogout(req, res),
 );
 
 export default router;
