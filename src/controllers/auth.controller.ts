@@ -3,6 +3,8 @@ import type AuthService from "../services/auth.service.ts";
 import { responseMessages } from "../constants/messages.constants.ts";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { tryAccessToken } from "../utils/tryAccessToken.ts";
+import { tryRefreshToken } from "../utils/tryRefreshToken.ts";
 
 dotenv.config();
 
@@ -64,17 +66,28 @@ class AuthController {
           user,
         });
     } catch (err) {
+      const error = err as Error;
+
+      if (error.message === "Credenciais inválidas.")
+        return res.status(401).json({ message: error.message });
+
       return res.status(500).json({
         message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
+        error: error.message,
       });
     }
   }
 
   async refresh(req: Request, res: Response) {
     try {
-      // Pega o refresh token do cookie (enviado automaticamente)
       const refreshToken = req.cookies.refresh_token;
+
+      const MINUTES = 15;
+      const SECONDS = 60;
+      const MILLISECONDS = 1000;
+
+      const accessTokenMaxAge = MINUTES * SECONDS * MILLISECONDS;
+
       if (!refreshToken) {
         return res
           .status(401)
@@ -83,7 +96,6 @@ class AuthController {
 
       const tokens = await this.authService.refreshAccessToken(refreshToken);
 
-      // Atualiza os cookies
       const isProduction = process.env.NODE_ENV === "production";
       const cookieOptions: CookieOptions = {
         httpOnly: true,
@@ -91,22 +103,11 @@ class AuthController {
         sameSite: isProduction ? "strict" : "none",
         path: "/",
       };
-      const accessTokenMaxAge = 15 * 60 * 1000; // 15 minutos
 
       res.cookie("access_token", tokens.accessToken, {
         ...cookieOptions,
         maxAge: accessTokenMaxAge,
       });
-
-      // Se houve rotação, atualiza também o refresh token
-      if (tokens.refreshToken) {
-        const refreshTokenMaxAge = 7 * 24 * 60 * 60 * 1000;
-        res.cookie("refresh_token", tokens.refreshToken, {
-          ...cookieOptions,
-          maxAge: refreshTokenMaxAge,
-          path: "/",
-        });
-      }
 
       return res.status(200).json({ message: "Token renovado com sucesso." });
     } catch (err) {
@@ -186,13 +187,12 @@ class AuthController {
   // ==================== MÉTODO EXISTENTE (AJUSTADO) ====================
   isTokenStillValid(req: Request, res: Response) {
     // Agora verifica o access_token
-    const access_token = req.cookies.access_token;
-    if (!access_token) {
-      return res.status(401).json({ message: "Token inválido." });
-    }
+    const token = req.tokenResponse?.token;
+
+    if (!token) return res.status(401).json({ message: "Token inválido." });
 
     try {
-      jwt.verify(access_token, process.env.JWT_SECRET as string);
+      jwt.verify(token as string, process.env.JWT_SECRET as string);
       return res.status(200).json({ status: "ok" });
     } catch {
       return res.status(401).json({ message: "Token expirado ou inválido." });
