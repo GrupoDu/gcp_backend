@@ -121,9 +121,9 @@ class AuthController {
 
   async userLogout(req: Request, res: Response): Promise<Response> {
     try {
-      const refreshToken = req.cookies.refresh_token;
-      if (refreshToken) {
-        await this.authService.revokeRefreshToken(refreshToken);
+      const token = req.tokenResponse;
+      if (token?.token_type === "refresh") {
+        await this.authService.revokeRefreshToken(token.token);
       }
 
       const isProduction = process.env.NODE_ENV === "production";
