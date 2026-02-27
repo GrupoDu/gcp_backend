@@ -4,7 +4,7 @@ export interface IProductionOrder {
   production_order_id: string;
   production_order_title: string;
   production_order_description?: string | null;
-  deliver_observation?: string | null;
+  delivery_observation?: string | null;
   created_at: Date;
   production_order_deadline: Date;
   production_order_status: string;
