@@ -15,7 +15,11 @@ export function getTokenMiddleware(
     const accessResult = tryAccessToken(accessToken);
     if (accessResult.isValid) {
       console.log("Usando access_token válido");
-      req.tokenResponse = { token: accessToken, payload: accessResult };
+      req.tokenResponse = {
+        token: accessToken,
+        payload: accessResult,
+        token_type: "access",
+      };
       return next();
     }
     console.log("Access_token expirado ou inválido");
@@ -26,7 +30,11 @@ export function getTokenMiddleware(
     const refreshResult = tryRefreshToken(refreshToken);
     if (refreshResult.isValid) {
       console.log("Usando refresh_token válido");
-      req.tokenResponse = { token: refreshToken, payload: refreshResult };
+      req.tokenResponse = {
+        token: refreshToken,
+        payload: refreshResult,
+        token_type: "refresh",
+      };
       return next();
     }
     console.log("Refresh_token expirado ou inválido");
