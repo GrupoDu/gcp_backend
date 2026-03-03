@@ -18,6 +18,7 @@ model products {
   acronym          String?
   composition      Json               @default("{}")
   uuid             String             @id(map: "produtos_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  stock_quantity   Decimal            @default(0) @db.Decimal
   production_order production_order[]
 }
 
