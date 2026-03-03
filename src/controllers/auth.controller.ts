@@ -6,6 +6,12 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const ACCESS_TOKEN_EXPIRY_MIN = 15;
+const ACCESS_TOKEN_EXPIRY_MS = ACCESS_TOKEN_EXPIRY_MIN * 60 * 1000;
+
+const REFRESH_TOKEN_EXPIRY_DAYS = 7;
+const REFRESH_TOKEN_EXPIRY_MS = REFRESH_TOKEN_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+
 class AuthController {
   private authService: AuthService;
 
@@ -13,51 +19,41 @@ class AuthController {
     this.authService = authService;
   }
 
+  private getCookieOptions(): CookieOptions {
+    const isProduction = process.env.NODE_ENV === "production";
+    return {
+      httpOnly: true,
+      secure: isProduction, // true apenas em produção (HTTPS)
+      sameSite: isProduction ? "lax" : "lax", // "lax" funciona para localhost com portas diferentes
+      path: "/",
+    };
+  }
+
   async userLogin(req: Request, res: Response) {
     try {
       const { email, password, user_type } = req.body;
 
-      if (!email || !password || !user_type) {
+      const isMissingField = !email || !password || !user_type;
+      if (isMissingField) {
         return res
           .status(400)
           .json({ message: responseMessages.fillAllFieldMessage });
       }
 
-      // Chama o service passando o req para capturar device info (opcional)
       const { user, accessToken, refreshToken } =
         await this.authService.userLogin(email, password, user_type);
 
-      const isProduction = process.env.NODE_ENV === "production";
-      const cookieOptions: CookieOptions = {
-        httpOnly: true,
-        secure: true,
-        sameSite: isProduction ? "strict" : "none",
-        path: "/",
-      };
-
-      const ACCESS_MIN = 15;
-      const ACCESS_SEC = 60;
-      const ACCESS_MS = 1000;
-
-      const REFRESH_DAYS = 7;
-      const REFRESH_HOURS = 24;
-      const REFRESH_MIN = 60;
-      const REFRESH_SEC = 60;
-      const REFRESH_MS = REFRESH_MIN * REFRESH_SEC * 1000;
-
-      const accessTokenMaxAge = ACCESS_MIN * ACCESS_SEC * ACCESS_MS; // 15 minutos
-      const refreshTokenMaxAge = REFRESH_DAYS * REFRESH_HOURS * REFRESH_MS; // 7 dias
+      const cookieOptions = this.getCookieOptions();
 
       res
         .status(200)
         .cookie("access_token", accessToken, {
           ...cookieOptions,
-          maxAge: accessTokenMaxAge,
+          maxAge: ACCESS_TOKEN_EXPIRY_MS,
         })
         .cookie("refresh_token", refreshToken, {
           ...cookieOptions,
-          maxAge: refreshTokenMaxAge,
-          path: "/",
+          maxAge: REFRESH_TOKEN_EXPIRY_MS,
         })
         .json({
           message: "Usuário logado com sucesso.",
@@ -65,10 +61,10 @@ class AuthController {
         });
     } catch (err) {
       const error = err as Error;
-
-      if (error.message === "Credenciais inválidas.")
+      const isInvalidCredentials = error.message === "Credenciais inválidas.";
+      if (isInvalidCredentials) {
         return res.status(401).json({ message: error.message });
-
+      }
       return res.status(500).json({
         message: responseMessages.catchErrorMessage,
         error: error.message,
@@ -80,32 +76,28 @@ class AuthController {
     try {
       const refreshToken = req.cookies.refresh_token;
 
-      const MINUTES = 15;
-      const SECONDS = 60;
-      const MILLISECONDS = 1000;
-
-      const accessTokenMaxAge = MINUTES * SECONDS * MILLISECONDS;
-
-      if (!refreshToken) {
+      const isRefreshTokenMissing = !refreshToken;
+      if (isRefreshTokenMissing) {
         return res
           .status(401)
           .json({ message: "Refresh token não fornecido." });
       }
 
-      const tokens = await this.authService.refreshAccessToken(refreshToken);
+      // O service agora retorna AMBOS os tokens (rotação)
+      const { accessToken, refreshToken: newRefreshToken } =
+        await this.authService.refreshAccessToken(refreshToken);
 
-      const isProduction = process.env.NODE_ENV === "production";
-      const cookieOptions: CookieOptions = {
-        httpOnly: true,
-        secure: true,
-        sameSite: isProduction ? "strict" : "none",
-        path: "/",
-      };
+      const cookieOptions = this.getCookieOptions();
 
-      res.cookie("access_token", tokens.accessToken, {
-        ...cookieOptions,
-        maxAge: accessTokenMaxAge,
-      });
+      res
+        .cookie("access_token", accessToken, {
+          ...cookieOptions,
+          maxAge: ACCESS_TOKEN_EXPIRY_MS,
+        })
+        .cookie("refresh_token", newRefreshToken, {
+          ...cookieOptions,
+          maxAge: REFRESH_TOKEN_EXPIRY_MS,
+        });
 
       return res.status(200).json({ message: "Token renovado com sucesso." });
     } catch (err) {
@@ -122,24 +114,18 @@ class AuthController {
   async userLogout(req: Request, res: Response): Promise<Response> {
     try {
       const token = req.tokenResponse;
-      if (token?.token_type === "refresh") {
+      console.log("token usado no logout: ", token);
+
+      const isRefreshToken = token?.token_type === "refresh";
+      if (isRefreshToken) {
         await this.authService.revokeRefreshToken(token.token);
       }
 
-      const isProduction = process.env.NODE_ENV === "production";
+      const cookieOptions = this.getCookieOptions();
+
       res
-        .clearCookie("access_token", {
-          httpOnly: true,
-          secure: true,
-          sameSite: "strict",
-          path: "/",
-        })
-        .clearCookie("refresh_token", {
-          httpOnly: true,
-          secure: true,
-          sameSite: "strict",
-          path: "/",
-        });
+        .clearCookie("access_token", cookieOptions)
+        .clearCookie("refresh_token", cookieOptions);
 
       return res.json({ message: "Usuário deslogado com sucesso." });
     } catch (err) {
@@ -150,28 +136,21 @@ class AuthController {
     }
   }
 
-  // ==================== LOGOUT DE TODOS OS DISPOSITIVOS ====================
   async logoutAll(req: Request, res: Response) {
     try {
-      // Presume que o usuário já está autenticado (middleware)
-      const userId = (req as any).user.user_id; // Ajuste conforme seu middleware
+      const userId = (req as any).user?.user_id;
+      const isUserIdMissing = !userId;
+      if (isUserIdMissing) {
+        return res.status(401).json({ message: "Usuário não autenticado." });
+      }
+
       await this.authService.revokeAllUserRefreshTokens(userId);
 
-      // Limpa os cookies atuais
-      const isProduction = process.env.NODE_ENV === "production";
+      const cookieOptions = this.getCookieOptions();
+
       res
-        .clearCookie("access_token", {
-          httpOnly: true,
-          secure: isProduction,
-          sameSite: "strict",
-          path: "/",
-        })
-        .clearCookie("refresh_token", {
-          httpOnly: true,
-          secure: isProduction,
-          sameSite: "strict",
-          path: "/",
-        });
+        .clearCookie("access_token", cookieOptions)
+        .clearCookie("refresh_token", cookieOptions);
 
       return res.json({ message: "Todos os dispositivos desconectados." });
     } catch (err) {
@@ -182,15 +161,16 @@ class AuthController {
     }
   }
 
-  // ==================== MÉTODO EXISTENTE (AJUSTADO) ====================
   isTokenStillValid(req: Request, res: Response) {
-    // Agora verifica o access_token
     const token = req.tokenResponse?.token;
 
-    if (!token) return res.status(401).json({ message: "Token inválido." });
+    const isTokenMissing = !token;
+    if (isTokenMissing) {
+      return res.status(401).json({ message: "Token inválido." });
+    }
 
     try {
-      jwt.verify(token as string, process.env.JWT_SECRET as string);
+      jwt.verify(token, process.env.JWT_SECRET as string);
       return res.status(200).json({ status: "ok" });
     } catch {
       return res.status(401).json({ message: "Token expirado ou inválido." });
