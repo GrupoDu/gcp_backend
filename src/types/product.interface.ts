@@ -1,4 +1,5 @@
 import type { Prisma } from "../../generated/prisma/client.js";
+import type { Decimal } from "../../generated/prisma/internal/prismaNamespace.ts";
 
 export interface IProduct {
   uuid: string;
@@ -10,6 +11,7 @@ export interface IProduct {
   features?: string[];
   acronym?: string | null;
   composition?: Prisma.JsonValue;
+  stock_quantity?: Decimal;
 }
 
 export interface IProductCreate extends Omit<IProduct, "composition"> {
