@@ -8,6 +8,7 @@ import type {
 import { responseMessages } from "../constants/messages.constants.ts";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
 import dotenv from "dotenv";
+import { io } from "../server.ts";
 
 dotenv.config();
 
@@ -19,15 +20,15 @@ class ProductionOrderService {
   }
 
   async getAllProductionOrders(): Promise<IProductionOrder[]> {
-    const allproductionorders: IProductionOrder[] =
+    const allProductionOrders: IProductionOrder[] =
       await this.prisma.production_order.findMany({
         orderBy: { production_order_status: "desc" },
       });
 
-    if (allproductionorders.length < 1)
+    if (allProductionOrders.length < 1)
       throw new Error("Nenhuma ordem de produção encontrada.");
 
-    return allproductionorders;
+    return allProductionOrders;
   }
 
   async getProductionOrderById(production_order_id: string) {
@@ -54,6 +55,8 @@ class ProductionOrderService {
       await this.prisma.production_order.create({
         data: newProductionOrderValues,
       });
+
+    io.emit("productionOrderNotify", newProductionOrder);
 
     return newProductionOrder;
   }
