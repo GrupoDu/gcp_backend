@@ -21,7 +21,6 @@ router.get(
 router.put(
   "/updateAnalysis",
   getTokenMiddleware,
-  adminAuthMiddleware,
   (req: Request, res: Response) =>
     anualAnalysisController.updateDeliveredAnualAnalysis(req, res),
 );
