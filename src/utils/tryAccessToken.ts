@@ -3,7 +3,6 @@ import type { ITokenPayloadResponse } from "../types/tokenPayloadResponse.interf
 
 export function tryAccessToken(token: string): ITokenPayloadResponse {
   try {
-    console.log(process.env.JWT_SECRET);
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
       user_type: string;
     };
