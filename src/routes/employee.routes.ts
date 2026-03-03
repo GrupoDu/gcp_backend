@@ -50,7 +50,6 @@ router.put("/activity/:uuid", (req: Request, res: Response) => {
 router.put(
   "/producedQuantity/:uuid",
   getTokenMiddleware,
-  adminAuthMiddleware,
   (req: Request, res: Response) => {
     employeeController.incrementEmployeeProductsProducedQuantity(req, res);
   },
