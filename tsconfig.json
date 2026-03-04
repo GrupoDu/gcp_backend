@@ -1,34 +1,24 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    "rootDir": ".",
+    "target": "ES2020",
+    "module": "NodeNext", // ou "ESNext"
+    "verbatimModuleSyntax": false,
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
-
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
-    "target": "es2023",
+    "rootDir": "./src",
+    "strict": true,
     "esModuleInterop": true,
-    "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["node", "express"],
-    "experimentalDecorators": true,
-    "strictPropertyInitialization": false,
-
-    "sourceMap": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
-
-    "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true,
-
-    "strict": true,
-    "jsx": "react-jsx",
-    "verbatimModuleSyntax": true,
-    "isolatedModules": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "skipLibCheck": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true
+    "sourceMap": true,
+    "lib": ["ES2020"],
+    "types": ["node"]
   },
-  "exclude": ["./node_modules", "./dist", "**/__tests__"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }
