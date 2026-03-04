@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Esse repositório guarda todo o backend do **Gerenciador de Controle de Produção**.\r #### [Repositório geral do GCP](https://github.com/GrupoDu/gerenciador_de_controle_de_producao?tab=GPL-3.0-1-ov-file#readme).\r ## Rodando o projeto",
   "main": "server.js",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
@@ -27,6 +28,7 @@
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
+    "dev": "^0.1.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.19.0",
