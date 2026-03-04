@@ -103,4 +103,8 @@ process.on("SIGINT", () => {
   process.exit(0);
 });
 
-httpServer.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+httpServer.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+  console.log("-----------------------------------");
+  console.log(`Frontend: ${FRONT_HOST}`);
+});
