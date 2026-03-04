@@ -102,3 +102,5 @@ process.on("SIGINT", () => {
   console.log("SIGINT recebido, desligando...");
   process.exit(0);
 });
+
+httpServer.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
