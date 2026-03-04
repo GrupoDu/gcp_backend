@@ -24,8 +24,7 @@ class AuthController {
     return {
       httpOnly: true,
       secure: isProduction,
-      sameSite: isProduction ? "strict" : "none",
-      domain: isProduction ? process.env.BACK_HOST : undefined,
+      sameSite: isProduction ? "lax" : "none",
       path: "/",
     };
   }
