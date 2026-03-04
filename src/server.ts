@@ -3,9 +3,9 @@ import { httpServer, PORT } from "./app.js";
 
 const HTTPS_PORT = 8003;
 const HTTP_PORT = 8001;
-const FRONT_HOST = process.env.FRONT_HOST || "http://localhost:8000";
+const FRONT_URL = process.env.FRONTEND_URL || "http://localhost:8000";
 
-const ALLOWED_ORIGINS = [FRONT_HOST, `http://localhost:${HTTP_PORT}`];
+const ALLOWED_ORIGINS = [FRONT_URL, `http://localhost:${HTTP_PORT}`];
 
 export const io = new Server(httpServer, {
   cors: {
@@ -101,5 +101,5 @@ process.on("SIGINT", () => {
 httpServer.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
   console.log("-----------------------------------");
-  console.log(`Frontend: ${FRONT_HOST}`);
+  console.log(`Frontend: ${FRONT_URL}`);
 });

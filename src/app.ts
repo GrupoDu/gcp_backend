@@ -19,14 +19,14 @@ dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT;
 const httpServer = createServer(app);
-const FRONT_HOST = process.env.FRONT_HOST || "http://localhost:3003";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3003";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [FRONT_HOST],
+    origin: [FRONTEND_URL],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
