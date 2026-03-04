@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { responseMessages } from "../constants/messages.constants.ts";
-import type GoalsAnalysisService from "../services/goalsAnalysis.service.ts";
+import { responseMessages } from "../constants/messages.constants.js";
+import type GoalsAnalysisService from "../services/goalsAnalysis.service.js";
 
 class GoalsAnalysisController {
   private goalsAnalysisService: GoalsAnalysisService;

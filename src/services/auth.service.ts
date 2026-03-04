@@ -1,8 +1,8 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import dotenv from "dotenv";
-import { PrismaClient } from "../../generated/prisma/client.ts";
-import type { IRefreshToken } from "../types/refreshToken.interface.ts";
+import { PrismaClient } from "../../generated/prisma/client.js";
+import type { IRefreshToken } from "../types/refreshToken.interface.js";
 
 dotenv.config();
 

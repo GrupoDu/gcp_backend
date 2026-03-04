@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import type { ITokenPayloadResponse } from "../types/tokenPayloadResponse.interface.ts";
+import type { ITokenPayloadResponse } from "../types/tokenPayloadResponse.interface.js";
 
 export function tryRefreshToken(token: string): ITokenPayloadResponse {
   try {

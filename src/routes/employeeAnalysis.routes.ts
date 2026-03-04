@@ -1,8 +1,8 @@
 import express, { Router, type Request, type Response } from "express";
-import EmployeeAnalysisController from "../controllers/employeeAnalysis.controller.ts";
-import EmployeeAnalysisService from "../services/employeeAnalysis.service.ts";
-import { prisma } from "../../lib/prisma.ts";
-import { dataAnalysisAuthorizationMiddleware } from "../middlewares/dataAnalysisAuthorization.middleware.ts";
+import EmployeeAnalysisController from "../controllers/employeeAnalysis.controller.js";
+import EmployeeAnalysisService from "../services/employeeAnalysis.service.js";
+import { prisma } from "../../lib/prisma.js";
+import { dataAnalysisAuthorizationMiddleware } from "../middlewares/dataAnalysisAuthorization.middleware.js";
 
 const router: Router = express.Router();
 const employeeAnalysisService = new EmployeeAnalysisService(prisma);

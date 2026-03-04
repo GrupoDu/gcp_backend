@@ -1,6 +1,6 @@
-import type { PrismaClient } from "../../generated/prisma/client.ts";
-import type { IGoal } from "../types/goal.interface.ts";
-import { getTodayDate } from "../utils/getTodayDate.ts";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import type { IGoal } from "../types/goal.interface.js";
+import { getTodayDate } from "../utils/getTodayDate.js";
 
 class GoalsAnalysisService {
   private prisma: PrismaClient;

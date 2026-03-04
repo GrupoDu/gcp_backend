@@ -20,10 +20,8 @@
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "skipLibCheck": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true
+    "skipLibCheck": true
   },
   "include": ["src"],
-  "exclude": ["dist", "node_modules", "**/**/__tests__/**.ts"]
+  "exclude": ["dist", "node_modules", "**/**/__tests__/**.ts", "**/tests"]
 }

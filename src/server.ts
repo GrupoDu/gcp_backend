@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { httpServer, PORT } from "./app.ts";
+import { httpServer, PORT } from "./app.js";
 
 const HTTPS_PORT = 8003;
 const HTTP_PORT = 8001;

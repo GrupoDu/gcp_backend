@@ -1,12 +1,12 @@
-import type { PrismaClient } from "../../generated/prisma/client.ts";
+import type { PrismaClient } from "../../generated/prisma/client.js";
 import type {
   IEmployeeGoal,
   IGoal,
   IGoalUpdate,
-} from "../types/goal.interface.ts";
-import { responseMessages } from "../constants/messages.constants.ts";
-import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
-import { isValidDate } from "../utils/isValidDate.ts";
+} from "../types/goal.interface.js";
+import { responseMessages } from "../constants/messages.constants.js";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
+import { isValidDate } from "../utils/isValidDate.js";
 
 class GoalService {
   private prisma: PrismaClient;

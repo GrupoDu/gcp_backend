@@ -1,4 +1,4 @@
-import type { Decimal } from "@prisma/client/runtime/client";
+import type { Decimal } from "../../generated/prisma/internal/prismaNamespace.js";
 
 export interface IProductionOrder {
   production_order_id: string;

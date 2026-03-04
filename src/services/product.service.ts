@@ -1,11 +1,11 @@
-import { responseMessages } from "../constants/messages.constants.ts";
+import { responseMessages } from "../constants/messages.constants.js";
 import type {
   IProduct,
   IProductCreate,
   IProductUpdate,
-} from "../types/product.interface.ts";
-import type { PrismaClient } from "../../generated/prisma/client.ts";
-import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
+} from "../types/product.interface.js";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 
 class ProductService {
   private prisma: PrismaClient;  
