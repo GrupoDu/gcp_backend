@@ -53,7 +53,7 @@ class ProductionOrderService {
         data: newProductionOrderValues,
       });
 
-      io.emit("productionOrderNotify", newProductionOrder);
+    io.emit("productionOrderNotify", newProductionOrder);
 
     return newProductionOrder;
   }
