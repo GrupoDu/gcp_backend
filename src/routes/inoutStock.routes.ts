@@ -12,11 +12,17 @@ const inoutStockController = new InOutStockController(inoutStockService);
 router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
   inoutStockController.getInOutStockAnalysis(req, res),
 );
-router.post("/incrementInStock", (req: Request, res: Response) =>
-  inoutStockController.incrementMonthlyInStockQuantity(req, res),
+router.post(
+  "/incrementInStock",
+  getTokenMiddleware,
+  (req: Request, res: Response) =>
+    inoutStockController.incrementMonthlyInStockQuantity(req, res),
 );
-router.post("/incrementOutStock", (req: Request, res: Response) =>
-  inoutStockController.incrementMonthlyOutStockQuantity(req, res),
+router.post(
+  "/incrementOutStock",
+  getTokenMiddleware,
+  (req: Request, res: Response) =>
+    inoutStockController.incrementMonthlyOutStockQuantity(req, res),
 );
 
 export default router;

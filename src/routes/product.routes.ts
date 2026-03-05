@@ -9,7 +9,7 @@ const router: Router = express.Router();
 const productService = new ProductService(prisma);
 const productController = new ProductController(productService);
 
-router.get("/", (req: Request, res: Response) =>
+router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
   productController.getAllProductsData(req, res),
 );
 router.post(
@@ -18,7 +18,7 @@ router.post(
   adminAuthMiddleware,
   (req: Request, res: Response) => productController.registerProduct(req, res),
 );
-router.put("/:uuid", (req: Request, res: Response) =>
+router.put("/:uuid", getTokenMiddleware, (req: Request, res: Response) =>
   productController.updateProductData(req, res),
 );
 router.delete(

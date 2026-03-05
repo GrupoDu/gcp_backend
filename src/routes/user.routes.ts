@@ -21,7 +21,7 @@ router.post(
   adminAuthMiddleware,
   (req: Request, res: Response) => userController.createNewUser(req, res),
 );
-router.get("/supervisors", (req: Request, res: Response) =>
+router.get("/supervisors", getTokenMiddleware, (req: Request, res: Response) =>
   userController.getAllSupervisorsUser(req, res),
 );
 router.get("/validator", getTokenMiddleware, (req: Request, res: Response) =>

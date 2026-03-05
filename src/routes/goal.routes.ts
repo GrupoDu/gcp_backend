@@ -9,7 +9,7 @@ const router: Router = express.Router();
 const goalService = new GoalService(prisma);
 const goalController = new GoalController(goalService);
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", getTokenMiddleware, (req: Request, res: Response) => {
   goalController.getAllGoalsData(req, res);
 });
 router.post(
