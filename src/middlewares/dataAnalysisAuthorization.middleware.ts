@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import type { IJwtPayload } from "../types/jwtPayload.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
+import { tokenErrorCases } from "../utils/tokenErrorCases.js";
 
 export function dataAnalysisAuthorizationMiddleware(
   req: Request,
@@ -9,18 +10,18 @@ export function dataAnalysisAuthorizationMiddleware(
   next: NextFunction,
 ) {
   try {
-    const authHeader = req.header("authorization");
+    const token = req.tokenResponse?.token;
     const jwt_secret = process.env.JWT_SECRET;
 
     if (!jwt_secret) {
       return res.status(401).json({ message: "Secret não fornecido." });
     }
 
-    if (!authHeader || typeof authHeader !== "string") {
+    if (!token) {
       return res.status(401).json({ message: "Token não fornecido." });
     }
 
-    const payload = jwt.verify(authHeader, jwt_secret) as IJwtPayload;
+    const payload = jwt.verify(token, jwt_secret) as IJwtPayload;
 
     if (!payload) {
       return res.status(401).json({ message: "Token inválido." });
@@ -34,11 +35,12 @@ export function dataAnalysisAuthorizationMiddleware(
     return;
   } catch (err) {
     const error = err as Error;
+    const { isTokenExpiredError, isTokenInvalidError } = tokenErrorCases(error);
 
-    if (error.name === "TokenExpireError") {
+    if (isTokenExpiredError) {
       return res.status(401).json({ message: "Token expirado" });
     }
-    if (error.name === "JsonWebTokenError") {
+    if (isTokenInvalidError) {
       return res.status(401).json({ message: "Token inválido" });
     }
 
