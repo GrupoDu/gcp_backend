@@ -1,10 +1,10 @@
 import express from "express";
-import ProductionOrderController from "../controllers/productionOrder.controller.js";
+import ProductionOrderController from "../controllers/productionOrder.controller.ts";
 import type { Request, Response, Router } from "express";
-import ProductionOrderService from "../services/productionOrder.service.js";
-import { prisma } from "../../lib/prisma.js";
-import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.js";
-import { getTokenMiddleware } from "../middlewares/getToken.middleware.js";
+import ProductionOrderService from "../services/productionOrder.service.ts";
+import { prisma } from "../../lib/prisma.ts";
+import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.ts";
+import { getTokenMiddleware } from "../middlewares/getToken.middleware.ts";
 
 const router: Router = express.Router();
 const productionOrderService = new ProductionOrderService(prisma);

@@ -1,4 +1,4 @@
-import { Prisma } from "../../../generated/prisma/client.js";
+import { Prisma } from "../../../generated/prisma/client.ts";
 
 export const mockedRegisterFactory = (overrides = {}) => ({
   register_id: "550e8400-e29b-41d4-a716-446655440000",

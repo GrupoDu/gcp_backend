@@ -1,4 +1,4 @@
-import type TrelloApiService from "../services/feedback.service.js";
+import type TrelloApiService from "../services/feedback.service.ts";
 import type { Request, Response } from "express";
 
 class TrelloApiController {

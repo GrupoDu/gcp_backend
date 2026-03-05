@@ -1,5 +1,5 @@
-import type { ITokenPayloadResponse } from "./tokenPayloadResponse.interface.js";
-import type { IUserPayload } from "./user.interface.js";
+import type { ITokenPayloadResponse } from "./tokenPayloadResponse.interface.ts";
+import type { IUserPayload } from "./user.interface.ts";
 
 declare global {
   namespace Express {

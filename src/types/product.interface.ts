@@ -1,5 +1,8 @@
-import type { Decimal } from "@prisma/client/runtime/wasm-compiler-edge";
-import type { Prisma } from "../../generated/prisma/client.js";
+import type {
+  Decimal,
+  InputJsonValue,
+  JsonValue,
+} from "@prisma/client/runtime/wasm-compiler-edge";
 
 export interface IProduct {
   uuid: string;
@@ -10,16 +13,16 @@ export interface IProduct {
   image: string;
   features?: string[];
   acronym?: string | null;
-  composition?: Prisma.JsonValue;
+  composition?: JsonValue;
   stock_quantity?: Decimal;
 }
 
 export interface IProductCreate extends Omit<IProduct, "composition"> {
-  composition?: Prisma.InputJsonValue;
+  composition?: InputJsonValue;
 }
 
 export interface IProductUpdate extends Partial<
   Omit<IProduct, "composition" | "uuid" | "created_at">
 > {
-  composition?: Prisma.InputJsonValue;
+  composition?: InputJsonValue;
 }

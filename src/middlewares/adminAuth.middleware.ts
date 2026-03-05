@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
-import type { IUserPublic } from "../types/user.interface.js";
-import { tokenErrorCases } from "../utils/tokenErrorCases.js";
+import type { IUserPublic } from "../types/user.interface.ts";
+import { tokenErrorCases } from "../utils/tokenErrorCases.ts";
 
 dotenv.config();
 

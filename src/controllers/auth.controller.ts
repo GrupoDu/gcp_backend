@@ -1,6 +1,6 @@
 import type { CookieOptions, Request, Response } from "express";
-import type AuthService from "../services/auth.service.js";
-import { responseMessages } from "../constants/messages.constants.js";
+import type AuthService from "../services/auth.service.ts";
+import { responseMessages } from "../constants/messages.constants.ts";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 

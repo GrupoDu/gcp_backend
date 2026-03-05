@@ -1,14 +1,14 @@
-import { PrismaClient } from "../../generated/prisma/client.js";
+import { PrismaClient } from "../../generated/prisma/client.ts";
 import type {
   IProductionOrder,
   IProductionOrderCreate,
   IProductionOrderDeliver,
   IProductionOrderUpdate,
-} from "../types/productionOrder.interface.js";
-import { responseMessages } from "../constants/messages.constants.js";
-import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
+} from "../types/productionOrder.interface.ts";
+import { responseMessages } from "../constants/messages.constants.ts";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
 import dotenv from "dotenv";
-import { io } from "../server.js";
+import { io } from "../server.ts";
 
 dotenv.config();
 

@@ -1,13 +1,13 @@
-import { PrismaClient } from "../../generated/prisma/client.js";
+import { PrismaClient } from "../../generated/prisma/client.ts";
 import bcrypt from "bcrypt";
 import type {
   IUserCreate,
   IUserPublic,
   IUserUpdate,
-} from "../types/user.interface.js";
-import { responseMessages } from "../constants/messages.constants.js";
-import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
-import { isEmailFormatValid } from "../utils/emailFormatValidator.util.js";
+} from "../types/user.interface.ts";
+import { responseMessages } from "../constants/messages.constants.ts";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
+import { isEmailFormatValid } from "../utils/emailFormatValidator.util.ts";
 
 class UserService {
   private prisma: PrismaClient;

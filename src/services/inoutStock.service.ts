@@ -1,4 +1,5 @@
-import type { PrismaClient } from "../../generated/prisma/client.js";
+import type { PrismaClient } from "../../generated/prisma/client.ts";
+import type { IInOutStockAnalysis } from "../types/inOutStockAnalysis.interface.ts";
 
 class InOutStockService {
   private prisma: PrismaClient;
@@ -8,30 +9,42 @@ class InOutStockService {
   }
 
   async getInOutStockAnalysis() {
-    const inOutStockAnalysis = await this.prisma.in_out_stock.findMany();
+    const MONTH = new Date().getMonth() + 1;
+    const YEAR = new Date().getFullYear();
+
+    const inOutStockAnalysis: IInOutStockAnalysis[] =
+      await this.prisma.in_out_stock.findMany({
+        where: { month: MONTH, year: YEAR },
+        select: {
+          in_quantity: true,
+          out_quantity: true,
+        },
+      });
     return inOutStockAnalysis;
   }
 
-  async incrementMonthlyInStockQuantity() {
+  async incrementMonthlyInStockQuantity(quantity: number) {
     const MONTH = new Date().getMonth() + 1;
     const YEAR = new Date().getFullYear();
 
-    const updatedProduct = await this.prisma.in_out_stock.updateMany({
-      where: { month: MONTH, year: YEAR },
-      data: { in_quantity: { increment: 1 } },
-    });
-    return updatedProduct;
+    const updatedInStockQuantityAnalysis =
+      await this.prisma.in_out_stock.updateMany({
+        where: { month: MONTH, year: YEAR },
+        data: { in_quantity: { increment: quantity } },
+      });
+    return updatedInStockQuantityAnalysis;
   }
 
-  async incrementMonthlyOutStockQuantity() {
+  async incrementMonthlyOutStockQuantity(quantity: number) {
     const MONTH = new Date().getMonth() + 1;
     const YEAR = new Date().getFullYear();
 
-    const updatedProduct = await this.prisma.in_out_stock.updateMany({
-      where: { month: MONTH, year: YEAR },
-      data: { out_quantity: { increment: 1 } },
-    });
-    return updatedProduct;
+    const updatedOutStockQuantityAnalysis =
+      await this.prisma.in_out_stock.updateMany({
+        where: { month: MONTH, year: YEAR },
+        data: { out_quantity: { increment: quantity } },
+      });
+    return updatedOutStockQuantityAnalysis;
   }
 }
 

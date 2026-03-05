@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import type { IJwtPayload } from "../types/jwtPayload.interface.js";
-import { responseMessages } from "../constants/messages.constants.js";
-import { tokenErrorCases } from "../utils/tokenErrorCases.js";
+import type { IJwtPayload } from "../types/jwtPayload.interface.ts";
+import { responseMessages } from "../constants/messages.constants.ts";
+import { tokenErrorCases } from "../utils/tokenErrorCases.ts";
 
 export function dataAnalysisAuthorizationMiddleware(
   req: Request,

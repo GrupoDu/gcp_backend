@@ -1,5 +1,5 @@
-import type { PrismaClient } from "../../generated/prisma/client.js";
-import type { IAnualAnalysis } from "../types/anualAnalysis.interface.js";
+import type { PrismaClient } from "../../generated/prisma/client.ts";
+import type { IAnualAnalysis } from "../types/anualAnalysis.interface.ts";
 
 class AnualAnalysisService {
   private prisma: PrismaClient;

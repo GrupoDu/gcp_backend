@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import { responseMessages } from "../constants/messages.constants.js";
-import type UserService from "../services/user.service.js";
+import { responseMessages } from "../constants/messages.constants.ts";
+import type UserService from "../services/user.service.ts";
 import dotenv from "dotenv";
 
 dotenv.config();

@@ -8,7 +8,8 @@
     "build": "prisma generate && echo 'Rodando tsc...' && npx tsc && echo 'tsc concluido.'",
     "start": "node dist/src/server.js",
     "dev": "nodemon src/server.ts",
-    "generate:api": "npx swagger-typescript-api generate --path ./swagger.json"
+    "generate:api": "npx swagger-typescript-api generate --path ./swagger.json",
+    "prisma:pull": "npx prisma db pull && npx prisma generate"
   },
   "repository": {
     "type": "git",

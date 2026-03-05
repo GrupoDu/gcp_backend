@@ -1,34 +1,28 @@
 import { Server } from "socket.io";
-import { httpServer, PORT } from "./app.js";
+import { httpServer, PORT } from "./app.ts";
 
-const HTTPS_PORT = 8003;
-const HTTP_PORT = 8001;
 const FRONT_URL = process.env.FRONTEND_URL || "http://localhost:8000";
 
-const ALLOWED_ORIGINS = [FRONT_URL, `http://localhost:${HTTP_PORT}`];
+const ALLOWED_ORIGINS = [FRONT_URL];
 
 export const io = new Server(httpServer, {
   cors: {
     origin: ALLOWED_ORIGINS,
     credentials: true,
     methods: ["GET", "POST"],
-    allowedHeaders: ["Authorization", "Content-Type"], // Headers importantes
+    allowedHeaders: ["Authorization", "Content-Type"],
   },
-  // Configurações importantes para o Render
   transports: ["websocket", "polling"], // Polling como fallback
-  pingTimeout: 60000, // 60 segundos (aumentei um pouco)
-  pingInterval: 25000, // 25 segundos
+  pingTimeout: 60000,
+  pingInterval: 25000,
   connectTimeout: 45000,
-  allowEIO3: true, // Suporte para versões anteriores
-  // Configuração para o Render
+  allowEIO3: true,
   perMessageDeflate: false,
-  // Adicionar path personalizado (opcional, mas ajuda)
   path: "/socket.io",
-  // Configuração para conexões em produção
   cookie: {
     name: "io",
     httpOnly: true,
-    sameSite: "lax", // Importante para CORS com credenciais
+    sameSite: "lax",
   },
 });
 
