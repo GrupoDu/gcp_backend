@@ -9,7 +9,7 @@ const router: Router = express.Router();
 const employeeService = new EmployeeService(prisma);
 const employeeController = new EmployeeController(employeeService);
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", getTokenMiddleware, (req: Request, res: Response) => {
   employeeController.getAllEmployeesData(req, res);
 });
 router.post(
@@ -44,9 +44,13 @@ router.put(
     employeeController.updateEmployeeData(req, res);
   },
 );
-router.put("/activity/:uuid", (req: Request, res: Response) => {
-  employeeController.incrementEmployeeActivityQuantity(req, res);
-});
+router.put(
+  "/activity/:uuid",
+  getTokenMiddleware,
+  (req: Request, res: Response) => {
+    employeeController.incrementEmployeeActivityQuantity(req, res);
+  },
+);
 router.put(
   "/producedQuantity/:uuid",
   getTokenMiddleware,

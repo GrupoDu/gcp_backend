@@ -12,13 +12,13 @@ const productionOrderController = new ProductionOrderController(
   productionOrderService,
 );
 
-router.get("/", (req: Request, res: Response) =>
+router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
   productionOrderController.getAllProductionRegisters(req, res),
 );
-router.post("/", (req: Request, res: Response) =>
+router.post("/", getTokenMiddleware, (req: Request, res: Response) =>
   productionOrderController.createNewProductionOrder(req, res),
 );
-router.get("/:uuid", (req: Request, res: Response) =>
+router.get("/:uuid", getTokenMiddleware, (req: Request, res: Response) =>
   productionOrderController.getProductionOrderById(req, res),
 );
 router.delete(
@@ -28,11 +28,14 @@ router.delete(
   (req: Request, res: Response) =>
     productionOrderController.removeTask(req, res),
 );
-router.put("/:uuid", (req: Request, res: Response) =>
+router.put("/:uuid", getTokenMiddleware, (req: Request, res: Response) =>
   productionOrderController.updateProductionOrder(req, res),
 );
-router.put("/deliver/:production_order_id", (req: Request, res: Response) =>
-  productionOrderController.deliverProductionOrder(req, res),
+router.put(
+  "/deliver/:production_order_id",
+  getTokenMiddleware,
+  (req: Request, res: Response) =>
+    productionOrderController.deliverProductionOrder(req, res),
 );
 
 export default router;
