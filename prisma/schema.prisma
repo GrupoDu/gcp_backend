@@ -111,3 +111,14 @@ model refresh_tokens {
   expires_at DateTime @db.Date
   revoked    Boolean
 }
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model in_out_stock {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+  month        BigInt
+  year         BigInt
+  in_quantity  BigInt   @default(0)
+  out_quantity BigInt   @default(0)
+  updated_at   DateTime @default(now()) @db.Date
+}
