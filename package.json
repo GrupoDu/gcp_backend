@@ -7,7 +7,8 @@
   "scripts": {
     "build": "prisma generate && echo 'Rodando tsc...' && npx tsc && echo 'tsc concluido.'",
     "start": "node dist/src/server.js",
-    "dev": "nodemon src/server.ts"
+    "dev": "nodemon src/server.ts",
+    "generate:api": "npx swagger-typescript-api generate --path ./swagger.json"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,7 @@
     "@prisma/adapter-pg": "^7.4.1",
     "@prisma/client": "^7.4.1",
     "@supabase/supabase-js": "^2.97.0",
+    "axios": "^1.13.6",
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.6",
@@ -51,6 +53,7 @@
     "nodemon": "^3.1.14",
     "prisma": "^7.4.1",
     "supabase": "^2.76.15",
+    "swagger-typescript-api": "^13.3.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3",
     "vitest-mock-extended": "^3.1.0"
