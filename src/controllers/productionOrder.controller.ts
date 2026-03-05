@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import type ProductionOrderService from "../services/productionOrder.service.ts";
-import { responseMessages } from "../constants/messages.constants.ts";
+import type ProductionOrderService from "../services/productionOrder.service.js";
+import { responseMessages } from "../constants/messages.constants.js";
 
 class ProductionOrderController {
   private productionOrderService: ProductionOrderService;

@@ -1,5 +1,5 @@
-import { responseMessages } from "../constants/messages.constants.ts";
-import type InOutStockService from "../services/inoutStock.service.ts";
+import { responseMessages } from "../constants/messages.constants.js";
+import type InOutStockService from "../services/inoutStock.service.js";
 import type { Request, Response } from "express";
 
 class InOutStockController {

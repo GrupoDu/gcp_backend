@@ -1,9 +1,9 @@
-import type { PrismaClient } from "../../generated/prisma/client.ts";
-import type { IEmployeeProductionAnalysis } from "../types/dataAnalysis.interface.ts";
-import { cacheInstance } from "../utils/cache.util.ts";
-import type { IEmployee } from "../types/employee.interface.ts";
-import { getMonthRange } from "../utils/getMonthRange.util.ts";
-import { getTodayDate } from "../utils/getTodayDate.ts";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import type { IEmployeeProductionAnalysis } from "../types/dataAnalysis.interface.js";
+import { cacheInstance } from "../utils/cache.util.js";
+import type { IEmployee } from "../types/employee.interface.js";
+import { getMonthRange } from "../utils/getMonthRange.util.js";
+import { getTodayDate } from "../utils/getTodayDate.js";
 
 class EmployeeAnalysisService {
   private prisma: PrismaClient;  

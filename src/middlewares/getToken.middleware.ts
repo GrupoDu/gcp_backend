@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { tryAccessToken } from "../utils/tryAccessToken.ts";
+import { tryAccessToken } from "../utils/tryAccessToken.js";
 
 export function getTokenMiddleware(
   req: Request,

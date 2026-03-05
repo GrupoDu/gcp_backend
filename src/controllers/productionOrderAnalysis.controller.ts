@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
-import type RegisterAnalysisService from "../services/productionOrderAnalysis.service.ts";
-import { responseMessages } from "../constants/messages.constants.ts";
+import type RegisterAnalysisService from "../services/productionOrderAnalysis.service.js";
+import { responseMessages } from "../constants/messages.constants.js";
 
 class ProductionOrderAnalysisController {
   private registerAnalysisService: RegisterAnalysisService;

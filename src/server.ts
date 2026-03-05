@@ -1,5 +1,5 @@
 import { Server } from "socket.io";
-import { httpServer, PORT } from "./app.ts";
+import { httpServer, PORT } from "./app.js";
 
 const FRONT_URL = process.env.FRONTEND_URL || "http://localhost:8000";
 

@@ -1,5 +1,5 @@
-import type { PrismaClient } from "../../generated/prisma/client.ts";
-import type { IInOutStockAnalysis } from "../types/inOutStockAnalysis.interface.ts";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import type { IInOutStockAnalysis } from "../types/inOutStockAnalysis.interface.js";
 
 class InOutStockService {
   private prisma: PrismaClient;

@@ -1,10 +1,10 @@
 import type { Request, Response } from "express";
-import { responseMessages } from "../constants/messages.constants.ts";
-import type EmployeeService from "../services/employee.service.ts";
+import { responseMessages } from "../constants/messages.constants.js";
+import type EmployeeService from "../services/employee.service.js";
 
 class EmployeeController {
   private employeeService: EmployeeService;
-  
+
   constructor(employeeService: EmployeeService) {
     this.employeeService = employeeService;
   }

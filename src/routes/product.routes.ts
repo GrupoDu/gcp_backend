@@ -1,9 +1,9 @@
-import ProductController from "../controllers/product.controller.ts";
+import ProductController from "../controllers/product.controller.js";
 import express, { Router, type Request, type Response } from "express";
-import ProductService from "../services/product.service.ts";
-import { prisma } from "../../lib/prisma.ts";
-import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.ts";
-import { getTokenMiddleware } from "../middlewares/getToken.middleware.ts";
+import ProductService from "../services/product.service.js";
+import { prisma } from "../../lib/prisma.js";
+import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.js";
+import { getTokenMiddleware } from "../middlewares/getToken.middleware.js";
 
 const router: Router = express.Router();
 const productService = new ProductService(prisma);

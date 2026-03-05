@@ -1,9 +1,9 @@
 import express, { Router, type Request, type Response } from "express";
-import EmployeeController from "../controllers/employee.controller.ts";
-import { prisma } from "../../lib/prisma.ts";
-import EmployeeService from "../services/employee.service.ts";
-import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.ts";
-import { getTokenMiddleware } from "../middlewares/getToken.middleware.ts";
+import EmployeeController from "../controllers/employee.controller.js";
+import { prisma } from "../../lib/prisma.js";
+import EmployeeService from "../services/employee.service.js";
+import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.js";
+import { getTokenMiddleware } from "../middlewares/getToken.middleware.js";
 
 const router: Router = express.Router();
 const employeeService = new EmployeeService(prisma);

@@ -5,7 +5,8 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "build": "prisma generate && echo 'Rodando tsc...' && npx tsc && echo 'tsc concluido.'",
+    "build": "prisma generate && echo 'Rodando tsc...' && tsc -p tsconfig.build.json && echo 'tsc concluido.'",
+    "build:dev": "prisma generate && echo 'Rodando tsc...' && tsc && echo 'tsc concluido.'",
     "start": "node dist/src/server.js",
     "dev": "nodemon src/server.ts",
     "generate:api": "npx swagger-typescript-api generate --path ./swagger.json",

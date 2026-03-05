@@ -19,11 +19,9 @@
     "verbatimModuleSyntax": true,
     "isolatedModules": true,
     "noUncheckedSideEffectImports": true,
-    "noEmit": true,
-    "allowImportingTsExtensions": true,
     "moduleDetection": "force",
     "skipLibCheck": true
   },
-  "include": ["src"],
-  "exclude": ["dist", "node_modules", "**/**/__tests__/**.ts", "**/tests"]
+  "include": ["./src"],
+  "exclude": ["./dist", "./node_modules", "**/**/__tests__/**.ts", "**/tests"]
 }

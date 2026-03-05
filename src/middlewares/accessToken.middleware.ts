@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { tokenErrorCases } from "../utils/tokenErrorCases.ts";
+import { tokenErrorCases } from "../utils/tokenErrorCases.js";
 
 export async function accessTokenMiddleware(
   req: Request,

@@ -1,4 +1,4 @@
-import type TrelloNodeApi from "trello-node-api/index.ts";
+import type TrelloNodeApi from "trello-node-api/index.js";
 import dotenv from "dotenv";
 dotenv.config();
 

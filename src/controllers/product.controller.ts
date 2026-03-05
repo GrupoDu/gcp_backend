@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
-import { responseMessages } from "../constants/messages.constants.ts";
-import type ProductService from "../services/product.service.ts";
+import { responseMessages } from "../constants/messages.constants.js";
+import type ProductService from "../services/product.service.js";
 
 class ProductController {
   private productService: ProductService;

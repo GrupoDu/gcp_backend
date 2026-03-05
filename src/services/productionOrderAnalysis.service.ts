@@ -1,7 +1,7 @@
-import type { PrismaClient } from "../../generated/prisma/client.ts";
-import { getMonthRange } from "../utils/getMonthRange.util.ts";
-import type { IProductionAnalysis } from "../types/dataAnalysis.interface.ts";
-import { getTodayDate } from "../utils/getTodayDate.ts";
+import type { PrismaClient } from "../../generated/prisma/client.js";
+import { getMonthRange } from "../utils/getMonthRange.util.js";
+import type { IProductionAnalysis } from "../types/dataAnalysis.interface.js";
+import { getTodayDate } from "../utils/getTodayDate.js";
 
 class ProductionOrderAnalysisService {
   private prisma: PrismaClient;  

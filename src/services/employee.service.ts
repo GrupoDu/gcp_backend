@@ -1,11 +1,11 @@
-import type { PrismaClient } from "../../generated/prisma/client.ts";
+import type { PrismaClient } from "../../generated/prisma/client.js";
 import type {
   IEmployee,
   IEmployeeCreate,
   IEmployeeUpdate,
-} from "../types/employee.interface.ts";
-import { responseMessages } from "../constants/messages.constants.ts";
-import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.ts";
+} from "../types/employee.interface.js";
+import { responseMessages } from "../constants/messages.constants.js";
+import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 
 class EmployeeService {
   private prisma: PrismaClient;

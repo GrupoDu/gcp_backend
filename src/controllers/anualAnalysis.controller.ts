@@ -1,7 +1,7 @@
-import type AnualAnalysisService from "../services/anualAnalysis.service.ts";
+import type AnualAnalysisService from "../services/anualAnalysis.service.js";
 import type { Request, Response } from "express";
-import type { IAnualAnalysis } from "../types/anualAnalysis.interface.ts";
-import { responseMessages } from "../constants/messages.constants.ts";
+import type { IAnualAnalysis } from "../types/anualAnalysis.interface.js";
+import { responseMessages } from "../constants/messages.constants.js";
 
 class AnualAnalysisController {
   private anualAnalysisService: AnualAnalysisService;

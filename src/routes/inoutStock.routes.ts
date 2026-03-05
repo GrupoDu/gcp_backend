@@ -1,9 +1,9 @@
 import express from "express";
 import type { Request, Response, Router } from "express";
-import InOutStockController from "../controllers/inoutStock.controller.ts";
-import InOutStockService from "../services/inoutStock.service.ts";
-import { prisma } from "../../lib/prisma.ts";
-import { getTokenMiddleware } from "../middlewares/getToken.middleware.ts";
+import InOutStockController from "../controllers/inoutStock.controller.js";
+import InOutStockService from "../services/inoutStock.service.js";
+import { prisma } from "../../lib/prisma.js";
+import { getTokenMiddleware } from "../middlewares/getToken.middleware.js";
 
 const router: Router = express.Router();
 const inoutStockService = new InOutStockService(prisma);
