@@ -19,16 +19,16 @@ import { createServer } from "http";
 
 dotenv.config();
 const app: Express = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8000;
 const httpServer = createServer(app);
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3003";
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [FRONTEND_URL, "http://localhost:8000"],
+    origin: [FRONTEND_URL, "http://localhost:3000"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
