@@ -44,7 +44,7 @@ class EmployeeService {
           employee_type: true,
           delivered_activities_quantity: true,
           not_delivered_activities_quantity: true,
-          products_produced_quantity: true,
+          produced_quantity: true,
         },
       });
 
@@ -139,7 +139,7 @@ class EmployeeService {
         employee_id: employeeUuid as string,
       },
       data: {
-        products_produced_quantity: {
+        produced_quantity: {
           increment: productProducedQuantity as number,
         },
       },

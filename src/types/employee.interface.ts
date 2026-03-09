@@ -6,7 +6,7 @@ export interface IEmployee {
   employee_type: string;
   delivered_activities_quantity: Decimal;
   not_delivered_activities_quantity: Decimal;
-  products_produced_quantity: Decimal;
+  produced_quantity: Decimal;
 }
 
 export interface IEmployeeCreate extends Omit<IEmployee, "employee_id"> {}
