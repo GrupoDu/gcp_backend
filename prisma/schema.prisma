@@ -125,9 +125,9 @@ model in_out_stock {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model stock_updates {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at       DateTime @default(now()) @db.Timestamptz(6)
-  product_quantity String
-  event            String
-  date             DateTime @db.Date
+  id                     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  product_quantity_title String
+  event                  String
+  date                   DateTime @db.Date
 }
