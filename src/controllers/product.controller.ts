@@ -4,7 +4,7 @@ import type ProductService from "../services/product.service.js";
 
 class ProductController {
   private productService: ProductService;
-  
+
   constructor(productService: ProductService) {
     this.productService = productService;
   }

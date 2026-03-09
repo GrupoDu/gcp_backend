@@ -4,7 +4,7 @@ import type GoalsAnalysisService from "../services/goalsAnalysis.service.js";
 
 class GoalsAnalysisController {
   private goalsAnalysisService: GoalsAnalysisService;
-  
+
   constructor(goalsAnalysisService: GoalsAnalysisService) {
     this.goalsAnalysisService = goalsAnalysisService;
   }

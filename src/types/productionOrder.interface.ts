@@ -29,4 +29,7 @@ export interface IProductionOrderUpdate extends Partial<
   Omit<IProductionOrder, "production_order_id">
 > {}
 
-export interface IProductionOrderDeliver extends Pick<IProductionOrder, "production_order_id" & "delivered_product_quantity" & "product_quantity"> {}
+export interface IProductionOrderDeliver extends Pick<
+  IProductionOrder,
+  "production_order_id" & "delivered_product_quantity" & "product_quantity"
+> {}

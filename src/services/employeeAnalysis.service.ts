@@ -6,7 +6,7 @@ import { getMonthRange } from "../utils/getMonthRange.util.js";
 import { getTodayDate } from "../utils/getTodayDate.js";
 
 class EmployeeAnalysisService {
-  private prisma: PrismaClient;  
+  private prisma: PrismaClient;
   private readonly CACHE_TTL = 300;
   private readonly CACHE_PREFIX = "employee_analysis";
 

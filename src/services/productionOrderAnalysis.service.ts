@@ -4,7 +4,7 @@ import type { IProductionAnalysis } from "../types/dataAnalysis.interface.js";
 import { getTodayDate } from "../utils/getTodayDate.js";
 
 class ProductionOrderAnalysisService {
-  private prisma: PrismaClient;  
+  private prisma: PrismaClient;
 
   constructor(prisma: PrismaClient) {
     this.prisma = prisma;

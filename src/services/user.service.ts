@@ -1,6 +1,10 @@
 import { PrismaClient } from "../../generated/prisma/client.js";
 import bcrypt from "bcrypt";
-import type { IUserCreate, IUserPublic, IUserUpdate } from "../types/user.interface.js";
+import type {
+  IUserCreate,
+  IUserPublic,
+  IUserUpdate,
+} from "../types/user.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 import { isEmailFormatValid } from "../utils/emailFormatValidator.util.js";
@@ -88,7 +92,10 @@ class UserService {
 
     const saltRoundsNumber = parseInt(saltRounds, 10);
 
-    const hashPassword = await bcrypt.hash(userInfos.password, saltRoundsNumber);
+    const hashPassword = await bcrypt.hash(
+      userInfos.password,
+      saltRoundsNumber,
+    );
 
     const newUser: IUserPublic = await this.prisma.users.create({
       data: {
@@ -102,14 +109,18 @@ class UserService {
     return newUser;
   }
 
-  async updateUserData(userNewData: IUserUpdate, userUuid: string): Promise<IUserPublic> {
+  async updateUserData(
+    userNewData: IUserUpdate,
+    userUuid: string,
+  ): Promise<IUserPublic> {
     if (!userUuid) {
       throw new Error(responseMessages.fillAllFieldMessage);
     }
 
     const updateFields = removeUndefinedUpdateFields(userNewData);
 
-    if (Object.keys(updateFields).length < 1) throw new Error("Nenhum campo fornecido");
+    if (Object.keys(updateFields).length < 1)
+      throw new Error("Nenhum campo fornecido");
 
     const updatedUser: IUserPublic = await this.prisma.users.update({
       where: {

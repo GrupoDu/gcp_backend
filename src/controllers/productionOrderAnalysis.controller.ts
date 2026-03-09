@@ -4,7 +4,7 @@ import { responseMessages } from "../constants/messages.constants.js";
 
 class ProductionOrderAnalysisController {
   private registerAnalysisService: RegisterAnalysisService;
-  
+
   constructor(registerAnalysisService: RegisterAnalysisService) {
     this.registerAnalysisService = registerAnalysisService;
   }
@@ -24,11 +24,9 @@ class ProductionOrderAnalysisController {
       }
 
       if (registersDataAnalysis.notDeliveredRegisterQuantity < 0) {
-        return res
-          .status(200)
-          .json({
-            message: "Não houve ordem de produção não entregues esse mês",
-          });
+        return res.status(200).json({
+          message: "Não houve ordem de produção não entregues esse mês",
+        });
       }
 
       return res.status(200).json(registersDataAnalysis);

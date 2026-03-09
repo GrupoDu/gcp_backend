@@ -166,7 +166,9 @@ class AuthService {
     return jwt.sign(
       { user_id: user.user_id, user_type: user.user_type },
       process.env.JWT_SECRET!,
-      { expiresIn: "15m" },
+      {
+        expiresIn: "15m",
+      },
     );
   }
 

@@ -32,7 +32,8 @@ export const io = new Server(httpServer, {
 
 // Middleware de autenticação (se precisar)
 io.use((socket, next) => {
-  const token = socket.handshake.auth.token || socket.handshake.headers.authorization;
+  const token =
+    socket.handshake.auth.token || socket.handshake.headers.authorization;
 
   if (token) {
     // Validar token aqui se necessário
@@ -45,7 +46,9 @@ io.use((socket, next) => {
 });
 
 io.on("connection", (socket) => {
-  console.log(`Cliente conectado: ${socket.id} | Transporte: ${socket.conn.transport.name}`);
+  console.log(
+    `Cliente conectado: ${socket.id} | Transporte: ${socket.conn.transport.name}`,
+  );
 
   // Join na sala (corrigindo a string template)
   socket.join(`connection_id:${socket.id}`);

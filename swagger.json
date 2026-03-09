@@ -32,7 +32,13 @@
       },
       "Goal": {
         "type": "object",
-        "required": ["goal_id", "goal_title", "goal_type", "goal_deadline", "goal_status"],
+        "required": [
+          "goal_id",
+          "goal_title",
+          "goal_type",
+          "goal_deadline",
+          "goal_status"
+        ],
         "properties": {
           "goal_id": { "type": "string" },
           "goal_title": { "type": "string" },
@@ -61,16 +67,16 @@
           "description": { "type": "string" },
           "product_type": { "type": "string" },
           "image": { "type": "string" },
-          "features": { 
+          "features": {
             "type": "array",
             "items": { "type": "string" }
           },
           "acronym": { "type": "string", "nullable": true },
-          "composition": { 
+          "composition": {
             "type": "object",
             "description": "Campo JSON flexível"
           },
-          "stock_quantity": { 
+          "stock_quantity": {
             "type": "number",
             "format": "decimal"
           }
@@ -101,11 +107,23 @@
       },
       "ProductionOrder": {
         "type": "object",
-        "required": ["production_order_title", "production_order_deadline", "product_quantity", "product_uuid", "client_uuid"],
+        "required": [
+          "production_order_title",
+          "production_order_deadline",
+          "product_quantity",
+          "product_uuid",
+          "client_uuid"
+        ],
         "properties": {
           "production_order_title": { "type": "string" },
-          "production_order_description": { "type": "string", "nullable": true },
-          "production_order_deadline": { "type": "string", "format": "date-time" },
+          "production_order_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "production_order_deadline": {
+            "type": "string",
+            "format": "date-time"
+          },
           "product_quantity": { "type": "number", "format": "decimal" },
           "cut_assistant": { "type": "string", "nullable": true },
           "fold_assistant": { "type": "string", "nullable": true },
@@ -118,7 +136,10 @@
       },
       "DeliveryOrder": {
         "type": "object",
-        "required": ["delivered_product_quantity", "requested_product_quantity"],
+        "required": [
+          "delivered_product_quantity",
+          "requested_product_quantity"
+        ],
         "properties": {
           "delivered_product_quantity": { "type": "number" },
           "requested_product_quantity": { "type": "number" }
@@ -133,9 +154,7 @@
       }
     }
   },
-  "security": [
-    { "cookieAuth": [] }
-  ],
+  "security": [{ "cookieAuth": [] }],
   "paths": {
     "/login": {
       "post": {
@@ -562,7 +581,10 @@
                   "description": { "type": "string" },
                   "product_type": { "type": "string" },
                   "image": { "type": "string" },
-                  "features": { "type": "array", "items": { "type": "string" } },
+                  "features": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
                   "acronym": { "type": "string", "nullable": true },
                   "composition": { "type": "object" },
                   "stock_quantity": { "type": "number", "format": "decimal" }
@@ -969,8 +991,14 @@
                 "minProperties": 1,
                 "properties": {
                   "production_order_title": { "type": "string" },
-                  "production_order_description": { "type": "string", "nullable": true },
-                  "production_order_deadline": { "type": "string", "format": "date-time" },
+                  "production_order_description": {
+                    "type": "string",
+                    "nullable": true
+                  },
+                  "production_order_deadline": {
+                    "type": "string",
+                    "format": "date-time"
+                  },
                   "product_quantity": { "type": "number", "format": "decimal" },
                   "cut_assistant": { "type": "string", "nullable": true },
                   "fold_assistant": { "type": "string", "nullable": true },
