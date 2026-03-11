@@ -37,20 +37,20 @@ model anualAnalysis {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model employees {
-  employee_id                                                      String                  @id(map: "employee_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_id                                                      String                   @id(map: "employee_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                                                             String
   employee_type                                                    String
-  delivered_activities_quantity                                    Decimal                 @default(0) @db.Decimal
-  not_delivered_activities_quantity                                Decimal                 @default(0) @db.Decimal
-  produced_quantity                                                Decimal                 @default(0) @db.Decimal
+  delivered_activities_quantity                                    Decimal                  @default(0) @db.Decimal
+  not_delivered_activities_quantity                                Decimal                  @default(0) @db.Decimal
+  produced_quantity                                                Decimal                  @default(0) @db.Decimal
   assistant_analysis                                               assistant_analysis[]
-  assitants_po_register                                            assitants_po_register[]
+  assistants_po_register                                           assistants_po_register[]
   goals                                                            goals[]
-  production_order_production_order_cut_assistantToemployees       production_order[]      @relation("production_order_cut_assistantToemployees")
-  production_order_production_order_employee_uuidToemployees       production_order[]      @relation("production_order_employee_uuidToemployees")
-  production_order_production_order_finishing_assistantToemployees production_order[]      @relation("production_order_finishing_assistantToemployees")
-  production_order_production_order_fold_assistantToemployees      production_order[]      @relation("production_order_fold_assistantToemployees")
-  production_order_production_order_paint_assistantToemployees     production_order[]      @relation("production_order_paint_assistantToemployees")
+  production_order_production_order_cut_assistantToemployees       production_order[]       @relation("production_order_cut_assistantToemployees")
+  production_order_production_order_employee_uuidToemployees       production_order[]       @relation("production_order_employee_uuidToemployees")
+  production_order_production_order_finishing_assistantToemployees production_order[]       @relation("production_order_finishing_assistantToemployees")
+  production_order_production_order_fold_assistantToemployees      production_order[]       @relation("production_order_fold_assistantToemployees")
+  production_order_production_order_paint_assistantToemployees     production_order[]       @relation("production_order_paint_assistantToemployees")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -78,32 +78,32 @@ model users {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model production_order {
-  production_order_id                                       String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at                                                DateTime                @default(now()) @db.Timestamptz(6)
+  production_order_id                                       String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at                                                DateTime                 @default(now()) @db.Timestamptz(6)
   production_order_title                                    String
-  production_order_deadline                                 DateTime                @db.Date
-  production_order_status                                   String                  @default("Pendente")
-  product_quantity                                          Decimal                 @db.Decimal
-  delivered_at                                              DateTime?               @db.Date
-  cut_assistant                                             String?                 @db.Uuid
-  fold_assistant                                            String?                 @db.Uuid
-  finishing_assistant                                       String?                 @db.Uuid
-  paint_assistant                                           String?                 @db.Uuid
-  employee_uuid                                             String?                 @db.Uuid
-  product_uuid                                              String                  @db.Uuid
-  client_uuid                                               String                  @db.Uuid
+  production_order_deadline                                 DateTime                 @db.Date
+  production_order_status                                   String                   @default("Pendente")
+  product_quantity                                          Decimal                  @db.Decimal
+  delivered_at                                              DateTime?                @db.Date
+  cut_assistant                                             String?                  @db.Uuid
+  fold_assistant                                            String?                  @db.Uuid
+  finishing_assistant                                       String?                  @db.Uuid
+  paint_assistant                                           String?                  @db.Uuid
+  employee_uuid                                             String?                  @db.Uuid
+  product_uuid                                              String                   @db.Uuid
+  client_uuid                                               String                   @db.Uuid
   production_order_description                              String?
   delivery_observation                                      String?
-  delivered_product_quantity                                Decimal                 @default(0) @db.Decimal
+  delivered_product_quantity                                Decimal                  @default(0) @db.Decimal
   assistant_analysis                                        assistant_analysis[]
-  assitants_po_register                                     assitants_po_register[]
-  users                                                     users                   @relation(fields: [client_uuid], references: [user_id], onDelete: Cascade, map: "register_client_uuid_fkey")
-  employees_production_order_cut_assistantToemployees       employees?              @relation("production_order_cut_assistantToemployees", fields: [cut_assistant], references: [employee_id], map: "register_cut_assistant_fkey")
-  employees_production_order_employee_uuidToemployees       employees?              @relation("production_order_employee_uuidToemployees", fields: [employee_uuid], references: [employee_id], map: "register_employee_uuid_fkey")
-  employees_production_order_finishing_assistantToemployees employees?              @relation("production_order_finishing_assistantToemployees", fields: [finishing_assistant], references: [employee_id], map: "register_finishing_assistant_fkey")
-  employees_production_order_fold_assistantToemployees      employees?              @relation("production_order_fold_assistantToemployees", fields: [fold_assistant], references: [employee_id], map: "register_fold_assistant_fkey")
-  employees_production_order_paint_assistantToemployees     employees?              @relation("production_order_paint_assistantToemployees", fields: [paint_assistant], references: [employee_id], map: "register_paint_assistant_fkey")
-  products                                                  products                @relation(fields: [product_uuid], references: [uuid], onDelete: SetNull, map: "register_product_uuid_fkey")
+  assistants_po_register                                    assistants_po_register[]
+  users                                                     users                    @relation(fields: [client_uuid], references: [user_id], onDelete: Cascade, map: "register_client_uuid_fkey")
+  employees_production_order_cut_assistantToemployees       employees?               @relation("production_order_cut_assistantToemployees", fields: [cut_assistant], references: [employee_id], map: "register_cut_assistant_fkey")
+  employees_production_order_employee_uuidToemployees       employees?               @relation("production_order_employee_uuidToemployees", fields: [employee_uuid], references: [employee_id], map: "register_employee_uuid_fkey")
+  employees_production_order_finishing_assistantToemployees employees?               @relation("production_order_finishing_assistantToemployees", fields: [finishing_assistant], references: [employee_id], map: "register_finishing_assistant_fkey")
+  employees_production_order_fold_assistantToemployees      employees?               @relation("production_order_fold_assistantToemployees", fields: [fold_assistant], references: [employee_id], map: "register_fold_assistant_fkey")
+  employees_production_order_paint_assistantToemployees     employees?               @relation("production_order_paint_assistantToemployees", fields: [paint_assistant], references: [employee_id], map: "register_paint_assistant_fkey")
+  products                                                  products                 @relation(fields: [product_uuid], references: [uuid], onDelete: SetNull, map: "register_product_uuid_fkey")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -149,13 +149,13 @@ model assistant_analysis {
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
-model assitants_po_register {
-  assistants_po_registers_uuid String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+model assistants_po_register {
+  assistants_po_registers_uuid String           @id(map: "assitants_po_register_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   delivered                    Boolean          @default(false)
   delivered_at                 DateTime?        @db.Date
   production_order_uuid        String           @db.Uuid
   assistant_uuid               String           @db.Uuid
   assistant_as                 String
-  employees                    employees        @relation(fields: [assistant_uuid], references: [employee_id], onDelete: NoAction, onUpdate: NoAction)
-  production_order             production_order @relation(fields: [production_order_uuid], references: [production_order_id], onDelete: NoAction, onUpdate: NoAction)
+  employees                    employees        @relation(fields: [assistant_uuid], references: [employee_id], onDelete: NoAction, onUpdate: NoAction, map: "assitants_po_register_assistant_uuid_fkey")
+  production_order             production_order @relation(fields: [production_order_uuid], references: [production_order_id], onDelete: NoAction, onUpdate: NoAction, map: "assitants_po_register_production_order_uuid_fkey")
 }
