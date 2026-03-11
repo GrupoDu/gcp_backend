@@ -21,14 +21,15 @@ dotenv.config();
 const app: Express = express();
 const PORT = process.env.PORT || 8000;
 const httpServer = createServer(app);
-const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+const FRONTEND_URL = process.env.FRONTEND_URL || "";
+const DEV_URL = process.env.DEV_URL || "";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: [FRONTEND_URL, "http://localhost:3000", "http://192.168.1.3:3001"],
+    origin: [FRONTEND_URL, DEV_URL, "http://192.168.1.3:3001"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
