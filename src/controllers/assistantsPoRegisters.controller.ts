@@ -52,12 +52,10 @@ export default class AssistantsPORegistersController {
     } catch (err) {
       const error = err as Error;
 
-      return res
-        .status(500)
-        .json({
-          message: responseMessages.catchErrorMessage,
-          error: error.message,
-        });
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: error.message,
+      });
     }
   }
 

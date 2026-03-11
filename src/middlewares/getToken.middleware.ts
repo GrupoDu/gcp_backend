@@ -39,11 +39,9 @@ export function getTokenMiddleware(
     if (isTokenExpiredError)
       return res.status(401).json({ message: "Token expirado." });
 
-    return res
-      .status(500)
-      .json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+    return res.status(500).json({
+      message: responseMessages.catchErrorMessage,
+      error: error.message,
+    });
   }
 }
