@@ -1,0 +1,16 @@
+services:
+  web:
+    build:
+      context: .
+      target: dev
+    develop:
+      watch:
+        - action: sync
+          path: .
+          target: /src/
+          ignore:
+            - node_modules
+        - action: rebuild
+          path: package.json
+    ports:
+      - "${DEV_PORT}:8000"
