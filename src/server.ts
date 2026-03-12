@@ -7,7 +7,7 @@ dotenv.config();
 const FRONT_URL = process.env.FRONTEND_URL;
 const DEV_URL = process.env.DEV_URL || "http://localhost:8000";
 
-const ALLOWED_ORIGINS = FRONT_URL || DEV_URL;
+const ALLOWED_ORIGINS = FRONT_URL ? FRONT_URL : DEV_URL;
 const isProduction = process.env.NODE_ENV === "production";
 
 export const io = new Server(httpServer, {

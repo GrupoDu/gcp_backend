@@ -17,6 +17,7 @@ import StockUpdatesRoutes from "./routes/stockUpdates.routes.js";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
 import AssistantsPoRegistersRoutes from "./routes/assistantsPoRegisters.routes.js";
+import DeliverProductionOrderRoutes from "./routes/deliverProductionOrder.routes.js";
 
 dotenv.config();
 const app: Express = express();
@@ -50,6 +51,7 @@ app.use("/feedback", FeedbackRoutes);
 app.use("/inoutStock", InOutStockRoutes);
 app.use("/stockUpdates", StockUpdatesRoutes);
 app.use("/assistantsPORegisters", AssistantsPoRegistersRoutes);
+app.use("/deliverProductionOrder", DeliverProductionOrderRoutes);
 
 app.get("/status", (req: Request, res: Response) => res.json({ status: "ok" }));
 
