@@ -62,10 +62,18 @@ class ProductionOrderService {
     if (!production_order_id)
       throw new Error(responseMessages.fillAllFieldMessage);
 
-    await this.prisma.production_order.delete({
-      where: {
-        production_order_id,
-      },
+    await this.prisma.$transaction(async (prisma) => {
+      await prisma.assistants_po_register.deleteMany({
+        where: {
+          production_order_uuid: production_order_id,
+        },
+      });
+
+      await prisma.production_order.delete({
+        where: {
+          production_order_id,
+        },
+      });
     });
 
     return "Ordem de produção deletada com sucesso.";
