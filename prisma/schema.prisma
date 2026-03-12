@@ -156,6 +156,6 @@ model assistants_po_register {
   production_order_uuid        String           @db.Uuid
   assistant_uuid               String           @db.Uuid
   assistant_as                 String
-  employees                    employees        @relation(fields: [assistant_uuid], references: [employee_id], onDelete: NoAction, onUpdate: NoAction, map: "assitants_po_register_assistant_uuid_fkey")
-  production_order             production_order @relation(fields: [production_order_uuid], references: [production_order_id], onDelete: NoAction, onUpdate: NoAction, map: "assitants_po_register_production_order_uuid_fkey")
+  employees                    employees        @relation(fields: [assistant_uuid], references: [employee_id], onDelete: NoAction, map: "assitants_po_register_assistant_uuid_fkey")
+  production_order             production_order @relation(fields: [production_order_uuid], references: [production_order_id], onDelete: Cascade, map: "assitants_po_register_production_order_uuid_fkey")
 }
