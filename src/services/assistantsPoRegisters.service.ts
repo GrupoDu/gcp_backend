@@ -57,4 +57,15 @@ export default class AssistantsPoRegistersService {
 
     return "Produção de assistente salva ao registro.";
   }
+
+  async isEveryAssistantsPORegistersDone(production_order_id: string) {
+    const assistantsPORegisters =
+      await this.prisma.assistants_po_register.findMany({
+        where: {
+          production_order_uuid: production_order_id,
+        },
+      });
+
+    return assistantsPORegisters.every((register) => register.delivered);
+  }
 }
