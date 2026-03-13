@@ -167,7 +167,7 @@ class AuthService {
       { user_id: user.user_id, user_type: user.user_type },
       process.env.JWT_SECRET!,
       {
-        expiresIn: "15m",
+        expiresIn: "2h",
       },
     );
   }
