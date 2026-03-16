@@ -3,7 +3,6 @@ import type {
   IOrder,
   IOrderCreate,
   IOrderUpdate,
-  OrderStatus,
 } from "../types/orders.interface.js";
 
 export default class OrdersService {
@@ -21,31 +20,37 @@ export default class OrdersService {
     });
   }
 
-  async getOrderById(order_id: string) {
-    return this.prisma.orders.findUnique({
+  async getOrderById(order_id: string): Promise<IOrder> {
+    const targetOrder: IOrder | null = await this.prisma.orders.findUnique({
       where: { order_id },
     });
+
+    if (!targetOrder) throw new Error("Pedido não encontrado");
+
+    return targetOrder;
   }
 
   async createOrder(order: IOrderCreate) {
     return this.prisma.orders.create({
       data: {
         ...order,
-        order_status: order.order_status || "Ainda não confirmado",
+        order_status: "Ainda não confirmado",
       },
     });
   }
 
-  async updateOrder(order_id: string, orderUpdatedFields: IOrderUpdate) {
-    const updateData = Object.fromEntries(
+  async updateOrder(
+    order_id: string,
+    orderUpdatedFields: IOrderUpdate,
+  ): Promise<IOrder> {
+    const updateData: IOrderUpdate = Object.fromEntries(
       Object.entries(orderUpdatedFields).filter(
         ([_, value]) => value !== undefined,
       ),
     );
 
-    if (Object.keys(updateData).length === 0) {
+    if (Object.keys(updateData).length === 0)
       return this.getOrderById(order_id);
-    }
 
     return this.prisma.orders.update({
       where: { order_id },
@@ -53,15 +58,13 @@ export default class OrdersService {
     });
   }
 
-  async updateOrderStatus(
-    order_id: string,
-  ): Promise<{ order: IOrder; nextStatus: OrderStatus }> {
-    const currentOrder = await this.getOrderById(order_id);
+  async updateOrderStatus(order_id: string, status: string): Promise<IOrder> {
+    const currentOrder: IOrder = await this.getOrderById(order_id);
     if (!currentOrder) {
       throw new Error("Order not found");
     }
 
-    const statusFlow: OrderStatus[] = [
+    const statusTypes: string[] = [
       "Ainda não confirmado",
       "Em produção",
       "Disponível",
@@ -70,29 +73,13 @@ export default class OrdersService {
       "Finalizado",
     ];
 
-    const currentIndex = statusFlow.indexOf(
-      currentOrder.order_status as OrderStatus,
-    );
+    const isStatusValid: boolean = statusTypes.includes(status);
 
-    const isFinalStatus = currentIndex === statusFlow.length - 1;
+    if (!isStatusValid) throw new Error("Invalid status");
 
-    if (currentIndex === -1) {
-      throw new Error("Invalid current status");
-    }
-
-    if (isFinalStatus) {
-      throw new Error("Order is already in final status");
-    }
-
-    const nextStatus = statusFlow[currentIndex + 1];
-
-    if (!nextStatus) throw new Error("Invalid next status");
-
-    const updatedOrder: IOrder = await this.prisma.orders.update({
+    return this.prisma.orders.update({
       where: { order_id },
-      data: { order_status: nextStatus },
+      data: { order_status: status },
     });
-
-    return { order: updatedOrder, nextStatus };
   }
 }
