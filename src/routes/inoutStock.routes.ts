@@ -9,21 +9,18 @@ const router: Router = express.Router();
 const inoutStockService = new InOutStockService(prisma);
 const inoutStockController = new InOutStockController(inoutStockService);
 
-router.get(
-  "/",
-  // getTokenMiddleware,
-  (req: Request, res: Response) =>
-    inoutStockController.getInOutStockAnalysis(req, res),
+router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
+  inoutStockController.getInOutStockAnalysis(req, res),
 );
 router.post(
   "/incrementInStock",
-  // getTokenMiddleware,
+  getTokenMiddleware,
   (req: Request, res: Response) =>
     inoutStockController.incrementMonthlyInStockQuantity(req, res),
 );
 router.post(
   "/incrementOutStock",
-  // getTokenMiddleware,
+  getTokenMiddleware,
   (req: Request, res: Response) =>
     inoutStockController.incrementMonthlyOutStockQuantity(req, res),
 );
