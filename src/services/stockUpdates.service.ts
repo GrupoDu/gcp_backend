@@ -1,5 +1,6 @@
 import type { PrismaClient } from "../../generated/prisma/client.js";
 import type { IStockUpdates } from "../types/stockUpdates.interface.js";
+import { io } from "../server.ts";
 
 class StockUpdatesService {
   private prisma: PrismaClient;
@@ -10,7 +11,7 @@ class StockUpdatesService {
 
   async getStockUpdates() {
     const stockUpdates = await this.prisma.stock_updates.findMany({
-      take: 5,
+      take: 10,
       orderBy: { created_at: "desc" },
     });
     return stockUpdates;
@@ -24,6 +25,9 @@ class StockUpdatesService {
         date: new Date(),
       },
     });
+
+    io.emit("stockUpdate", stockUpdate);
+
     return stockUpdate;
   }
 }
