@@ -9,11 +9,15 @@ const router: Router = express.Router();
 const stockUpdatesService = new StockUpdatesService(prisma);
 const stockUpdatesController = new StockUpdatesController(stockUpdatesService);
 
-router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
+router.get("/", 
+  // getTokenMiddleware,
+  (req: Request, res: Response) =>
   stockUpdatesController.getStockUpdates(req, res),
 );
-router.post("/", getTokenMiddleware, (req: Request, res: Response) =>
-  stockUpdatesController.getStockUpdates(req, res),
+router.post("/", 
+  // getTokenMiddleware, 
+  (req: Request, res: Response) =>
+  stockUpdatesController.registerStockUpdate(req, res),
 );
 
 export default router;
