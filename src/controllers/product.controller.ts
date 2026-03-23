@@ -22,6 +22,25 @@ class ProductController {
     }
   }
 
+  async getProductById(req: Request, res: Response): Promise<Response> {
+    const { product_uuid } = req.params;
+
+    try {
+      const product = await this.productService.getProductById(
+        product_uuid as string,
+      );
+
+      return res.status(200).json(product);
+    } catch (err) {
+      const error = err as Error;
+
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: error.message,
+      });
+    }
+  }
+
   async registerProduct(req: Request, res: Response): Promise<Response> {
     try {
       const productInfos = req.body;
