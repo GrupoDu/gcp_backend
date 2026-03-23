@@ -27,14 +27,15 @@ class ProductionOrderController {
   }
 
   async getProductionOrderById(req: Request, res: Response): Promise<Response> {
-    const { uuid } = req.params;
+    const { production_order_id } = req.params;
 
     try {
-      if (!uuid) throw new Error("id do registro não informado.");
+      if (!production_order_id)
+        throw new Error("id do registro não informado.");
 
       const targetTask =
         await this.productionOrderService.getProductionOrderById(
-          uuid as string,
+          production_order_id as string,
         );
 
       return res.status(200).json(targetTask);
@@ -72,14 +73,16 @@ class ProductionOrderController {
 
   async removeTask(req: Request, res: Response): Promise<Response> {
     try {
-      const { uuid } = req.params;
+      const { production_order_id } = req.params;
 
-      if (!uuid)
+      if (!production_order_id)
         return res
           .status(422)
           .json({ message: responseMessages.fillAllFieldMessage });
 
-      await this.productionOrderService.removeProductionOrder(uuid as string);
+      await this.productionOrderService.removeProductionOrder(
+        production_order_id as string,
+      );
 
       return res
         .status(200)
@@ -95,12 +98,12 @@ class ProductionOrderController {
   async updateProductionOrder(req: Request, res: Response): Promise<Response> {
     try {
       const ProductionOrderNewValues = req.body;
-      const { uuid } = req.params;
+      const { production_order_id } = req.params;
 
       const updatedProductionOrder =
         await this.productionOrderService.updateProductionOrder(
           ProductionOrderNewValues,
-          uuid as string,
+          production_order_id as string,
         );
 
       return res.status(200).json({
@@ -136,6 +139,33 @@ class ProductionOrderController {
       return res.status(500).json({
         message: responseMessages.catchErrorMessage,
         error: (err as Error).message,
+      });
+    }
+  }
+
+  async stockProductionValidation(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
+    const { production_order_id } = req.params;
+
+    try {
+      if (!production_order_id)
+        throw new Error("Id da ordem de produção não informado.");
+
+      await this.productionOrderService.stockProductionValidation(
+        production_order_id as string,
+      );
+
+      return res.status(200).json({
+        message: "Validação de estoque realizada com sucesso.",
+      });
+    } catch (err) {
+      const error = err as Error;
+
+      return res.status(500).json({
+        message: responseMessages.catchErrorMessage,
+        error: error.message,
       });
     }
   }

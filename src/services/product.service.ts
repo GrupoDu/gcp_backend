@@ -20,6 +20,18 @@ class ProductService {
     return allProducts;
   }
 
+  async getProductById(product_uuid: string): Promise<IProduct> {
+    const product: IProduct | null = await this.prisma.products.findUnique({
+      where: {
+        uuid: product_uuid,
+      },
+    });
+
+    if (!product) throw new Error("Produto não encontrado.");
+
+    return product;
+  }
+
   async registerNewProduct(newProductData: IProductCreate): Promise<IProduct> {
     const { name, description, product_type, image } = newProductData;
 

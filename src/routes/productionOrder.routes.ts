@@ -18,24 +18,36 @@ router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
 router.post("/", getTokenMiddleware, (req: Request, res: Response) =>
   productionOrderController.createNewProductionOrder(req, res),
 );
-router.get("/:uuid", getTokenMiddleware, (req: Request, res: Response) =>
-  productionOrderController.getProductionOrderById(req, res),
+router.get(
+  "/:production_order_id",
+  getTokenMiddleware,
+  (req: Request, res: Response) =>
+    productionOrderController.getProductionOrderById(req, res),
 );
 router.delete(
-  "/:uuid",
+  "/:production_order_id",
   getTokenMiddleware,
   adminAuthMiddleware,
   (req: Request, res: Response) =>
     productionOrderController.removeTask(req, res),
 );
-router.put("/:uuid", getTokenMiddleware, (req: Request, res: Response) =>
-  productionOrderController.updateProductionOrder(req, res),
+router.put(
+  "/:production_order_id",
+  getTokenMiddleware,
+  (req: Request, res: Response) =>
+    productionOrderController.updateProductionOrder(req, res),
 );
 router.put(
   "/deliver/:production_order_id",
   getTokenMiddleware,
   (req: Request, res: Response) =>
     productionOrderController.deliverProductionOrder(req, res),
+);
+router.patch(
+  "/validate/:production_order_id",
+  getTokenMiddleware,
+  (req: Request, res: Response) =>
+    productionOrderController.stockProductionValidation(req, res),
 );
 
 export default router;

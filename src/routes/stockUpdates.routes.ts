@@ -13,7 +13,7 @@ router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
   stockUpdatesController.getStockUpdates(req, res),
 );
 router.post("/", getTokenMiddleware, (req: Request, res: Response) =>
-  stockUpdatesController.getStockUpdates(req, res),
+  stockUpdatesController.registerStockUpdate(req, res),
 );
 
 export default router;

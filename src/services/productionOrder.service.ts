@@ -141,6 +141,19 @@ class ProductionOrderService {
     return deliveredProductOrder;
   }
 
+  async stockProductionValidation(
+    production_order_id: string,
+  ): Promise<IProductionOrder> {
+    return this.prisma.production_order.update({
+      where: {
+        production_order_id,
+      },
+      data: {
+        stock_validation: true,
+      },
+    });
+  }
+
   private verifyDeliveredProductQuantity(
     delivered_product_quantity: number,
     requested_product_quantity: number,

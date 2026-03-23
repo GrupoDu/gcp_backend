@@ -95,6 +95,7 @@ model production_order {
   production_order_description                              String?
   delivery_observation                                      String?
   delivered_product_quantity                                Decimal                  @default(0) @db.Decimal
+  stock_validation                                          Boolean                  @default(false)
   assistants_po_register                                    assistants_po_register[]
   users                                                     users                    @relation(fields: [client_uuid], references: [user_id], onDelete: Cascade, map: "register_client_uuid_fkey")
   employees_production_order_cut_assistantToemployees       employees?               @relation("production_order_cut_assistantToemployees", fields: [cut_assistant], references: [employee_id], map: "register_cut_assistant_fkey")
@@ -157,5 +158,16 @@ model orders {
   delivery_observation String?
   product_type         String
   product_uuid         String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  order_title          String
+  order_deadline       DateTime @db.Date
   products             products @relation(fields: [product_uuid], references: [uuid], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model order_items {
+  order_item_id String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  product_id    String   @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  quantity      Decimal  @default(1) @db.Decimal
+  unit_price    Decimal  @db.Decimal
 }

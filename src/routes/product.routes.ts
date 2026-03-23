@@ -18,6 +18,11 @@ router.post(
   adminAuthMiddleware,
   (req: Request, res: Response) => productController.registerProduct(req, res),
 );
+router.get(
+  "/:product_uuid",
+  getTokenMiddleware,
+  (req: Request, res: Response) => productController.getProductById(req, res),
+);
 router.put("/:uuid", getTokenMiddleware, (req: Request, res: Response) =>
   productController.updateProductData(req, res),
 );
