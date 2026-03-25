@@ -2,10 +2,7 @@ import type { Request, Response } from "express";
 import type ProductionOrderService from "../services/productionOrder.service.js";
 import errorResponseWith from "../utils/errorResponseWith.js";
 import successResponseWith from "../utils/successResponseWith.js";
-import type {
-  IProductionOrder,
-  IProductionOrderCreate,
-} from "../types/productionOrder.interface.js";
+import type { IProductionOrderCreate } from "../types/productionOrder.interface.js";
 import isMissingFields from "../utils/isMissingFields.js";
 import {
   ARBITRARY_FIELDS_MESSAGE,
