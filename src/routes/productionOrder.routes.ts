@@ -1,6 +1,6 @@
 import express from "express";
-import ProductionOrderController from "../controllers/productionOrder.controller.js";
 import type { Request, Response, Router } from "express";
+import ProductionOrderController from "../controllers/productionOrder.controller.js";
 import ProductionOrderService from "../services/productionOrder.service.js";
 import { prisma } from "../../lib/prisma.js";
 import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.js";
@@ -13,10 +13,10 @@ const productionOrderController = new ProductionOrderController(
 );
 
 router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
-  productionOrderController.getAllProductionRegisters(req, res),
+  productionOrderController.getAllProductionOrders(req, res),
 );
 router.post("/", getTokenMiddleware, (req: Request, res: Response) =>
-  productionOrderController.createNewProductionOrder(req, res),
+  productionOrderController.createProductionOrder(req, res),
 );
 router.get(
   "/:production_order_id",
@@ -29,7 +29,7 @@ router.delete(
   getTokenMiddleware,
   adminAuthMiddleware,
   (req: Request, res: Response) =>
-    productionOrderController.removeTask(req, res),
+    productionOrderController.removeProductionOrder(req, res),
 );
 router.put(
   "/:production_order_id",

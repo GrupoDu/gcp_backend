@@ -1,28 +1,37 @@
 import type { Request, Response } from "express";
 import type ProductionOrderService from "../services/productionOrder.service.js";
-import { responseMessages } from "../constants/messages.constants.js";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
+import type { IProductionOrderCreate } from "../types/productionOrder.interface.js";
+import isMissingFields from "../utils/isMissingFields.js";
+import {
+  ARBITRARY_FIELDS_MESSAGE,
+  MISSING_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 
 class ProductionOrderController {
-  private productionOrderService: ProductionOrderService;
+  private _productionOrderService: ProductionOrderService;
 
   constructor(productionOrderService: ProductionOrderService) {
-    this.productionOrderService = productionOrderService;
+    this._productionOrderService = productionOrderService;
   }
 
-  async getAllProductionRegisters(
-    req: Request,
-    res: Response,
-  ): Promise<Response> {
+  async getAllProductionOrders(req: Request, res: Response): Promise<Response> {
     try {
-      const allProductionRegisters =
-        await this.productionOrderService.getAllProductionOrders();
+      const productionOrders =
+        await this._productionOrderService.getAllProductionOrders();
 
-      return res.status(200).json(allProductionRegisters);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            productionOrders,
+            "Dados encontrados com sucesso.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -30,68 +39,107 @@ class ProductionOrderController {
     const { production_order_id } = req.params;
 
     try {
-      if (!production_order_id)
-        throw new Error("id do registro não informado.");
+      if (!production_order_id) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["production_order_id"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
-      const targetTask =
-        await this.productionOrderService.getProductionOrderById(
+      const targetProductionOrder =
+        await this._productionOrderService.getProductionOrderById(
           production_order_id as string,
         );
 
-      return res.status(200).json(targetTask);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            targetProductionOrder,
+            "Registro encontrado com sucesso.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: "Erro interno de servidor.",
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
-  async createNewProductionOrder(
-    req: Request,
-    res: Response,
-  ): Promise<Response> {
+  async createProductionOrder(req: Request, res: Response): Promise<Response> {
     try {
-      const newTaskValues = req.body;
+      const newProductionOrderValues: IProductionOrderCreate = req.body;
+      const fields = Object.keys(newProductionOrderValues);
 
-      const newTask =
-        await this.productionOrderService.createNewProductionOrder(
-          newTaskValues,
+      if (isMissingFields(newProductionOrderValues)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
+      const newProductionOrder =
+        await this._productionOrderService.createNewProductionOrder(
+          newProductionOrderValues,
         );
 
-      return res.status(201).json({
-        message: "Ordem de produção criado com sucesso.",
-        register: newTask,
-      });
+      return res
+        .status(201)
+        .json(
+          successResponseWith(
+            newProductionOrder,
+            "Ordem de produção criada com sucesso.",
+            201,
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
-  async removeTask(req: Request, res: Response): Promise<Response> {
+  async removeProductionOrder(req: Request, res: Response): Promise<Response> {
     try {
       const { production_order_id } = req.params;
 
-      if (!production_order_id)
+      if (!production_order_id) {
         return res
           .status(422)
-          .json({ message: responseMessages.fillAllFieldMessage });
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["production_order_id"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
-      await this.productionOrderService.removeProductionOrder(
-        production_order_id as string,
-      );
+      const removeResponse =
+        await this._productionOrderService.removeProductionOrder(
+          production_order_id as string,
+        );
 
       return res
         .status(200)
-        .json({ message: "Ordem de produção deletada com sucesso. " });
+        .json(
+          successResponseWith(
+            removeResponse,
+            "Ordem de produção deletada com sucesso.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -100,32 +148,63 @@ class ProductionOrderController {
       const ProductionOrderNewValues = req.body;
       const { production_order_id } = req.params;
 
+      if (!production_order_id) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["production_order_id"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
       const updatedProductionOrder =
-        await this.productionOrderService.updateProductionOrder(
+        await this._productionOrderService.updateProductionOrder(
           ProductionOrderNewValues,
           production_order_id as string,
         );
 
-      return res.status(200).json({
-        message: "Registro atualizado com sucesso.",
-        update: updatedProductionOrder,
-      });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            updatedProductionOrder,
+            "Ordem de produção atualizada com sucesso.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
   async deliverProductionOrder(req: Request, res: Response): Promise<Response> {
+    const { production_order_id } = req.params;
+    const { delivered_product_quantity, requested_product_quantity } = req.body;
+
     try {
-      const { production_order_id } = req.params;
-      const { delivered_product_quantity, requested_product_quantity } =
-        req.body;
+      const deliveredAndRequestedQuantity = {
+        delivered_product_quantity,
+        requested_product_quantity,
+      };
+      const fields = Object.keys(deliveredAndRequestedQuantity);
+
+      if (isMissingFields(deliveredAndRequestedQuantity)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const deliveredProductionOrder =
-        await this.productionOrderService.deliverProductionOrder(
+        await this._productionOrderService.deliverProductionOrder(
           production_order_id as string,
           delivered_product_quantity as number,
           requested_product_quantity as number,
@@ -136,10 +215,8 @@ class ProductionOrderController {
         update: deliveredProductionOrder,
       });
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(error.message);
     }
   }
 
@@ -150,23 +227,34 @@ class ProductionOrderController {
     const { production_order_id } = req.params;
 
     try {
-      if (!production_order_id)
-        throw new Error("Id da ordem de produção não informado.");
+      if (!production_order_id) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["production_order_id"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
-      await this.productionOrderService.stockProductionValidation(
+      await this._productionOrderService.stockProductionValidation(
         production_order_id as string,
       );
 
-      return res.status(200).json({
-        message: "Validação de estoque realizada com sucesso.",
-      });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            "Validação realizada.",
+            "Validação de estoque realizada com sucesso.",
+          ),
+        );
     } catch (err) {
       const error = err as Error;
 
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 }
