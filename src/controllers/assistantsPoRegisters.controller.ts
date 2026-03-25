@@ -1,16 +1,22 @@
 import type AssistantsPoRegistersService from "../services/assistantsPoRegisters.service.js";
 import type { Request, Response } from "express";
-import { responseMessages } from "../constants/messages.constants.js";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
+import isMissingFields from "../utils/isMissingFields.js";
+import {
+  ARBITRARY_FIELDS_MESSAGE,
+  MISSING_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 import type {
   IAssistantPORegisterIdentifiers,
   IAssistantsPORegisterCreate,
 } from "../types/assistantsPoRegisters.interface.js";
 
 export default class AssistantsPORegistersController {
-  private assistantsPoRegistersService: AssistantsPoRegistersService;
+  private _assistantsPoRegistersService: AssistantsPoRegistersService;
 
   constructor(assistantsPoRegistersService: AssistantsPoRegistersService) {
-    this.assistantsPoRegistersService = assistantsPoRegistersService;
+    this._assistantsPoRegistersService = assistantsPoRegistersService;
   }
 
   async getAllAssistantsPORegisters(
@@ -19,16 +25,19 @@ export default class AssistantsPORegistersController {
   ): Promise<Response> {
     try {
       const allAssistantsPORegisters =
-        await this.assistantsPoRegistersService.getAllAssistantsPORegisters();
+        await this._assistantsPoRegistersService.getAllAssistantsPORegisters();
 
-      return res.status(200).json(allAssistantsPORegisters);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            allAssistantsPORegisters,
+            "Dados encontrados com sucesso.",
+          ),
+        );
     } catch (err) {
       const error = err as Error;
-
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -39,23 +48,33 @@ export default class AssistantsPORegistersController {
     const { production_order_uuid } = req.params;
 
     try {
-      if (!production_order_uuid)
+      if (!production_order_uuid) {
         return res
-          .status(400)
-          .json({ message: responseMessages.fillAllFieldMessage });
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["production_order_uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const assistantsPORegistersByProductionOrderId =
-        await this.assistantsPoRegistersService.getAssistantsPORegistersByProductionOrderId(
+        await this._assistantsPoRegistersService.getAssistantsPORegistersByProductionOrderId(
           production_order_uuid as string,
         );
-      return res.status(200).json(assistantsPORegistersByProductionOrderId);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            assistantsPORegistersByProductionOrderId,
+            "Registros encontrados com sucesso.",
+          ),
+        );
     } catch (err) {
       const error = err as Error;
-
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -64,27 +83,38 @@ export default class AssistantsPORegistersController {
     res: Response,
   ): Promise<Response> {
     const newAssistantPORegisterValues: IAssistantsPORegisterCreate = req.body;
+    const fields = Object.keys(newAssistantPORegisterValues);
 
     try {
-      if (!newAssistantPORegisterValues)
-        throw new Error(responseMessages.fillAllFieldMessage);
+      if (isMissingFields(newAssistantPORegisterValues)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const newAssistantPORegister =
-        await this.assistantsPoRegistersService.createAssistantPORegister(
+        await this._assistantsPoRegistersService.createAssistantPORegister(
           newAssistantPORegisterValues,
         );
 
-      return res.status(201).json({
-        message: "Registro de assistente criado",
-        newAssistantPORegister,
-      });
+      return res
+        .status(201)
+        .json(
+          successResponseWith(
+            newAssistantPORegister,
+            "Registro de assistente criado com sucesso.",
+            201,
+          ),
+        );
     } catch (err) {
       const error = err as Error;
-
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -93,26 +123,37 @@ export default class AssistantsPORegistersController {
     res: Response,
   ): Promise<Response> {
     const identifierValues: IAssistantPORegisterIdentifiers = req.body;
+    const fields = Object.keys(identifierValues);
 
     try {
-      if (!identifierValues)
-        throw new Error(responseMessages.fillAllFieldMessage);
+      if (isMissingFields(identifierValues)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const assistantPORegisterUpdateResponse =
-        await this.assistantsPoRegistersService.updateAssistantPORegisterAsDelivered(
+        await this._assistantsPoRegistersService.updateAssistantPORegisterAsDelivered(
           identifierValues,
         );
 
       return res
         .status(200)
-        .json({ message: assistantPORegisterUpdateResponse });
+        .json(
+          successResponseWith(
+            assistantPORegisterUpdateResponse,
+            "Registro atualizado como entregue com sucesso.",
+          ),
+        );
     } catch (err) {
       const error = err as Error;
-
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 }

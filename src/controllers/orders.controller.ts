@@ -1,25 +1,30 @@
 import type { Request, Response } from "express";
 import OrdersService from "../services/orders.service.js";
 import type { IOrderCreate, IOrderUpdate } from "../types/orders.interface.js";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
+import isMissingFields from "../utils/isMissingFields.js";
+import {
+  ARBITRARY_FIELDS_MESSAGE,
+  MISSING_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 
 export default class OrdersController {
-  private ordersService: OrdersService;
+  private _ordersService: OrdersService;
 
   constructor(ordersService: OrdersService) {
-    this.ordersService = ordersService;
+    this._ordersService = ordersService;
   }
 
   async getOrders(req: Request, res: Response): Promise<Response> {
     try {
-      const orders = await this.ordersService.getOrders();
-      return res.status(200).json(orders);
-    } catch (error) {
-      console.error("Erro ao buscar pedidos:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Erro interno do servidor",
-        error: error instanceof Error ? error.message : "Erro desconhecido",
-      });
+      const orders = await this._ordersService.getOrders();
+      return res
+        .status(200)
+        .json(successResponseWith(orders, "Pedidos encontrados com sucesso."));
+    } catch (err) {
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -28,62 +33,59 @@ export default class OrdersController {
       const { order_id } = req.params;
 
       if (!order_id || typeof order_id !== "string") {
-        return res.status(400).json({
-          success: false,
-          message: "ID do pedido é obrigatório e deve ser uma string válida",
-        });
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["order_id"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
       }
 
-      const order = await this.ordersService.getOrderById(order_id);
+      const order = await this._ordersService.getOrderById(order_id);
 
       if (!order) {
-        return res.status(404).json({
-          success: false,
-          message: "Pedido não encontrado",
-        });
+        return res
+          .status(404)
+          .json(errorResponseWith("Pedido não encontrado", 404));
       }
 
-      return res.status(200).json(order);
-    } catch (error) {
-      console.error("Erro ao buscar pedido por ID:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Erro interno do servidor",
-        error: error instanceof Error ? error.message : "Erro desconhecido",
-      });
+      return res
+        .status(200)
+        .json(successResponseWith(order, "Pedido encontrado com sucesso."));
+    } catch (err) {
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
   async createOrder(req: Request, res: Response): Promise<Response> {
     try {
       const orderData: IOrderCreate = req.body;
+      const fields = Object.keys(orderData);
 
-      const isAllFieldsFilled =
-        !!orderData.product_quantity ||
-        !!orderData.product_type ||
-        !!orderData.product_uuid;
-
-      if (!isAllFieldsFilled) {
-        return res.status(400).json({
-          success: false,
-          message: "Todos os campos são obrigatórios",
-        });
+      if (isMissingFields(orderData)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
       }
 
-      const newOrder = await this.ordersService.createOrder(orderData);
+      const newOrder = await this._ordersService.createOrder(orderData);
 
-      return res.status(201).json({
-        success: true,
-        data: newOrder,
-        message: "Pedido criado com sucesso",
-      });
-    } catch (error) {
-      console.error("Erro ao criar pedido:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Erro interno do servidor",
-        error: error instanceof Error ? error.message : "Erro desconhecido",
-      });
+      return res
+        .status(201)
+        .json(successResponseWith(newOrder, "Pedido criado com sucesso", 201));
+    } catch (err) {
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -91,35 +93,50 @@ export default class OrdersController {
     try {
       const { order_id } = req.params;
       const updateData: IOrderUpdate = req.body;
+      const fields = Object.keys(updateData);
 
-      const thereAreUpdateFields = Object.keys(updateData).length > 0;
+      if (!order_id) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["order_id"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
-      if (!thereAreUpdateFields)
-        return res.status(400).json({
-          success: false,
-          message: "Nenhum campo para atualização foi fornecido",
-        });
+      if (isMissingFields(updateData)) {
+        return res
+          .status(400)
+          .json(
+            errorResponseWith(
+              "Nenhum campo para atualização foi fornecido",
+              400,
+            ),
+          );
+      }
 
-      const updatedOrder = await this.ordersService.updateOrder(
+      const updatedOrder = await this._ordersService.updateOrder(
         order_id as string,
         updateData,
       );
 
       if (!updatedOrder) {
-        return res.status(404).json({
-          success: false,
-          message: "Pedido não encontrado",
-        });
+        return res
+          .status(404)
+          .json(errorResponseWith("Pedido não encontrado", 404));
       }
 
-      return res.status(200).json(updatedOrder);
-    } catch (error) {
-      console.error("Erro ao atualizar pedido:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Erro interno do servidor",
-        error: error instanceof Error ? error.message : "Erro desconhecido",
-      });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(updatedOrder, "Pedido atualizado com sucesso."),
+        );
+    } catch (err) {
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -127,35 +144,45 @@ export default class OrdersController {
     try {
       const { order_id } = req.params;
       const { status } = req.body;
+      const statusData = { status };
 
-      const isOrderIdNotValid: boolean =
-        !order_id || typeof order_id !== "string";
-      if (isOrderIdNotValid) {
-        return res.status(400).json({
-          success: false,
-          message: "ID do pedido é obrigatório e deve ser uma string válida",
-        });
+      if (!order_id) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["order_id"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
       }
 
-      const isStatusNotValid = !status || typeof status !== "string";
-      if (isStatusNotValid) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Status do pedido é obrigatório e deve ser uma string válida",
-        });
+      if (isMissingFields(statusData)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["status"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
       }
 
-      const result = await this.ordersService.updateOrderStatus(
+      const result = await this._ordersService.updateOrderStatus(
         order_id as string,
         status,
       );
 
-      return res.status(200).json({
-        success: true,
-        data: result,
-        message: `Status do pedido atualizado para: ${status}`,
-      });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            result,
+            `Status do pedido atualizado para: ${status}`,
+          ),
+        );
     } catch (err) {
       const error = err as Error;
 
@@ -163,31 +190,24 @@ export default class OrdersController {
         this.errorsCase(error);
 
       if (isOrderNotFound) {
-        return res.status(404).json({
-          success: false,
-          message: "Pedido não encontrado",
-        });
+        return res
+          .status(404)
+          .json(errorResponseWith("Pedido não encontrado", 404));
       }
 
       if (isCurrentStatusInvalid) {
-        return res.status(400).json({
-          success: false,
-          message: "Status atual inválido",
-        });
+        return res
+          .status(400)
+          .json(errorResponseWith("Status atual inválido", 400));
       }
 
       if (isOrderOnFinalStatus) {
-        return res.status(400).json({
-          success: false,
-          message: "Pedido já está no status final",
-        });
+        return res
+          .status(400)
+          .json(errorResponseWith("Pedido já está no status final", 400));
       }
 
-      return res.status(500).json({
-        success: false,
-        message: "Erro interno do servidor",
-        error: error instanceof Error ? error.message : "Erro desconhecido",
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 

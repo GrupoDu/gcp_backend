@@ -3,6 +3,13 @@ import type AuthService from "../services/auth.service.js";
 import { responseMessages } from "../constants/messages.constants.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
+import isMissingFields from "../utils/isMissingFields.js";
+import {
+  ARBITRARY_FIELDS_MESSAGE,
+  MISSING_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 
 dotenv.config();
 
@@ -32,12 +39,18 @@ class AuthController {
   async userLogin(req: Request, res: Response) {
     try {
       const { email, password, user_type } = req.body;
+      const loginData = { email, password, user_type };
 
-      const isMissingField = !email || !password || !user_type;
-      if (isMissingField) {
+      if (isMissingFields(loginData)) {
         return res
-          .status(400)
-          .json({ message: responseMessages.fillAllFieldMessage });
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["email", "password", "user_type"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
       }
 
       const { user, accessToken, refreshToken } =
@@ -55,20 +68,14 @@ class AuthController {
           ...cookieOptions,
           maxAge: REFRESH_TOKEN_EXPIRY_MS,
         })
-        .json({
-          message: "Usuário logado com sucesso.",
-          user,
-        });
+        .json(successResponseWith({ user }, "Usuário logado com sucesso."));
     } catch (err) {
       const error = err as Error;
       const isInvalidCredentials = error.message === "Credenciais inválidas.";
       if (isInvalidCredentials) {
-        return res.status(401).json({ message: error.message });
+        return res.status(401).json(errorResponseWith(error.message, 401));
       }
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -80,7 +87,7 @@ class AuthController {
       if (isRefreshTokenMissing) {
         return res
           .status(401)
-          .json({ message: "Refresh token não fornecido." });
+          .json(errorResponseWith("Refresh token não fornecido.", 401));
       }
 
       // O service agora retorna AMBOS os tokens (rotação)
@@ -99,15 +106,22 @@ class AuthController {
           maxAge: REFRESH_TOKEN_EXPIRY_MS,
         });
 
-      return res.status(200).json({ message: "Token renovado com sucesso." });
+      return res
+        .status(200)
+        .json(successResponseWith(null, "Token renovado com sucesso."));
     } catch (err) {
       // Em caso de erro, limpa os cookies por segurança
       res.clearCookie("access_token");
       res.clearCookie("refresh_token");
-      return res.status(401).json({
-        message: "Falha ao renovar token.",
-        error: (err as Error).message,
-      });
+      return res
+        .status(401)
+        .json(
+          errorResponseWith(
+            "Falha ao renovar token.",
+            401,
+            (err as Error).message,
+          ),
+        );
     }
   }
 
@@ -127,12 +141,19 @@ class AuthController {
         .clearCookie("access_token", cookieOptions)
         .clearCookie("refresh_token", cookieOptions);
 
-      return res.json({ message: "Usuário deslogado com sucesso." });
+      return res
+        .status(200)
+        .json(successResponseWith(null, "Usuário deslogado com sucesso."));
     } catch (err) {
-      return res.status(500).json({
-        message: "Erro ao fazer logout.",
-        error: (err as Error).message,
-      });
+      return res
+        .status(500)
+        .json(
+          errorResponseWith(
+            "Erro ao fazer logout.",
+            500,
+            (err as Error).message,
+          ),
+        );
     }
   }
 
@@ -141,7 +162,9 @@ class AuthController {
       const userId = (req as any).user?.user_id;
       const isUserIdMissing = !userId;
       if (isUserIdMissing) {
-        return res.status(401).json({ message: "Usuário não autenticado." });
+        return res
+          .status(401)
+          .json(errorResponseWith("Usuário não autenticado.", 401));
       }
 
       await this.authService.revokeAllUserRefreshTokens(userId);
@@ -152,12 +175,21 @@ class AuthController {
         .clearCookie("access_token", cookieOptions)
         .clearCookie("refresh_token", cookieOptions);
 
-      return res.json({ message: "Todos os dispositivos desconectados." });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(null, "Todos os dispositivos desconectados."),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: "Erro ao desconectar dispositivos.",
-        error: (err as Error).message,
-      });
+      return res
+        .status(500)
+        .json(
+          errorResponseWith(
+            "Erro ao desconectar dispositivos.",
+            500,
+            (err as Error).message,
+          ),
+        );
     }
   }
 
@@ -166,15 +198,19 @@ class AuthController {
 
     const isTokenMissing = !token;
     if (isTokenMissing) {
-      return res.status(401).json({ message: "Token inválido." });
+      return res.status(401).json(errorResponseWith("Token inválido.", 401));
     }
 
     try {
       const payload = jwt.verify(token, process.env.JWT_SECRET as string);
 
-      return res.status(200).json({ status: "ok", payload });
+      return res
+        .status(200)
+        .json(successResponseWith({ payload }, "Token válido."));
     } catch {
-      return res.status(401).json({ message: "Token expirado ou inválido." });
+      return res
+        .status(401)
+        .json(errorResponseWith("Token expirado ou inválido.", 401));
     }
   }
 }

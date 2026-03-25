@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import type RegisterAnalysisService from "../services/productionOrderAnalysis.service.js";
-import { responseMessages } from "../constants/messages.constants.js";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
 
 class ProductionOrderAnalysisController {
   private registerAnalysisService: RegisterAnalysisService;
@@ -20,21 +21,36 @@ class ProductionOrderAnalysisController {
       if (registersDataAnalysis.deliveredRegisterQuantity < 0) {
         return res
           .status(200)
-          .json({ message: "Não houve ordem de produção entregues esse mês" });
+          .json(
+            successResponseWith(
+              null,
+              "Não houve ordem de produção entregues esse mês",
+            ),
+          );
       }
 
       if (registersDataAnalysis.notDeliveredRegisterQuantity < 0) {
-        return res.status(200).json({
-          message: "Não houve ordem de produção não entregues esse mês",
-        });
+        return res
+          .status(200)
+          .json(
+            successResponseWith(
+              null,
+              "Não houve ordem de produção não entregues esse mês",
+            ),
+          );
       }
 
-      return res.status(200).json(registersDataAnalysis);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            registersDataAnalysis,
+            "Análise de ordem de produção encontrada com sucesso.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 }

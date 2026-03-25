@@ -1,7 +1,13 @@
 import type { Request, Response } from "express";
-import { responseMessages } from "../constants/messages.constants.js";
 import type UserService from "../services/user.service.js";
 import dotenv from "dotenv";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
+import isMissingFields from "../utils/isMissingFields.js";
+import {
+  ARBITRARY_FIELDS_MESSAGE,
+  MISSING_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 
 dotenv.config();
 
@@ -16,12 +22,14 @@ class UserController {
     try {
       const allUsers = await this.userService.getAllUsersData();
 
-      return res.status(200).json(allUsers);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(allUsers, "Usuários encontrados com sucesso."),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -29,16 +37,26 @@ class UserController {
     try {
       const { uuid } = req.params;
 
-      if (!uuid) throw new Error("ID do usuário faltando.");
+      if (!uuid) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const userData = await this.userService.getUserById(uuid as string);
 
-      return res.status(200).json(userData);
+      return res
+        .status(200)
+        .json(successResponseWith(userData, "Usuário encontrado com sucesso."));
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -46,29 +64,47 @@ class UserController {
     try {
       const allSupervisors = await this.userService.getAllSupervisorsUsers();
 
-      return res.status(200).json(allSupervisors);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            allSupervisors,
+            "Supervisores encontrados com sucesso.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
   async createNewUser(req: Request, res: Response): Promise<Response> {
     try {
       const newUserInfos = req.body;
+      const fields = Object.keys(newUserInfos);
+
+      if (isMissingFields(newUserInfos)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const newUser = await this.userService.registerNewUser(newUserInfos);
 
       return res
         .status(201)
-        .json({ message: "Novo usuário criado com sucesso.", user: newUser });
+        .json(
+          successResponseWith(newUser, "Novo usuário criado com sucesso.", 201),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -76,14 +112,26 @@ class UserController {
     try {
       const { uuid } = req.params;
 
+      if (!uuid) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
       await this.userService.deleteUserData(uuid as string);
 
-      return res.status(200).json({ message: "Usuário deletado com sucesso." });
+      return res
+        .status(200)
+        .json(successResponseWith(null, "Usuário deletado com sucesso."));
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -91,21 +139,43 @@ class UserController {
     try {
       const updateInfos = req.body;
       const { uuid } = req.params;
+      const fields = Object.keys(updateInfos);
+
+      if (!uuid) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
+      if (isMissingFields(updateInfos)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const updatedUser = await this.userService.updateUserData(
         updateInfos,
         uuid as string,
       );
 
-      return res.status(200).json({
-        message: "Usuário editado com successo.",
-        update: updatedUser,
-      });
+      return res
+        .status(200)
+        .json(successResponseWith(updatedUser, "Usuário editado com sucesso."));
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -114,17 +184,19 @@ class UserController {
       const token = req.tokenResponse?.payload;
 
       if (!token?.isValid) {
-        return res.status(401).json({ message: "Token expirado." });
+        return res.status(401).json(errorResponseWith("Token expirado.", 401));
       }
 
-      if (token?.payload) return res.status(200).json(token.payload);
+      if (token?.payload) {
+        return res
+          .status(200)
+          .json(successResponseWith(token.payload, "Token válido."));
+      }
 
-      return res.status(401).json({ message: "Token inválido." });
+      return res.status(401).json(errorResponseWith("Token inválido.", 401));
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 }

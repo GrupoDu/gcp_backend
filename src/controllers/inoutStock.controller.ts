@@ -1,6 +1,11 @@
-import { responseMessages } from "../constants/messages.constants.js";
 import type InOutStockService from "../services/inoutStock.service.js";
 import type { Request, Response } from "express";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
+import {
+  ARBITRARY_FIELDS_MESSAGE,
+  MISSING_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 
 class InOutStockController {
   private inoutStockService: InOutStockService;
@@ -14,14 +19,17 @@ class InOutStockController {
       const inOutStockAnalysis =
         await this.inoutStockService.getInOutStockAnalysis();
 
-      return res.status(200).json(inOutStockAnalysis);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            inOutStockAnalysis,
+            "Análise de estoque encontrada com sucesso.",
+          ),
+        );
     } catch (err) {
       const error = err as Error;
-
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -34,22 +42,24 @@ class InOutStockController {
     try {
       if (!quantity) {
         return res
-          .status(400)
-          .json({ message: "Quantidade de produtos produzidos obrigatorio." });
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["quantity"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
       }
 
       await this.inoutStockService.incrementMonthlyInStockQuantity(quantity);
 
       return res
         .status(200)
-        .json({ message: "Estoque incrementado com sucesso." });
+        .json(successResponseWith(null, "Estoque incrementado com sucesso."));
     } catch (err) {
       const error = err as Error;
-
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -62,22 +72,24 @@ class InOutStockController {
     try {
       if (!quantity) {
         return res
-          .status(400)
-          .json({ message: "Quantidade de produtos produzidos obrigatorio." });
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["quantity"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
       }
 
       await this.inoutStockService.incrementMonthlyOutStockQuantity(quantity);
 
       return res
         .status(200)
-        .json({ message: "Estoque incrementado com sucesso." });
+        .json(successResponseWith(null, "Estoque decrementado com sucesso."));
     } catch (err) {
       const error = err as Error;
-
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 }

@@ -1,24 +1,36 @@
 import type { Request, Response } from "express";
-import { responseMessages } from "../constants/messages.constants.js";
 import type EmployeeService from "../services/employee.service.js";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
+import isMissingFields from "../utils/isMissingFields.js";
+import {
+  ARBITRARY_FIELDS_MESSAGE,
+  MISSING_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 
 class EmployeeController {
-  private employeeService: EmployeeService;
+  private _employeeService: EmployeeService;
 
   constructor(employeeService: EmployeeService) {
-    this.employeeService = employeeService;
+    this._employeeService = employeeService;
   }
 
   async getAllEmployeesData(req: Request, res: Response): Promise<Response> {
     try {
-      const allEmployeesData = await this.employeeService.getAllEmployeesData();
+      const allEmployeesData =
+        await this._employeeService.getAllEmployeesData();
 
-      return res.status(200).json(allEmployeesData);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            allEmployeesData,
+            "Dados encontrados com sucesso.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -26,35 +38,68 @@ class EmployeeController {
     try {
       const { uuid } = req.params;
 
-      const employeeData = await this.employeeService.getEmployeeData(
+      if (!uuid) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
+      const employeeData = await this._employeeService.getEmployeeData(
         uuid as string,
       );
 
-      return res.status(200).json(employeeData);
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            employeeData,
+            "Dados do funcionário encontrados com sucesso.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
   async createNewEmployee(req: Request, res: Response): Promise<Response> {
     try {
       const newEmployeeData = req.body;
+      const fields = Object.keys(newEmployeeData);
+
+      if (isMissingFields(newEmployeeData)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const newEmployee =
-        await this.employeeService.registerNewEmployee(newEmployeeData);
+        await this._employeeService.registerNewEmployee(newEmployeeData);
 
-      return res.status(201).json({
-        message: "Funcionário adicionado ao sistema.",
-        employee: newEmployee,
-      });
+      return res
+        .status(201)
+        .json(
+          successResponseWith(
+            newEmployee,
+            "Funcionário adicionado ao sistema.",
+            201,
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -62,16 +107,26 @@ class EmployeeController {
     try {
       const { uuid } = req.params;
 
-      await this.employeeService.removeEmployeeData(uuid as string);
+      if (!uuid) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
+      await this._employeeService.removeEmployeeData(uuid as string);
 
       return res
         .status(200)
-        .json({ message: "Funcionário removido do sistema." });
+        .json(successResponseWith(null, "Funcionário removido do sistema."));
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -79,21 +134,48 @@ class EmployeeController {
     try {
       const updateEmployeeValues = req.body;
       const { uuid } = req.params;
+      const fields = Object.keys(updateEmployeeValues);
 
-      const updatedEmployee = await this.employeeService.updateEmployeeData(
+      if (!uuid) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
+      if (isMissingFields(updateEmployeeValues)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(fields),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
+      const updatedEmployee = await this._employeeService.updateEmployeeData(
         updateEmployeeValues,
         uuid as string,
       );
 
-      return res.status(200).json({
-        message: "Dados do funcionário atualizados.",
-        udpate: updatedEmployee,
-      });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            updatedEmployee,
+            "Dados do funcionário atualizados.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -104,20 +186,34 @@ class EmployeeController {
     try {
       const { uuid } = req.params;
 
+      if (!uuid) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
       const updatedEmployeeActivity =
-        await this.employeeService.incrementEmployeeActivitiesQuantity(
+        await this._employeeService.incrementEmployeeActivitiesQuantity(
           uuid as string,
         );
 
-      return res.status(200).json({
-        message: "Quantidade de atividades atualizada.",
-        udpate: updatedEmployeeActivity,
-      });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            updatedEmployeeActivity,
+            "Quantidade de atividades atualizada.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 
@@ -128,22 +224,49 @@ class EmployeeController {
     try {
       const { uuid } = req.params;
       const { productsQuantity } = req.body;
+      const productData = { productsQuantity };
+
+      if (!uuid) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["uuid"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
+      if (isMissingFields(productData)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE(["productsQuantity"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
 
       const updatedEmployee =
-        await this.employeeService.incrementEmployeeProductsProducedQuantity(
+        await this._employeeService.incrementEmployeeProductsProducedQuantity(
           uuid as string,
           productsQuantity,
         );
 
-      return res.status(200).json({
-        message: "Quantidade de produtos produzidos atualizada.",
-        udpate: updatedEmployee,
-      });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            updatedEmployee,
+            "Quantidade de produtos produzidos atualizada.",
+          ),
+        );
     } catch (err) {
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: (err as Error).message,
-      });
+      const error = err as Error;
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 }

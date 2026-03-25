@@ -1,6 +1,12 @@
 import type { Request, Response } from "express";
 import type DeliverProductionOrderService from "../services/deliverProductionOrder.service.js";
-import { responseMessages } from "../constants/messages.constants.js";
+import errorResponseWith from "../utils/errorResponseWith.js";
+import successResponseWith from "../utils/successResponseWith.js";
+import isMissingFields from "../utils/isMissingFields.js";
+import {
+  ARBITRARY_FIELDS_MESSAGE,
+  MISSING_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 
 class DeliverProductionOrderController {
   private deliverProductionOrderService: DeliverProductionOrderService;
@@ -14,17 +20,25 @@ class DeliverProductionOrderController {
       const { production_order_id } = req.params;
       const { delivered_product_quantity, requested_product_quantity } =
         req.body;
+      const deliveryData = {
+        delivered_product_quantity,
+        requested_product_quantity,
+      };
 
-      if (!production_order_id) {
+      if (isMissingFields(deliveryData) || !production_order_id) {
         return res
-          .status(400)
-          .json({ message: "ID da ordem de produção não fornecido." });
-      }
-
-      if (!delivered_product_quantity || !requested_product_quantity) {
-        return res
-          .status(400)
-          .json({ message: responseMessages.fillAllFieldMessage });
+          .status(422)
+          .json(
+            errorResponseWith(
+              ARBITRARY_FIELDS_MESSAGE([
+                "delivered_product_quantity",
+                "requested_product_quantity",
+                "prodution_order_id",
+              ]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
       }
 
       const deliveredProductionOrder =
@@ -34,22 +48,21 @@ class DeliverProductionOrderController {
           requested_product_quantity as number,
         );
 
-      return res.status(200).json({
-        message: "Ordem de produção entregue com sucesso.",
-        update: deliveredProductionOrder,
-      });
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            deliveredProductionOrder,
+            "Ordem de produção entregue com sucesso.",
+          ),
+        );
     } catch (err) {
       const error = err as Error;
 
       if (error.message.includes("não concluíram"))
-        return res.status(400).json({
-          message: error.message,
-        });
+        return res.status(400).json(errorResponseWith(error.message, 400));
 
-      return res.status(500).json({
-        message: responseMessages.catchErrorMessage,
-        error: error.message,
-      });
+      return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
 }
