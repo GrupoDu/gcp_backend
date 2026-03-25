@@ -1,8 +1,8 @@
 import { describe, it, beforeEach, vi, expect } from "vitest";
-import GoalService from "../goal.service";
+import GoalService from "../goal.service.js";
 
-vi.mock("../../../lib/prisma.ts");
-import prisma from "../../tests/__mocks__/@prisma/prisma";
+vi.mock("../../../lib/prisma.js");
+import prisma from "../../tests/__mocks__/@prisma/prisma.js";
 import { randomUUID } from "node:crypto";
 
 describe("Testes de criação de meta.", () => {
@@ -24,7 +24,7 @@ describe("Testes de criação de meta.", () => {
   });
 
   it("Deve criar uma nova meta para usuário.", async () => {
-    prisma.goal.create.mockResolvedValue(newMockedGoal);
+    prisma.goals.create.mockResolvedValue(newMockedGoal);
 
     const newGoal = await goalService.createNewGoal(newMockedGoal);
 

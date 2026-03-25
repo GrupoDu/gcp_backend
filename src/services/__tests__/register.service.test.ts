@@ -1,6 +1,6 @@
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
-import RegisterService from "../register.service.js";
-import { mockedRegisterFactory } from "../../tests/factories/register.factory.js";
+import ProductionOrderService from "../productionOrder.service.js";
+import { mockedRegisterFactory } from "../../tests/factories/productionOrder.factory.js";
 import jwt from "jsonwebtoken";
 
 vi.mock("../../../lib/prisma.js");
@@ -8,27 +8,28 @@ vi.mock("../../../lib/prisma.js");
 import prisma from "../../tests/__mocks__/@prisma/prisma.js";
 
 describe("Testes de criação de registro.", () => {
-  let registerService: RegisterService;
+  let productionOrderService: ProductionOrderService;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    registerService = new RegisterService(prisma);
+    productionOrderService = new ProductionOrderService(prisma);
   });
 
-  it("Deve conseguir criar um novo registro.", async () => {
+  it("Deve conseguir criar um novo registro.", async ({ skip }) => {
     const mockedRegister = mockedRegisterFactory();
 
-    prisma.register.create.mockResolvedValue(mockedRegister);
+    prisma.production_order.create.mockResolvedValue(mockedRegister);
 
-    const newRegister = await registerService.createNewRegister(mockedRegister);
+    const newRegister =
+      await productionOrderService.createNewProductionOrder(mockedRegister);
 
     expect(newRegister.title).toBe("Título do registro");
   });
 });
 
 describe("Testes de update de registro.", () => {
-  let registerService: RegisterService;
+  let productionOrderService: ProductionOrderService;
   let jwtVerifySpy: any;
 
   beforeEach(() => {
@@ -40,7 +41,7 @@ describe("Testes de update de registro.", () => {
       user_id: "123",
       user_type: "admin",
     });
-    registerService = new RegisterService(prisma);
+    productionOrderService = new ProductionOrderService(prisma);
   });
 
   afterEach(() => {
@@ -52,16 +53,16 @@ describe("Testes de update de registro.", () => {
       title: "Update de título",
     });
 
-    prisma.register.update.mockResolvedValue(mockedTitleUpdateRegister);
+    prisma.production_order.update.mockResolvedValue(mockedTitleUpdateRegister);
 
-    const updateRegister = await registerService.updateRegisterData(
+    const updateRegister = await productionOrderService.updateProductionOrder(
       mockedTitleUpdateRegister,
       "550e8400-e29b-41d4-a716-446655440000",
       jwtVerifySpy,
     );
 
     expect(updateRegister.title).toBe("Update de título");
-    expect(updateRegister.register_id).toBe(
+    expect(updateRegister.production_order_id).toBe(
       "550e8400-e29b-41d4-a716-446655440000",
     );
   });
@@ -71,9 +72,11 @@ describe("Testes de update de registro.", () => {
       description: "Atualizando a descrição desse registro.",
     });
 
-    prisma.register.update.mockResolvedValue(mockedDescriptionUpdateRegister);
+    prisma.production_order.update.mockResolvedValue(
+      mockedDescriptionUpdateRegister,
+    );
 
-    const updateRegister = await registerService.updateRegisterData(
+    const updateRegister = await productionOrderService.updateProductionOrder(
       mockedDescriptionUpdateRegister,
       "550e8400-e29b-41d4-a716-446655440000",
       jwtVerifySpy,
@@ -82,7 +85,7 @@ describe("Testes de update de registro.", () => {
     expect(updateRegister.description).toBe(
       "Atualizando a descrição desse registro.",
     );
-    expect(updateRegister.register_id).toBe(
+    expect(updateRegister.production_order_id).toBe(
       "550e8400-e29b-41d4-a716-446655440000",
     );
   });
@@ -92,9 +95,11 @@ describe("Testes de update de registro.", () => {
       cut_assistant: "Sergio",
     });
 
-    prisma.register.update.mockResolvedValue(mockedCutAssistantUpdateRegister);
+    prisma.production_order.update.mockResolvedValue(
+      mockedCutAssistantUpdateRegister,
+    );
 
-    const updateRegister = await registerService.updateRegisterData(
+    const updateRegister = await productionOrderService.updateProductionOrder(
       mockedCutAssistantUpdateRegister,
       "550e8400-e29b-41d4-a716-446655440000",
       jwtVerifySpy,
@@ -112,11 +117,11 @@ describe("Testes de update de registro.", () => {
       throw new Error("Token invalido");
     });
 
-    prisma.register.update.mockResolvedValue(mockedTitleUpdateRegister);
+    prisma.production_order.update.mockResolvedValue(mockedTitleUpdateRegister);
 
     expect(
       async () =>
-        await registerService.updateRegisterData(
+        await productionOrderService.updateProductionOrder(
           mockedTitleUpdateRegister,
           "550e8400-e29b-41d4-a716-446655440000",
           jwtVerifySpy,
