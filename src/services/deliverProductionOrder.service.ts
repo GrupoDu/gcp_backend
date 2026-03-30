@@ -59,10 +59,11 @@ class DeliverProductionOrderService {
     delivered_product_quantity: number,
     requested_product_quantity: number,
   ) {
-    if (delivered_product_quantity > requested_product_quantity)
+    if (delivered_product_quantity > requested_product_quantity) {
       throw new Error(
         "Quantidade entregue maior que a quantidade requisitada.",
       );
+    }
   }
 }
 
