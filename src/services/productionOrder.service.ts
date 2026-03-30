@@ -81,8 +81,8 @@ class ProductionOrderService {
       throw new Error("Nenhum campo fornecido.");
 
     this.verifyDeliveredProductQuantity(
-      productionOrderUpdatedFields.delivered_product_quantity,
-      productionOrderUpdatedFields.requested_product_quantity,
+      Number(productionOrderUpdatedFields.delivered_product_quantity),
+      Number(productionOrderUpdatedFields.requested_product_quantity),
     );
 
     return this._prisma.production_order.update({
