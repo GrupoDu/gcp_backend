@@ -8,6 +8,8 @@ export interface IGoal {
   goal_status: string;
 }
 
+export interface IGoalCreate extends Omit<IGoal, "goal_id"> {}
+
 export interface IEmployeeGoal extends Omit<IGoal, "employee_goal"> {
   employee_goal: string | null;
 }
