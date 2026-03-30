@@ -1,11 +1,11 @@
-import express, { Router, type Request, type Response } from "express";
+import { Router, type Request, type Response } from "express";
 import UserController from "../controllers/user.controller.js";
 import UserService from "../services/user.service.js";
 import { prisma } from "../../lib/prisma.js";
 import { adminAuthMiddleware } from "../middlewares/adminAuth.middleware.js";
 import { getTokenMiddleware } from "../middlewares/getToken.middleware.js";
 
-const router: Router = express.Router();
+const router: Router = Router();
 const userService = new UserService(prisma);
 const userController = new UserController(userService);
 
@@ -28,19 +28,19 @@ router.get("/validator", getTokenMiddleware, (req: Request, res: Response) =>
   userController.tokenValidator(req, res),
 );
 router.get(
-  "/:uuid",
+  "/:user_uuid",
   getTokenMiddleware,
   adminAuthMiddleware,
   (req: Request, res: Response) => userController.getUserById(req, res),
 );
 router.delete(
-  "/:uuid",
+  "/:user_uuid",
   getTokenMiddleware,
   adminAuthMiddleware,
   (req: Request, res: Response) => userController.deleteUser(req, res),
 );
 router.put(
-  "/:uuid",
+  "/:user_uuid",
   getTokenMiddleware,
   adminAuthMiddleware,
   (req: Request, res: Response) => userController.updateUserData(req, res),
