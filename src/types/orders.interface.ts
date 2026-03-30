@@ -5,10 +5,7 @@ export interface IOrder {
   order_deadline: Date;
   order_title: string;
   order_description: string | null;
-  product_quantity: number;
   delivery_observation: string | null;
-  product_type: string;
-  product_uuid: string;
 }
 
 export interface IOrderCreate extends Omit<
