@@ -53,7 +53,7 @@ class EmployeeController {
     }
   }
 
-  async getEmployeeData(req: Request, res: Response): Promise<Response> {
+  async getEmployeeDataById(req: Request, res: Response): Promise<Response> {
     const { employee_uuid } = req.params;
 
     try {
@@ -70,7 +70,7 @@ class EmployeeController {
       }
 
       const employeeData =
-        await this._employeeService.getEmployeeData(employee_uuid);
+        await this._employeeService.getEmployeeDataById(employee_uuid);
 
       return res
         .status(200)
