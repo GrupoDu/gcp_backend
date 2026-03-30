@@ -37,7 +37,8 @@ class GoalService {
 
     isValidDate(newGoalData.goal_deadline.toString());
 
-    if (newGoalData.goal_type === "Funcionário") {
+    const isEmployeeGoal = newGoalData.goal_type === "Funcionário";
+    if (isEmployeeGoal) {
       return this.createEmployeeGoal(newGoalData);
     }
 
