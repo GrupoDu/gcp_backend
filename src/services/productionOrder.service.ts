@@ -11,6 +11,17 @@ import { io } from "../server.js";
 
 dotenv.config();
 
+/**
+ * Service responsável por gerenciar ordens de produção.
+ * @see ProductionOrderController
+ * @method getAllProductionOrders
+ * @method getProductionOrderById
+ * @method createProductionOrder
+ * @method updateProductionOrder
+ * @method removeProductionOrder
+ * @method deliverProductionOrder
+ * @method stockProductionValidation
+ */
 class ProductionOrderService {
   private _prisma: PrismaClient;
 
@@ -132,10 +143,11 @@ class ProductionOrderService {
     delivered_product_quantity: number,
     requested_product_quantity: number,
   ) {
-    if (delivered_product_quantity > requested_product_quantity)
+    if (delivered_product_quantity > requested_product_quantity) {
       throw new Error(
         "Quantidade entregue maior que a quantidade requisitada.",
       );
+    }
   }
 }
 
