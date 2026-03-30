@@ -88,14 +88,9 @@ class UserService {
 
   async registerNewUser(userInfos: IUserCreate): Promise<IUserPublic> {
     const saltRounds = process.env.SALT_ROUNDS;
-    const { name, email, password, user_type } = userInfos;
 
     if (!saltRounds) {
       throw new Error("Variável de ambiente SALT_ROUNDS não encontrada.");
-    }
-
-    if (!name || !email || !password || !user_type) {
-      throw new Error(responseMessages.fillAllFieldMessage);
     }
 
     isEmailFormatValid(userInfos.email);
@@ -123,9 +118,7 @@ class UserService {
     userNewData: IUserUpdate,
     userUuid: string,
   ): Promise<IUserPublic> {
-    if (!userUuid) {
-      throw new Error(responseMessages.fillAllFieldMessage);
-    }
+    if (!userUuid) throw new Error(responseMessages.fillAllFieldMessage);
 
     const updateFields = removeUndefinedUpdateFields(userNewData);
 
@@ -137,9 +130,9 @@ class UserService {
         user_id: userUuid,
       },
       data: {
-        email: updateFields.email,
-        name: updateFields.name,
-        user_type: updateFields.user_type,
+        email: String(updateFields.email),
+        name: String(updateFields.name),
+        user_type: String(updateFields.user_type),
       },
     });
 
@@ -155,9 +148,7 @@ class UserService {
       },
     });
 
-    if (!deletedUser) {
-      throw new Error("Usuário não encontrado.");
-    }
+    if (!deletedUser) throw new Error("Usuário não encontrado.");
 
     return "Usuário excluido com sucesso";
   }
