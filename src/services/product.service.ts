@@ -42,17 +42,9 @@ class ProductService {
   }
 
   async registerNewProduct(newProductData: IProductCreate): Promise<IProduct> {
-    const { name, description, product_type, image } = newProductData;
-
-    if (!name || !description || !product_type || !image) {
-      throw new Error(responseMessages.fillAllFieldMessage);
-    }
-
-    const newProduct: IProduct = await this._prisma.products.create({
+    return this._prisma.products.create({
       data: newProductData,
     });
-
-    return newProduct;
   }
 
   async updateProductData(
