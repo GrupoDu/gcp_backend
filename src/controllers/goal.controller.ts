@@ -6,11 +6,7 @@ import {
   REQUIRED_FIELDS_MESSAGE,
   MISSING_FIELDS_MESSAGE,
 } from "../constants/messages.constants.js";
-import type {
-  IGoal,
-  IGoalCreate,
-  IGoalUpdate,
-} from "../types/goal.interface.js";
+import type { IGoalCreate, IGoalUpdate } from "../types/goal.interface.js";
 import checkMissingFields from "../utils/checkMissingFields.js";
 import { GoalSchema, GoalUpdateSchema } from "../schemas/goal.schema.js";
 import { hasValidString } from "../utils/hasValidString.js";
