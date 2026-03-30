@@ -81,7 +81,7 @@ class EmployeeService {
 
     const updatedEmployee: IEmployee = await this._prisma.employees.update({
       where: {
-        employee_id: employeeUuid as string,
+        employee_id: employeeUuid,
       },
       data: updateFields,
     });
