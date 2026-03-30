@@ -110,21 +110,21 @@ class ProductController {
 
   async deleteProduct(req: Request, res: Response): Promise<Response> {
     try {
-      const { uuid } = req.params;
+      const { product_uuid } = req.params;
 
-      if (!hasValidString(uuid)) {
+      if (!hasValidString(product_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["uuid"]),
+              REQUIRED_FIELDS_MESSAGE(["product_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
           );
       }
 
-      await this._productService.deleteProduct(uuid);
+      await this._productService.deleteProduct(product_uuid);
 
       return res
         .status(200)
@@ -137,7 +137,7 @@ class ProductController {
 
   async updateProductData(req: Request, res: Response): Promise<Response> {
     const productNewData = req.body as IProductUpdate;
-    const { uuid } = req.params;
+    const { product_uuid } = req.params;
 
     try {
       const productRecord = productNewData as unknown as Record<
@@ -148,12 +148,12 @@ class ProductController {
       const { schemaErr, requiredFieldsMessage, isMissingFields } =
         checkMissingFields(productRecord, ProductUpdateSchema);
 
-      if (!hasValidString(uuid)) {
+      if (!hasValidString(product_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["uuid"]),
+              REQUIRED_FIELDS_MESSAGE(["product_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
@@ -168,7 +168,7 @@ class ProductController {
 
       const updatedProduct = await this._productService.updateProductData(
         productNewData,
-        uuid,
+        product_uuid,
       );
 
       return res
