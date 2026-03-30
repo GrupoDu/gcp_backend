@@ -35,10 +35,6 @@ class EmployeeService {
   }
 
   async getEmployeeDataById(employeeUuid: string): Promise<IEmployee> {
-    if (!employeeUuid) {
-      throw new Error("ID do funcionário nao fornecido.");
-    }
-
     const employeeData: IEmployee | null =
       await this._prisma.employees.findUnique({
         where: {
@@ -90,9 +86,7 @@ class EmployeeService {
   }
 
   async removeEmployeeData(employeeUuid: string): Promise<string> {
-    if (!employeeUuid) {
-      throw new Error(responseMessages.fillAllFieldMessage);
-    }
+    if (!employeeUuid) throw new Error(responseMessages.fillAllFieldMessage);
 
     await this._prisma.employees.delete({
       where: {
