@@ -42,9 +42,7 @@ class UserService {
       },
     });
 
-    if (allUsersData.length < 1) {
-      throw new Error("Nenhum usuário encontrado.");
-    }
+    if (allUsersData.length < 1) throw new Error("Nenhum usuário encontrado.");
 
     return allUsersData;
   }
@@ -89,9 +87,8 @@ class UserService {
   async registerNewUser(userInfos: IUserCreate): Promise<IUserPublic> {
     const saltRounds = process.env.SALT_ROUNDS;
 
-    if (!saltRounds) {
+    if (!saltRounds)
       throw new Error("Variável de ambiente SALT_ROUNDS não encontrada.");
-    }
 
     isEmailFormatValid(userInfos.email);
 
@@ -121,9 +118,9 @@ class UserService {
     if (!userUuid) throw new Error(responseMessages.fillAllFieldMessage);
 
     const updateFields = removeUndefinedUpdateFields(userNewData);
+    const hasNoFieldsToUpdate = Object.keys(updateFields).length < 1;
 
-    if (Object.keys(updateFields).length < 1)
-      throw new Error("Nenhum campo fornecido");
+    if (hasNoFieldsToUpdate) throw new Error("Nenhum campo fornecido");
 
     const updatedUser: IUserPublic = await this._prisma.users.update({
       where: {
