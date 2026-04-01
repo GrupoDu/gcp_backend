@@ -42,7 +42,10 @@ export default class AssistantsPoRegistersService {
   ): Promise<IAssistantsPORegisters> {
     const newAssistantPORegister =
       await this._prisma.assistants_po_register.create({
-        data: newAssistantPORegisterValues,
+        data: {
+          ...newAssistantPORegisterValues,
+          delivered: false,
+        },
       });
 
     return newAssistantPORegister;
