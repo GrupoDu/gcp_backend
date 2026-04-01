@@ -21,6 +21,10 @@ export interface IProductionOrder {
   stock_validation?: boolean;
 }
 
+/**
+ * Campos omitidos na criação de ordem de produção
+ * @see {IProductionOrder}
+ */
 type createOmitFields =
   | "production_order_id"
   | "created_at"
@@ -33,6 +37,11 @@ type createOmitFields =
   | "fold_assistant"
   | "cut_assistant";
 
+/**
+ * @see {IProductionOrder}
+ * @extends {IProductionOrder}
+ * @Omit production_order_id, created_at, delivered_product_quantity, stock_validation, delivered_at, employee_uuid, finishing_assistant, paint_assistant, fold_assistant, cut_assistant
+ */
 export interface IProductionOrderCreate extends Omit<
   IProductionOrder,
   createOmitFields | "product_uuid" | "client_uuid"
@@ -49,15 +58,30 @@ export interface IProductionOrderCreate extends Omit<
   };
 }
 
+/**
+ * @see {IProductionOrder}
+ * @extends {IProductionOrder}
+ * @Omit production_order_id
+ */
 export interface IProductionOrderUpdate extends Partial<
   Omit<IProductionOrder, "production_order_id">
 > {}
 
+/**
+ * @see {IProductionOrder}
+ * @extends {IProductionOrder}
+ * @Pick production_order_id, delivered_product_quantity, product_quantity
+ */
 export interface IProductionOrderDeliver extends Pick<
   IProductionOrder,
   "production_order_id" & "delivered_product_quantity" & "product_quantity"
 > {}
 
+/**
+ * @see {IProductionOrder}
+ * @extends {IProductionOrder}
+ * @Omit delivered_product_quantity, product_quantity
+ */
 export interface IProductionOrderTestType extends Omit<
   IProductionOrder,
   "delivered_product_quantity" | "product_quantity"

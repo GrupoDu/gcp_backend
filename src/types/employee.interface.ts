@@ -9,12 +9,27 @@ export interface IEmployee {
   produced_quantity: Decimal;
 }
 
+/**
+ * @extends {IEmployee}
+ * @see {IEmployee}
+ * @Omit employee_id
+ */
 export interface IEmployeeCreate extends Omit<IEmployee, "employee_id"> {}
 
+/**
+ * @extends {IEmployee}
+ * @see {IEmployee}
+ * @Omit employee_id
+ */
 export interface IEmployeeUpdate extends Partial<
   Omit<IEmployee, "employee_id">
 > {}
 
+/**
+ * @extends {IEmployee}
+ * @see {IEmployee}
+ * @Omit delivered_activities_quantity, not_delivered_activities_quantity, produced_quantity
+ */
 export interface IEmployeeTestType extends Omit<
   IEmployee,
   | "delivered_activities_quantity"

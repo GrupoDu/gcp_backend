@@ -8,9 +8,18 @@ export interface IOrder {
   delivery_observation: string | null;
 }
 
+/**
+ * @see {IOrder}
+ * @extends {IOrder}
+ * @Omit order_id, created_at, order_status
+ */
 export interface IOrderCreate extends Omit<
   IOrder,
   "order_id" | "created_at" | "order_status"
 > {}
 
+/**
+ * @see {IOrder}
+ * @extends {IOrder}
+ */
 export interface IOrderUpdate extends Partial<IOrder> {}

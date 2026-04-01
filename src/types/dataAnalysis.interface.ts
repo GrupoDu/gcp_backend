@@ -6,10 +6,19 @@ export interface IProductionAnalysis {
   nextMonth: Date;
 }
 
+/**
+ * @extends {IProductionAnalysis}
+ * @see {IProductionAnalysis}
+ */
 export interface IProductProductionAnalysis extends IProductionAnalysis {
   productName: string;
 }
 
+/**
+ * @extends {IProductionAnalysis}
+ * @see {IProductionAnalysis}
+ * @Omit pendingRegisterQuantity
+ */
 export interface IEmployeeProductionAnalysis extends Omit<
   IProductionAnalysis,
   "pendingRegisterQuantity"

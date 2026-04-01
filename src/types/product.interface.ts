@@ -17,6 +17,11 @@ export interface IProduct {
   stock_quantity?: Decimal;
 }
 
+/**
+ * @extends {IProduct}
+ * @see {IProduct}
+ * @Omit composition, created_at, uuid
+ */
 export interface IProductCreate extends Omit<
   IProduct,
   "composition" | "created_at" | "uuid"
@@ -24,16 +29,26 @@ export interface IProductCreate extends Omit<
   composition?: InputJsonValue;
 }
 
+/**
+ * @see {IProduct}
+ * @extends {IProduct}
+ * @Omit composition, uuid, created_at
+ */
 export interface IProductUpdate extends Partial<
   Omit<IProduct, "composition" | "uuid" | "created_at">
 > {
   composition?: InputJsonValue;
 }
 
+/**
+ * @extends {IProduct}
+ * @see {IProduct}
+ * @Omit stock_quantity, composition
+ */
 export interface IProductTestType extends Omit<
   IProduct,
   "stock_quantity" | "composition"
 > {
   stock_quantity: number;
-  composition?: any;
+  composition?: unknown;
 }

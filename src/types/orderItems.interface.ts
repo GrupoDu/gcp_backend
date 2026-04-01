@@ -8,11 +8,21 @@ export interface IOrderItemsDetails {
   quantity: Decimal;
 }
 
+/**
+ * @extends {IOrderItemsDetails}
+ * @see {IOrderItemsDetails}
+ * @Omit order_item_id
+ */
 export interface IOrderItemsCreate extends Omit<
   IOrderItemsDetails,
   "order_item_id"
 > {}
 
+/**
+ * @see {IOrderItemsDetails}
+ * @extends {IOrderItemsDetails}
+ * @Omit unit_price, quantity
+ */
 export interface IOrderItemsTestType extends Omit<
   IOrderItemsDetails,
   "unit_price" | "quantity"
