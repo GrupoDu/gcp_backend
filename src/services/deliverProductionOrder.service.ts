@@ -41,7 +41,7 @@ class DeliverProductionOrderService {
       );
 
       const areAllAssistantsDone =
-        await this.assistantsPoRegistersService.isEveryAssistantsPORegistersDone(
+        await this.assistantsPoRegistersService.hasEveryAssistantPORegistersDone(
           production_order_id,
         );
 

@@ -7,50 +7,68 @@ import type { PrismaClient } from "../../generated/prisma/client.js";
 
 /**
  * Service responsável por gerenciar registros de assistentes.
+ *
+ * @class {AssistantsPoRegistersService}
  * @see AssistantsPoRegistersController
- * @method getAllAssistantsPORegisters
- * @method getAssistantsPORegistersByProductionOrderId
- * @method createAssistantPORegister
- * @method updateAssistantPORegisterAsDelivered
  */
 export default class AssistantsPoRegistersService {
   private _prisma: PrismaClient;
 
+  /** @param {PrismaClient} prisma - Prisma client */
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
   }
 
+  /**
+   * Método responsável por buscar todos os registros de assistentes.
+   *
+   * @returns {Promise<IAssistantsPORegisters[]>} Array de registros de assistentes
+   */
   async getAllAssistantsPORegisters(): Promise<IAssistantsPORegisters[]> {
     return this._prisma.assistants_po_register.findMany();
   }
 
+  /**
+   * Método responsável por buscas registro de assistentes por ID da ordem de produção
+   *
+   * @returns {Promise<IAssistantsPORegisters[]>} Array de registros de assistentes
+   * @param {string} production_order_uuid - ID da ordem de produção
+   */
   async getAssistantsPORegistersByProductionOrderId(
     production_order_uuid: string,
   ): Promise<IAssistantsPORegisters[]> {
-    const assistantPORegisterProductionOrder: IAssistantsPORegisters[] =
-      await this._prisma.assistants_po_register.findMany({
-        where: {
-          production_order_uuid,
-        },
-      });
-
-    return assistantPORegisterProductionOrder;
+    return this._prisma.assistants_po_register.findMany({
+      where: {
+        production_order_uuid,
+      },
+    });
   }
 
+  /**
+   * Método responsável por criar um novo registro de assistente
+   *
+   * @returns {Promise<IAssistantsPORegisters>} Novo registro de assistente
+   * @param {IAssistantsPORegisterCreate} newAssistantPORegisterValues - Valores do novo registro de assistente
+   * @see {IAssistantsPORegisterCreate}
+   */
   async createAssistantPORegister(
     newAssistantPORegisterValues: IAssistantsPORegisterCreate,
   ): Promise<IAssistantsPORegisters> {
-    const newAssistantPORegister =
-      await this._prisma.assistants_po_register.create({
-        data: {
-          ...newAssistantPORegisterValues,
-          delivered: false,
-        },
-      });
-
-    return newAssistantPORegister;
+    return this._prisma.assistants_po_register.create({
+      data: {
+        ...newAssistantPORegisterValues,
+        delivered: false,
+      },
+    });
   }
 
+  /**
+   * Método responsável por atualizar o registro de assistente como entregue
+   *
+   * @returns {Promise<string>} Mensagem de sucesso
+   * @param {IAssistantPORegisterIdentifiers} identifiers - Identificadores para atualizar o registro
+   * @see {IAssistantPORegisterIdentifiers}
+   */
   async updateAssistantPORegisterAsDelivered(
     identifiers: IAssistantPORegisterIdentifiers,
   ): Promise<string> {
@@ -69,7 +87,13 @@ export default class AssistantsPoRegistersService {
     return "Produção de assistente salva ao registro.";
   }
 
-  async isEveryAssistantsPORegistersDone(production_order_id: string) {
+  /**
+   * Método responsável por verificar se todos os assistentes entregaram suas tarefas
+   *
+   * @returns {Promise<boolean>} - Resultado boleano da verificação
+   * @param {string} production_order_id - ID da ordem de produção
+   */
+  async hasEveryAssistantPORegistersDone(production_order_id: string) {
     const assistantsPORegisters =
       await this._prisma.assistants_po_register.findMany({
         where: {
