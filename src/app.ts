@@ -36,7 +36,7 @@ app.use(
     origin: [FRONTEND_URL, DEV_URL, "http://192.168.1.4:3000"],
     credentials: true,
     allowedHeaders: ["Content-Type", "Authorization"],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
   }),
 );
 app.use("/products", ProductRoutes);
