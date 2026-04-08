@@ -1,14 +1,14 @@
 import type { NextFunction, Request, Response } from "express";
 import { tokenErrorCases } from "../utils/tokenErrorCases.js";
 
-export async function accessTokenMiddleware(
+export default function accessTokenMiddleware(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   try {
     // Pega o token do cookie (access_token)
-    const token = req.cookies.access_token;
+    const token = String(req.cookies.access_token);
 
     if (!token) {
       res.status(401).json({ message: "Token de acesso não fornecido." });
@@ -16,9 +16,8 @@ export async function accessTokenMiddleware(
     }
 
     const secret = process.env.JWT_SECRET;
-    if (!secret) {
+    if (!secret)
       throw new Error("JWT_SECRET não definida nas variáveis de ambiente.");
-    }
 
     req.tokenResponse = { token: token, payload: null };
     next();
@@ -47,5 +46,3 @@ export async function accessTokenMiddleware(
     });
   }
 }
-
-export default accessTokenMiddleware;
