@@ -178,12 +178,11 @@ export default class OrdersService {
     productionOrders: IProductionOrderCreate[],
   ) {
     return this._prisma.$transaction(async (tx) => {
-      const updatedOrder = await this.updateOrderStatus(
-        order_id,
-        order_status,
-        productionOrders,
-        tx,
-      );
+      // Atualizar diretamente o status do pedido para evitar recursão
+      const updatedOrder = await tx.orders.update({
+        where: { order_id },
+        data: { order_status },
+      });
 
       const oldProductionOrders =
         await this._productionOrderService.getProductionOrdersByOrderId(
