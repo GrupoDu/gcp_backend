@@ -1,16 +1,17 @@
 services:
-  web:
+  api:
     build:
       context: .
       target: dev
-    develop:
-      watch:
-        - action: sync
-          path: .
-          target: /src/
-          ignore:
-            - node_modules
-        - action: rebuild
-          path: package.json
+    env_file:
+      - .env
     ports:
       - "${DEV_PORT}:8000"
+    expose:
+      - "8000"
+    networks:
+      - api-network
+
+networks:
+  api-network:
+    name: gcp-network
