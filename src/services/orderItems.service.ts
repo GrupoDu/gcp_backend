@@ -6,44 +6,61 @@ import type {
 
 /**
  * Service responsável por gerenciar itens de pedidos.
+ *
+ * @class OrderItemsService
  * @see OrderItemsController
- * @method getOrderItems
- * @method addItemsToOrder
- * @method removeItemFromOrder
  */
 export default class OrderItemsService {
   private _prisma: PrismaClient;
 
+  /** @param {PrismaClient} prisma - Prisma client */
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
   }
 
+  /**
+   * Busca itens de um pedido
+   *
+   * @param {string} order_id
+   * @see {IOrderItemsDetails}
+   * @returns {Promise<IOrderItemsDetails[]>} - Array de itens de pedido
+   */
   async getOrderItems(order_id: string): Promise<IOrderItemsDetails[]> {
-    const orderItems: IOrderItemsDetails[] =
-      await this._prisma.order_items.findMany({
-        where: { order_id },
-      });
-
-    return orderItems;
+    return this._prisma.order_items.findMany({
+      where: { order_id },
+    });
   }
 
+  /**
+   * Adiciona um item ao pedido
+   *
+   * @param {IOrderItemsCreate} orderItemsDetails - Detalhes do item a ser adicionado
+   * @param {string} order_id - ID do pedido
+   * @see {IOrderItemsCreate}
+   * @see {IOrderItemsDetails}
+   * @returns {Promise<IOrderItemsDetails>} - Item adicionado ao pedido
+   */
   async addItemsToOrder(
     orderItemsDetails: IOrderItemsCreate,
     order_id: string,
   ): Promise<IOrderItemsDetails> {
-    const newOrderItem: IOrderItemsDetails =
-      await this._prisma.order_items.create({
-        data: {
-          product_id: orderItemsDetails.product_id,
-          order_id,
-          unit_price: orderItemsDetails.unit_price,
-          quantity: orderItemsDetails.quantity,
-        },
-      });
-
-    return newOrderItem;
+    return this._prisma.order_items.create({
+      data: {
+        product_id: orderItemsDetails.product_id,
+        order_id,
+        unit_price: orderItemsDetails.unit_price,
+        quantity: orderItemsDetails.quantity,
+      },
+    });
   }
 
+  /**
+   * Remove um item do pedido
+   *
+   * @param {string} order_id - ID do pedido
+   * @param {string} product_id - ID do produto
+   * @returns {Promise<string>} - Mensagem de sucesso
+   */
   async removeItemFromOrder(
     order_id: string,
     product_id: string,

@@ -1,13 +1,13 @@
 import { describe, it, beforeEach, afterEach, expect, vi } from "vitest";
 import ProductionOrderService from "../productionOrder.service.js";
-import { mockedRegisterFactory } from "../../tests/factories/productionOrder.factory.js";
+import { productionOrderFactory } from "../../tests/factories/productionOrder.factory.js";
 import jwt from "jsonwebtoken";
 
 vi.mock("../../../lib/prisma.js");
 
 import prisma from "../../tests/__mocks__/@prisma/prisma.js";
 
-describe("Testes de criação de registro.", () => {
+describe("Testes de criação de order de produção.", () => {
   let productionOrderService: ProductionOrderService;
 
   beforeEach(() => {
@@ -17,12 +17,13 @@ describe("Testes de criação de registro.", () => {
   });
 
   it("Deve conseguir criar um novo registro.", async ({ skip }) => {
-    const mockedRegister = mockedRegisterFactory();
+    const mockedProductionOrder = productionOrderFactory();
 
-    prisma.production_order.create.mockResolvedValue(mockedRegister);
+    prisma.production_order.create.mockResolvedValue(mockedProductionOrder);
 
-    const newRegister =
-      await productionOrderService.createNewProductionOrder(mockedRegister);
+    const newRegister = await productionOrderService.createNewProductionOrder(
+      mockedProductionOrder,
+    );
 
     expect(newRegister.title).toBe("Título do registro");
   });
@@ -49,7 +50,7 @@ describe("Testes de update de registro.", () => {
   });
 
   it("Deve editar título do registro.", async ({ skip }) => {
-    const mockedTitleUpdateRegister = mockedRegisterFactory({
+    const mockedTitleUpdateRegister = productionOrderFactory({
       title: "Update de título",
     });
 
@@ -68,7 +69,7 @@ describe("Testes de update de registro.", () => {
   });
 
   it("Deve editar descrição do registro.", async ({ skip }) => {
-    const mockedDescriptionUpdateRegister = mockedRegisterFactory({
+    const mockedDescriptionUpdateRegister = productionOrderFactory({
       description: "Atualizando a descrição desse registro.",
     });
 
@@ -91,7 +92,7 @@ describe("Testes de update de registro.", () => {
   });
 
   it("Deve editar ajudante de corte.", async ({ skip }) => {
-    const mockedCutAssistantUpdateRegister = mockedRegisterFactory({
+    const mockedCutAssistantUpdateRegister = productionOrderFactory({
       cut_assistant: "Sergio",
     });
 
@@ -109,7 +110,7 @@ describe("Testes de update de registro.", () => {
   });
 
   it("Não deve permitir edição de registro.", () => {
-    const mockedTitleUpdateRegister = mockedRegisterFactory({
+    const mockedTitleUpdateRegister = productionOrderFactory({
       title: "Atualização de título",
     });
 

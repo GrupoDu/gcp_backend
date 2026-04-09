@@ -11,30 +11,39 @@ import { isValidDate } from "../utils/isValidDate.js";
 
 /**
  * Service responsável por gerenciar metas.
+ *
+ * @class GoalService
  * @see GoalController
- * @method getAllGoalsData
- * @method createNewGoal
- * @method deleteGoal
- * @method updateGoalData
  */
 class GoalService {
   private _prisma: PrismaClient;
 
+  /** @param {PrismaClient} prisma - Prisma client */
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
   }
 
-  async getAllGoalsData() {
-    const allGoalsData: IGoal[] = await this._prisma.goals.findMany();
-
-    if (!allGoalsData) throw new Error("Nenhuma meta encontrada.");
-
-    return allGoalsData;
+  /**
+   * Busca todas as metas.
+   *
+   * @returns {Promise<IGoal[]>} - Lista de metas
+   * @see {IGoal}
+   */
+  async getAllGoalsData(): Promise<IGoal[]> {
+    return this._prisma.goals.findMany();
   }
 
-  async createNewGoal(newGoalData: IGoalCreate) {
-    if (!newGoalData) throw new Error(responseMessages.fillAllFieldMessage);
-
+  /**
+   * Cria uma meta.
+   *
+   * @param {IGoalCreate} newGoalData - Dados da nova meta
+   * @returns {Promise<IGoal>} - Meta criada
+   * @see {createEmployeeGoal}
+   * @see {isValidDate}
+   * @see {IGoalCreate}
+   * @see {IGoal}
+   */
+  async createNewGoal(newGoalData: IGoalCreate): Promise<IGoal> {
     isValidDate(newGoalData.goal_deadline.toString());
 
     const isEmployeeGoal = newGoalData.goal_type === "Funcionário";
@@ -42,24 +51,37 @@ class GoalService {
       return this.createEmployeeGoal(newGoalData);
     }
 
-    const newGoal = await this._prisma.goals.create({
+    return this._prisma.goals.create({
       data: newGoalData,
     });
-
-    return newGoal;
   }
 
-  private async createEmployeeGoal(newGoalData: IGoalCreate) {
+  /**
+   * Cria uma meta para o funcionário
+   *
+   * @param {IGoalCreate} newGoalData - Dados da nova meta
+   * @returns {Promise<IEmployeeGoal>} - Meta criada
+   * @see {IGoalCreate}
+   * @see {IEmployeeGoal}
+   * @private
+   */
+  private async createEmployeeGoal(
+    newGoalData: IGoalCreate,
+  ): Promise<IEmployeeGoal> {
     if (newGoalData.goal_type !== "Funcionário")
       throw new Error("Tipo de meta inválido.");
 
-    const newEmployeeGoal: IEmployeeGoal = await this._prisma.goals.create({
+    return this._prisma.goals.create({
       data: newGoalData,
     });
-
-    return newEmployeeGoal;
   }
 
+  /**
+   * Remove uma meta
+   *
+   * @param {string} goalUuid - ID da meta
+   * @returns {Promise<string>} - Mensagem de meta deletada com sucesso
+   */
   async deleteGoal(goalUuid: string): Promise<string> {
     if (!goalUuid) throw new Error(responseMessages.fillAllFieldMessage);
 
@@ -74,7 +96,19 @@ class GoalService {
     return "Meta excluida com sucesso.";
   }
 
-  async updateGoalData(goalData: IGoalUpdate, goalUuid: string) {
+  /**
+   * Atualiza uma meta
+   *
+   * @param {IGoalUpdate} goalData - Dados atualizados da meta
+   * @param {string} goalUuid - ID da meta
+   * @returns {Promise<IGoal>} - Meta atualizada
+   * @see {IGoalUpdate}
+   * @see {IGoal}
+   */
+  async updateGoalData(
+    goalData: IGoalUpdate,
+    goalUuid: string,
+  ): Promise<IGoal> {
     if (!goalUuid) throw new Error(responseMessages.fillAllFieldMessage);
 
     const updateFields = removeUndefinedUpdateFields(goalData);
@@ -82,14 +116,12 @@ class GoalService {
 
     if (!hasUpdateFields) throw new Error("Nenhum campo fornecido");
 
-    const updatedGoal = await this._prisma.goals.update({
+    return this._prisma.goals.update({
       where: {
         goal_id: goalUuid,
       },
       data: updateFields,
     });
-
-    return updatedGoal;
   }
 }
 

@@ -4,63 +4,70 @@ import { io } from "../server.js";
 
 /**
  * Service responsável por gerenciar análises de entrada e saída de estoque.
+ *
+ * @class InOutStockService
  * @see InOutStockController
- * @method getInOutStockAnalysis
- * @method incrementMonthlyInStockQuantity
- * @method incrementMonthlyOutStockQuantity
  */
 class InOutStockService {
   private _prisma: PrismaClient;
+  private static MONTH: number = new Date().getMonth() + 1;
+  private static YEAR: number = new Date().getFullYear();
 
+  /** @param {PrismaClient} prisma - Prisma client */
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
   }
 
-  async getInOutStockAnalysis() {
-    const MONTH = new Date().getMonth() + 1;
-    const YEAR = new Date().getFullYear();
-
-    const inOutStockAnalysis: IInOutStockAnalysis[] =
-      await this._prisma.in_out_stock.findMany({
-        where: { month: MONTH, year: YEAR },
-        select: {
-          in_quantity: true,
-          out_quantity: true,
-          month: true,
-          year: true,
-        },
-      });
-    return inOutStockAnalysis;
+  /**
+   * Analisa as entradas e saídas de estoque.
+   *
+   * @returns {Promise<IInOutStockAnalysis[]>} - Array de análises de entrada e saída de estoque
+   * @see {InOutStockController}
+   */
+  async getInOutStockAnalysis(): Promise<IInOutStockAnalysis[]> {
+    return this._prisma.in_out_stock.findMany({
+      where: { month: InOutStockService.MONTH, year: InOutStockService.YEAR },
+      select: {
+        in_quantity: true,
+        out_quantity: true,
+        month: true,
+        year: true,
+      },
+    });
   }
 
-  async incrementMonthlyInStockQuantity(quantity: number) {
-    const MONTH = new Date().getMonth() + 1;
-    const YEAR = new Date().getFullYear();
+  /**
+   * Incrementa a quantidade de entrada no mês atual.
+   *
+   * @param {number} quantity - Quantidade a ser atualizada
+   * @see {MONTH}
+   * @see {YEAR}
+   * @returns {Promise<void>}
+   */
+  async incrementMonthlyInStockQuantity(quantity: number): Promise<void> {
+    await this._prisma.in_out_stock.updateMany({
+      where: { month: InOutStockService.MONTH, year: InOutStockService.YEAR },
+      data: { in_quantity: { increment: quantity } },
+    });
 
-    const updatedInStockQuantityAnalysis =
-      await this._prisma.in_out_stock.updateMany({
-        where: { month: MONTH, year: YEAR },
-        data: { in_quantity: { increment: quantity } },
-      });
-
-    io.emit("inStock", quantity);
-
-    return updatedInStockQuantityAnalysis;
+    io.emit("in-stock", quantity);
   }
 
-  async incrementMonthlyOutStockQuantity(quantity: number) {
-    const MONTH = new Date().getMonth() + 1;
-    const YEAR = new Date().getFullYear();
+  /**
+   * Incrementa a quantidade de saída no mês atual.
+   *
+   * @param {number} quantity - Quantidade a ser atualizada
+   * @see {MONTH}
+   * @see {YEAR}
+   * @returns {Promise<void>}
+   */
+  async incrementMonthlyOutStockQuantity(quantity: number): Promise<void> {
+    await this._prisma.in_out_stock.updateMany({
+      where: { month: InOutStockService.MONTH, year: InOutStockService.YEAR },
+      data: { out_quantity: { increment: quantity } },
+    });
 
-    const updatedOutStockQuantityAnalysis =
-      await this._prisma.in_out_stock.updateMany({
-        where: { month: MONTH, year: YEAR },
-        data: { out_quantity: { increment: quantity } },
-      });
-
-    io.emit("outStock", quantity);
-
-    return updatedOutStockQuantityAnalysis;
+    io.emit("out-stock", quantity);
   }
 }
 

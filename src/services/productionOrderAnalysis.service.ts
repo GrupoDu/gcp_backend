@@ -5,16 +5,27 @@ import { getTodayDate } from "../utils/getTodayDate.js";
 
 /**
  * Service responsável por gerenciar análises de produção.
+ *
+ * @class ProductionOrderAnalysisService
  * @see ProductionOrderAnalysisController
- * @method registerDataAnalysis
  */
 class ProductionOrderAnalysisService {
   private _prisma: PrismaClient;
 
+  /** @param {PrismaClient} prisma - Instância do PrismaClient */
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
   }
 
+  /**
+   * Realiza análise de dados de produção.
+   *
+   * @returns {Promise<IProductionAnalysis>} - Dados de análise de produção
+   * @see {IProductionAnalysis}
+   * @see {getDeliveredRegistersData}
+   * @see {getNotDeliveredRegistersData}
+   * @see {getPendingRegistersData}
+   */
   async productionOrderDataAnalysis(): Promise<IProductionAnalysis> {
     const [delivered, notDelivered, pending] = await Promise.all([
       this.getDeliveredRegistersData(),
@@ -22,60 +33,67 @@ class ProductionOrderAnalysisService {
       this.getPendingRegistersData(),
     ]);
 
-    const fullDataAnalysis: IProductionAnalysis = {
+    return {
       deliveredRegisterQuantity: delivered,
       notDeliveredRegisterQuantity: notDelivered,
       pendingRegisterQuantity: pending,
       actualMonth: getMonthRange(getTodayDate()).actualMonth,
       nextMonth: getMonthRange(getTodayDate()).nextMonth,
     };
-
-    return fullDataAnalysis;
   }
 
+  /**
+   * Busca quantidade de registros entregues no mês atual.
+   *
+   * @returns {Promise<number>} - Quantidade de registros entregues
+   * @private
+   */
   private async getDeliveredRegistersData(): Promise<number> {
-    const deliveredRegistersQuantity =
-      await this._prisma.production_order.count({
-        where: {
-          production_order_status: "Entregue",
-          production_order_deadline: {
-            gte: getMonthRange(getTodayDate()).actualMonth,
-            lt: getMonthRange(getTodayDate()).nextMonth,
-          },
+    return this._prisma.production_order.count({
+      where: {
+        production_order_status: "Entregue",
+        production_order_deadline: {
+          gte: getMonthRange(getTodayDate()).actualMonth,
+          lt: getMonthRange(getTodayDate()).nextMonth,
         },
-      });
-
-    return deliveredRegistersQuantity;
+      },
+    });
   }
 
+  /**
+   * Busca quantidade de registros não entregues no mês atual.
+   *
+   * @returns {Promise<number>} - Quantidade de registros não entregues
+   * @private
+   */
   private async getNotDeliveredRegistersData(): Promise<number> {
-    const notDeliveredRegistersQuantity =
-      await this._prisma.production_order.count({
-        where: {
-          production_order_status: "Não entregue",
-          production_order_deadline: {
-            gte: getMonthRange(getTodayDate()).actualMonth,
-            lt: getMonthRange(getTodayDate()).nextMonth,
-          },
+    return this._prisma.production_order.count({
+      where: {
+        production_order_status: "Não entregue",
+        production_order_deadline: {
+          gte: getMonthRange(getTodayDate()).actualMonth,
+          lt: getMonthRange(getTodayDate()).nextMonth,
         },
-      });
-
-    return notDeliveredRegistersQuantity;
+      },
+    });
   }
 
+  /**
+   * Busca quantidade de registros pendentes no mês atual.
+   *
+   * @returns {Promise<number>} - Quantidade de registros pendentes
+   * @private
+   */
   private async getPendingRegistersData(): Promise<number> {
-    const notDeliveredRegistersQuantity =
-      await this._prisma.production_order.count({
-        where: {
-          production_order_status: "Pendente",
-          production_order_deadline: {
-            gte: getMonthRange(getTodayDate()).actualMonth,
-            lt: getMonthRange(getTodayDate()).nextMonth,
-          },
+    return this._prisma.production_order.count({
+      where: {
+        production_order_status: "Pendente",
+        production_order_deadline: {
+          gte: getMonthRange(getTodayDate()).actualMonth,
+          lt: getMonthRange(getTodayDate()).nextMonth,
         },
-      });
-
-    return notDeliveredRegistersQuantity;
+      },
+    });
   }
 }
 

@@ -11,23 +11,26 @@ import { isEmailFormatValid } from "../utils/emailFormatValidator.util.js";
 
 /**
  * Service responsável por gerenciar usuários.
+ *
+ * @class UserService
  * @see UserController
- * @method getAllUsersData
- * @method getAllSupervisorsUsers
- * @method getUserById
- * @method registerNewUser
- * @method updateUserData
- * @method deleteUserData
  */
 class UserService {
   private _prisma: PrismaClient;
 
+  /** @param {PrismaClient} prisma - Instância do PrismaClient */
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
   }
 
+  /**
+   * Busca todos os usuários (exceto Admin).
+   *
+   * @returns {Promise<IUserPublic[]>} - Array de usuários públicos
+   * @see {IUserPublic}
+   */
   async getAllUsersData(): Promise<IUserPublic[]> {
-    const allUsersData: IUserPublic[] = await this._prisma.users.findMany({
+    return this._prisma.users.findMany({
       select: {
         email: true,
         name: true,
@@ -41,14 +44,16 @@ class UserService {
         },
       },
     });
-
-    if (allUsersData.length < 1) throw new Error("Nenhum usuário encontrado.");
-
-    return allUsersData;
   }
 
+  /**
+   * Busca todos os usuários do tipo supervisor.
+   *
+   * @returns {Promise<IUserPublic[]>} - Array de supervisores
+   * @see {IUserPublic}
+   */
   async getAllSupervisorsUsers(): Promise<IUserPublic[]> {
-    const allSupervisors: IUserPublic[] = await this._prisma.users.findMany({
+    return this._prisma.users.findMany({
       where: {
         user_type: "supervisor",
       },
@@ -60,13 +65,17 @@ class UserService {
       },
       orderBy: { name: "asc" },
     });
-
-    return allSupervisors;
   }
 
+  /**
+   * Busca um usuário pelo ID.
+   *
+   * @param {string} user_id - ID do usuário
+   * @returns {Promise<IUserPublic>} - Dados públicos do usuário
+   * @throws {Error} - ID do usuário não fornecido ou usuário não encontrado
+   * @see {IUserPublic}
+   */
   async getUserById(user_id: string): Promise<IUserPublic> {
-    if (!user_id) throw new Error("ID do usuário não fornecido.");
-
     const userData = await this._prisma.users.findUnique({
       where: {
         user_id,
@@ -84,6 +93,15 @@ class UserService {
     return userData;
   }
 
+  /**
+   * Registra um novo usuário.
+   *
+   * @param {IUserCreate} userInfos - Dados do novo usuário
+   * @returns {Promise<IUserPublic>} - Usuário criado
+   * @throws {Error} - Variável de ambiente SALT_ROUNDS não encontrada
+   * @see {IUserCreate}
+   * @see {IUserPublic}
+   */
   async registerNewUser(userInfos: IUserCreate): Promise<IUserPublic> {
     const saltRounds = process.env.SALT_ROUNDS;
 
@@ -99,7 +117,7 @@ class UserService {
       saltRoundsNumber,
     );
 
-    const newUser: IUserPublic = await this._prisma.users.create({
+    return this._prisma.users.create({
       data: {
         name: userInfos.name,
         email: userInfos.email,
@@ -107,22 +125,28 @@ class UserService {
         user_type: userInfos.user_type,
       },
     });
-
-    return newUser;
   }
 
+  /**
+   * Atualiza dados de um usuário.
+   *
+   * @param {IUserUpdate} userNewData - Novos dados do usuário
+   * @param {string} userUuid - ID do usuário
+   * @returns {Promise<IUserPublic>} - Usuário atualizado
+   * @throws {Error} - Nenhum campo fornecido
+   * @see {IUserUpdate}
+   * @see {IUserPublic}
+   */
   async updateUserData(
     userNewData: IUserUpdate,
     userUuid: string,
   ): Promise<IUserPublic> {
-    if (!userUuid) throw new Error(responseMessages.fillAllFieldMessage);
-
     const updateFields = removeUndefinedUpdateFields(userNewData);
     const hasNoFieldsToUpdate = Object.keys(updateFields).length < 1;
 
     if (hasNoFieldsToUpdate) throw new Error("Nenhum campo fornecido");
 
-    const updatedUser: IUserPublic = await this._prisma.users.update({
+    return this._prisma.users.update({
       where: {
         user_id: userUuid,
       },
@@ -132,13 +156,16 @@ class UserService {
         user_type: String(updateFields.user_type),
       },
     });
-
-    return updatedUser;
   }
 
+  /**
+   * Remove um usuário do sistema.
+   *
+   * @param {string} userUuid - ID do usuário
+   * @returns {Promise<string>} - Mensagem de sucesso
+   * @throws {Error} - ID do usuário não fornecido ou usuário não encontrado
+   */
   async deleteUserData(userUuid: string): Promise<string> {
-    if (!userUuid) throw new Error("ID do usuário não fornecido.");
-
     const deletedUser = await this._prisma.users.delete({
       where: {
         user_id: userUuid,

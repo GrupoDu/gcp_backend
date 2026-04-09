@@ -19,6 +19,7 @@ class AnualAnalysisService {
    * Método responsável por buscar análises mensais.
    *
    * @returns {Promise<IAnualAnalysis[]>} Array de análises mensais
+   * @see {IAnualAnalysis}
    */
   async getMontlyAnalysis(): Promise<IAnualAnalysis[]> {
     return this._prisma.anualAnalysis.findMany();
@@ -33,7 +34,7 @@ class AnualAnalysisService {
     const MONTH = new Date().getMonth() + 1;
     const YEAR = new Date().getFullYear();
 
-    const updatedAnalysis = await this._prisma.anualAnalysis.updateMany({
+    await this._prisma.anualAnalysis.updateMany({
       where: {
         month: MONTH,
         year: YEAR,
@@ -42,9 +43,6 @@ class AnualAnalysisService {
         delivered: { increment: 1 },
       },
     });
-
-    if (updatedAnalysis.count < 1)
-      throw new Error("Nenhuma analise encontrada.");
 
     return "Analise mensal atualizada com sucesso.";
   }

@@ -23,6 +23,7 @@ export default class AssistantsPoRegistersService {
    * Método responsável por buscar todos os registros de assistentes.
    *
    * @returns {Promise<IAssistantsPORegisters[]>} Array de registros de assistentes
+   * @see {IAssistantsPORegisters}
    */
   async getAllAssistantsPORegisters(): Promise<IAssistantsPORegisters[]> {
     return this._prisma.assistants_po_register.findMany();
@@ -33,6 +34,7 @@ export default class AssistantsPoRegistersService {
    *
    * @returns {Promise<IAssistantsPORegisters[]>} Array de registros de assistentes
    * @param {string} production_order_uuid - ID da ordem de produção
+   * @see {IAssistantsPORegisters}
    */
   async getAssistantsPORegistersByProductionOrderId(
     production_order_uuid: string,
@@ -45,7 +47,7 @@ export default class AssistantsPoRegistersService {
   }
 
   /**
-   * Método responsável por criar um novo registro de assistente
+   * Cria registro de assistente
    *
    * @returns {Promise<IAssistantsPORegisters>} Novo registro de assistente
    * @param {IAssistantsPORegisterCreate} newAssistantPORegisterValues - Valores do novo registro de assistente
@@ -63,7 +65,7 @@ export default class AssistantsPoRegistersService {
   }
 
   /**
-   * Método responsável por atualizar o registro de assistente como entregue
+   * Atualizar o registro de assistente como entregue
    *
    * @returns {Promise<string>} Mensagem de sucesso
    * @param {IAssistantPORegisterIdentifiers} identifiers - Identificadores para atualizar o registro
@@ -88,12 +90,14 @@ export default class AssistantsPoRegistersService {
   }
 
   /**
-   * Método responsável por verificar se todos os assistentes entregaram suas tarefas
+   * Verifica se todos os assistentes entregaram as tarefas
    *
    * @returns {Promise<boolean>} - Resultado boleano da verificação
    * @param {string} production_order_id - ID da ordem de produção
    */
-  async hasEveryAssistantPORegistersDone(production_order_id: string) {
+  async hasEveryAssistantPORegistersDone(
+    production_order_id: string,
+  ): Promise<boolean> {
     const assistantsPORegisters =
       await this._prisma.assistants_po_register.findMany({
         where: {

@@ -23,7 +23,7 @@ class AuthService {
   }
 
   /**
-   * Método responsável por autenticar um usuário e gerar tokens de acesso e refresh.
+   * Autentica um usuário e gerar tokens de acesso e refresh.
    *
    * @param {string} email - Email do usuário
    * @param {string} password - Senha do usuário
@@ -71,18 +71,16 @@ class AuthService {
   }
 
   /**
-   * Método responsável por renovar o token de acesso.
+   * Renova o token de acesso.
    *
    * @param {string} oldRefreshToken - Antigo refresh token
-   * @returns {Promise<Omit<ILoginResponse, "user">>}
+   * @returns {Promise<Omit<ILoginResponse, "user">>} Objeto contendo o novo token de acesso e refresh
    * @see {ILoginResponse}
    */
   async refreshAccessToken(
     oldRefreshToken: string,
   ): Promise<Omit<ILoginResponse, "user">> {
-    // Transação para garantir atomicidade
     return await this._prisma.$transaction(async (tx) => {
-      // 1. Busca o token no banco
       const tokenRecord = await tx.refresh_tokens.findUnique({
         where: { token: oldRefreshToken },
       });
@@ -91,17 +89,14 @@ class AuthService {
 
       if (tokenRecord.revoked) throw new Error("Refresh token revogado.");
 
-      // 2. Verifica expiração
       await this.checkTokenExpired(tokenRecord, tx);
 
-      // 3. Verifica a assinatura JWT
       const decoded = await this.verifyJWTSignature(
         oldRefreshToken,
         tx,
         tokenRecord.id,
       );
 
-      // 4. Verifica se o usuário ainda existe
       const user = await tx.users.findUnique({
         where: { user_id: decoded.user_id },
         select: { user_id: true, user_type: true },
@@ -109,14 +104,11 @@ class AuthService {
 
       if (!user) throw new Error("Usuário não encontrado.");
 
-      // 5. Revoga o token antigo (uso único)
       await this.revokeOldRefreshToken(tx, tokenRecord.id);
 
-      // 6. Gera novos tokens
       const newAccessToken = this.generateAccessToken(user);
       const newRefreshToken = this.generateRefreshToken(user);
 
-      // 7. Salva o novo refresh token
       await this.saveRefreshToken(tx, user, newRefreshToken);
 
       return {
@@ -127,7 +119,7 @@ class AuthService {
   }
 
   /**
-   * Método responsável por revogar um refresh token.
+   * Revoga um refresh token.
    *
    * @param {string} token - refresh token
    * @returns {Promise<void>}
@@ -140,11 +132,11 @@ class AuthService {
   }
 
   /**
-   * Método responsável por verificar se o token de refresh expirou.
+   * Verifica se o token de refresh expirou.
    *
    * @returns {Promise<void>}
    * @param {IRefreshToken} tokenRecord - token de refresh
-   * @param {PrismaTransactionClient} tx - transação
+   * @param {PrismaTransactionClient} tx - transaction
    * @private
    * @see {IRefreshToken}
    * @see {PrismaTransactionClient}
@@ -155,7 +147,7 @@ class AuthService {
   ): Promise<void> {
     const isTokenExpired = tokenRecord.expires_at < new Date();
     if (isTokenExpired) {
-      // Marca como revogado
+      // Marca token como revogado
       await tx.refresh_tokens.update({
         where: { id: tokenRecord.id },
         data: { revoked: true },
@@ -165,11 +157,11 @@ class AuthService {
   }
 
   /**
-   * Método responsável por verificar a assinatura do token de refresh.
+   * Verifica a assinatura do token de refresh.
    *
    * @returns {Promise<{user_id: string}>} - ID do usuário
    * @param {string} oldRefreshToken - Antigo refresh token
-   * @param {PrismaTransactionClient} tx - transação
+   * @param {PrismaTransactionClient} tx - transaction
    * @param {string} tokenId - ID do token
    * @private
    * @see {PrismaTransactionClient}
@@ -198,10 +190,10 @@ class AuthService {
   }
 
   /**
-   * Método responsável por revogar um token antigo de refresh.
+   * Revoga um token antigo de refresh.
    *
    * @returns Promise<void>
-   * @param {PrismaTransactionClient} tx - Transação
+   * @param {PrismaTransactionClient} tx - transacion
    * @param {string} tokenId - ID do token
    * @private
    * @see {PrismaTransactionClient}
@@ -217,7 +209,7 @@ class AuthService {
   }
 
   /**
-   * Método responsável por gerar um token de acesso.
+   * Gera um token de acesso.
    *
    * @param {string} user - Objeto com user_id e user_type
    * @returns {string} - Token de acesso
@@ -237,7 +229,7 @@ class AuthService {
   }
 
   /**
-   * Método responsável por gerar um token de refresh.
+   * Gera um token de refresh.
    *
    * @param {{user_id: string}} user - Objeto com user_id
    * @returns {string} - Refresh token
@@ -250,9 +242,9 @@ class AuthService {
   }
 
   /**
-   * Método responsável por salvar o refresh token no banco.
+   * Salva o refresh token no banco.
    *
-   * @param {PrismaTransactionClient} tx
+   * @param {PrismaTransactionClient} tx - transaction
    * @param {{user_id: string}} user - ID do usuário
    * @param {string} newRefreshToken - Novo refresh token
    * @returns {Promise<void>}
@@ -271,19 +263,6 @@ class AuthService {
         expires_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         revoked: false,
       },
-    });
-  }
-
-  /**
-   * Método responsável por revogar todos os refresh tokens de um usuário.
-   *
-   * @returns {Promise<void>}
-   * @param {string} userId - ID do usuário
-   */
-  async revokeAllUserRefreshTokens(userId: string): Promise<void> {
-    await this._prisma.refresh_tokens.updateMany({
-      where: { user_uuid: userId },
-      data: { revoked: true },
     });
   }
 }

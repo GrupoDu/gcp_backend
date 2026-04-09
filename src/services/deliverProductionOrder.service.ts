@@ -12,15 +12,26 @@ import debbugLogger from "../utils/debugLogger.js";
  */
 class DeliverProductionOrderService {
   private _prisma: PrismaClient;
-  private assistantsPoRegistersService: AssistantsPoRegistersService;
+  private _assistantsPoRegistersService: AssistantsPoRegistersService;
 
+  /** @param {PrismaClient} prisma - Prisma client */
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
-    this.assistantsPoRegistersService = new AssistantsPoRegistersService(
+    this._assistantsPoRegistersService = new AssistantsPoRegistersService(
       prisma,
     );
   }
 
+  /**
+   * Faz a entrega de uma ordem de produção.
+   *
+   * @param {string} production_order_id - ID da ordem de produção
+   * @param {number} delivered_product_quantity - Quantidade entregue
+   * @param {number} requested_product_quantity - Quantidade requisitada
+   * @returns {IProductionOrder} - Ordem de produção entregue
+   * @see {IProductionOrder}
+   * @see {verifyDeliveredProductQuantity}
+   */
   async deliverProductionOrder(
     production_order_id: string,
     delivered_product_quantity: number,
@@ -41,7 +52,7 @@ class DeliverProductionOrderService {
       );
 
       const areAllAssistantsDone =
-        await this.assistantsPoRegistersService.hasEveryAssistantPORegistersDone(
+        await this._assistantsPoRegistersService.hasEveryAssistantPORegistersDone(
           production_order_id,
         );
 
@@ -67,10 +78,18 @@ class DeliverProductionOrderService {
     });
   }
 
+  /**
+   * Verifica se a quantidade entregue é maior que a quantidade requisitada.
+   *
+   * @param {number} delivered_product_quantity - Quantidade entregue
+   * @param {number} requested_product_quantity - Quantidade requisitada
+   * @returns {void}
+   * @private
+   */
   private verifyDeliveredProductQuantity(
     delivered_product_quantity: number,
     requested_product_quantity: number,
-  ) {
+  ): void {
     if (delivered_product_quantity > requested_product_quantity) {
       throw new Error(
         "Quantidade entregue maior que a quantidade requisitada.",
@@ -78,6 +97,14 @@ class DeliverProductionOrderService {
     }
   }
 
+  /**
+   * Verifica se todos os assistentes foram preenchidos.
+   *
+   * @param {string} production_order_id - ID da ordem de produção
+   * @param {PrismaTransactionClient} tx - transaction
+   * @returns {Promise<boolean>} - Valor booleano da verificação
+   * @private
+   */
   private async hasAllAssistantsFilled(
     production_order_id: string,
     tx: PrismaTransactionClient,
