@@ -3,6 +3,9 @@ services:
     build:
       context: .
       target: dev
+    volumes:
+      - .:/api
+      - /api/node_modules
     env_file:
       - .env
     ports:
@@ -14,4 +17,5 @@ services:
 
 networks:
   api-network:
-    name: gcp-network
+    name: erp-network
+    external: true
