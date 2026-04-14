@@ -15,8 +15,7 @@ export interface IProductionOrder {
   finishing_assistant?: string | null;
   paint_assistant?: string | null;
   employee_uuid?: string | null;
-  product_uuid: string;
-  client_uuid: string | null;
+  supervisor_uuid: string | null;
   delivered_product_quantity?: Decimal;
   stock_validation?: boolean;
   order_id?: string | null;
