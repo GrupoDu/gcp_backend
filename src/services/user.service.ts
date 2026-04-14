@@ -5,7 +5,6 @@ import type {
   IUserPublic,
   IUserUpdate,
 } from "../types/user.interface.js";
-import { responseMessages } from "../constants/messages.constants.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 import { isEmailFormatValid } from "../utils/emailFormatValidator.util.js";
 
