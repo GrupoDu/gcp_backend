@@ -2,7 +2,10 @@
   "openapi": "3.0.0",
   "info": {
     "title": "ERP Grupo Du API",
-    "description": "API para ERP do Grupo Du",
+    "description": "API para ERP do Grupo Du. Qualquer observação ou documentação incorreta, por favor enviar email explicando",
+    "contact": {
+      "email": "joao.lubf@gmail.com"
+    },
     "version": "0.1.0"
   },
   "servers": [
@@ -231,6 +234,17 @@
           "requested_product_quantity": { "type": "number" }
         }
       },
+      "StockUpdates": {
+        "type": "object",
+        "required": [
+          "product_quantity_title",
+          "event"
+        ],
+        "properties": {
+          "product_quantity_title": { "type": "string" },
+          "event": { "type": "string" }
+        }
+      },
       "Error": {
         "type": "object",
         "properties": {
@@ -261,7 +275,7 @@
               "schema": { "$ref": "#/components/schemas/LoginRequest" },
               "example": {
                 "email": "usuario@grupodu.com",
-                "senha": "123456",
+                "password": "123456",
                 "user_type": "admin"
               }
             }
@@ -316,6 +330,14 @@
       "post": {
         "summary": "Renova o token de acesso",
         "tags": ["Login"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "refresh_token",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Token renovado com sucesso",
@@ -345,9 +367,9 @@
                   },
                   "FailedToRefresh": {
                     "value": {
-                      "error": "Falha ao renovar token.",
+                      "error": "string.",
                       "status": 401,
-                      "message": "Refresh token não fornecido.",
+                      "message": "string.",
                       "success": false
                     }
                   }
@@ -362,12 +384,59 @@
       "get": {
         "summary": "Verifica se o token é válido",
         "tags": ["Login"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "access_token",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Token válido"
+            "description": "Token válido",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "payload": {
+                      "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                      "user_type": "admin",
+                      "iat": 1516239022,
+                      "exp": 1475878357
+                    }
+                  },
+                  "status": 200,
+                  "message": "Token válido.",
+                  "success": true
+                }
+              }
+            }
           },
           "401": {
-            "description": "Token inválido"
+            "description": "Token inválido",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "InvalidToken": {
+                    "value": {
+                      "status": 401,
+                      "message": "Token inválido.",
+                      "success": false,
+                      "error": "Token inválido."
+                    }
+                  },
+                  "ExpiredToken": {
+                    "value": {
+                      "status": 401,
+                      "message": "Token expirado ou inválido.",
+                      "success": false,
+                      "error": "Token expirado ou inválido."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -378,7 +447,30 @@
         "tags": ["Login"],
         "responses": {
           "200": {
-            "description": "Logout realizado com sucesso"
+            "description": "Logout realizado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": null,
+                  "status": 200,
+                  "message": "Logout realizado com sucesso.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro ao fazer logout",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 500,
+                  "message": "Erro ao fazer logout.",
+                  "success": false,
+                  "error": "Erro interno do servidor."
+                }
+              }
+            }
           }
         }
       }
@@ -392,15 +484,34 @@
             "description": "Lista de metas retornada com sucesso",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Goal" }
+                "example": {
+                  "data": [
+                    {
+                      "goal_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                      "goal_title": "Título da meta",
+                      "goal_description": "Descrição da meta",
+                      "goal_type": "Geral",
+                      "goal_deadline": "2026-04-15T00:00:00.000Z",
+                      "employee_goal": "285b4930-4518-471f-a12c-8ae3fffbe477",
+                      "goal_status": "Não batido"
+                    }
+                  ],
+                  "status": 200,
+                  "message": "Dados encontrados com sucesso.",
+                  "success": true
                 }
               }
             }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -418,25 +529,60 @@
         },
         "responses": {
           "201": {
-            "description": "Meta criada com sucesso"
+            "description": "Meta criada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "goal_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "goal_title": "Título da meta",
+                    "goal_description": "Descrição da meta",
+                    "goal_type": "Geral",
+                    "goal_deadline": "2026-04-15T00:00:00.000Z",
+                    "employee_goal": "285b4930-4518-471f-a12c-8ae3fffbe477",
+                    "goal_status": "Não batido"
+                  },
+                  "status": 201,
+                  "message": "Dados encontrados com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatorios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatorios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: goal_title, goal_type, goal_deadline, employee_goal, goal_status."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/goals/{uuid}": {
+    "/goals/{goal_uuid}": {
       "delete": {
         "summary": "Remove uma meta (Apenas Admin)",
         "tags": ["Goals"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "goal_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -444,23 +590,50 @@
         ],
         "responses": {
           "200": {
-            "description": "Meta removida com sucesso"
+            "description": "Meta removida com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": "Remoção concluída.",
+                  "status": 200,
+                  "message": "Meta removida com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatorios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatorios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: goal_uuid."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
-      "put": {
+      "patch": {
         "summary": "Atualiza uma meta (Apenas Admin)",
         "tags": ["Goals"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "goal_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -488,13 +661,48 @@
         },
         "responses": {
           "200": {
-            "description": "Meta atualizada com sucesso"
+            "description": "Meta atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "goal_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "goal_title": "Título da meta",
+                    "goal_description": "Descrição da meta",
+                    "goal_type": "Geral",
+                    "goal_deadline": "2026-04-15T00:00:00.000Z",
+                    "employee_goal": "285b4930-4518-471f-a12c-8ae3fffbe477",
+                    "goal_status": "Não batido"
+                  },
+                  "status": 201,
+                  "message": "Dados encontrados com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatorios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatorios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: goal_uuid."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -509,18 +717,31 @@
             "description": "Lista de usuários retornada com sucesso",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/User" }
+                "example": {
+                  "data": [
+                    {
+                      "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                      "name": "Rafael",
+                      "email": "rafael@exemplo.com",
+                      "user_type": "admin"
+                    }
+                  ],
+                  "status": 200,
+                  "success": true,
+                  "message": "Dados encontrados com sucesso."
                 }
               }
             }
           },
-          "403": {
-            "description": "Acesso negado"
-          },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -538,13 +759,45 @@
         },
         "responses": {
           "201": {
-            "description": "Usuário criado com sucesso"
+            "description": "Usuário criado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "email": "rafael@exemplo.com",
+                    "user_type": "admin"
+                  },
+                  "status": 201,
+                  "message": "Usuário criado com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: name, email, password, user_type."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -555,10 +808,32 @@
         "tags": ["Users"],
         "responses": {
           "200": {
-            "description": "Lista de supervisores retornada com sucesso"
+            "description": "Lista de supervisores retornada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "email": "rafael@exemplo.com",
+                    "user_type": "admin"
+                  },
+                  "status": 200,
+                  "success": true,
+                  "message": "Dados encontrados com sucesso."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -567,24 +842,67 @@
       "get": {
         "summary": "Valida informações do usuário",
         "tags": ["Users"],
+        "parameters": [
+          {
+            "in": "cookie",
+            "name": "token",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Validação realizada com sucesso"
+            "description": "Validação realizada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "user_type": "admin",
+                    "iat": 1516239022,
+                    "exp": 1475878357
+                  },
+                  "status": 200,
+                  "message": "Token válido.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Token inválido.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 401,
+                  "message": "Token inválido.",
+                  "success": false,
+                  "error": "Token inválido ou não fornecido."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/users/{uuid}": {
+    "/users/{user_uuid}": {
       "get": {
         "summary": "Busca um usuário por UUID (Apenas Admin)",
         "tags": ["Users"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "user_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -595,15 +913,42 @@
             "description": "Usuário encontrado",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/User" }
+                "example": {
+                  "data": {
+                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "email": "rafael@exemplo.com",
+                    "user_type": "admin"
+                  },
+                  "status": 200,
+                  "success": true,
+                  "message": "Dados encontrados com sucesso."
+                }
               }
             }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: user_uuid."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -613,7 +958,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "user_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -621,23 +966,50 @@
         ],
         "responses": {
           "200": {
-            "description": "Usuário removido com sucesso"
+            "description": "Usuário removido com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": "Usuário removido com sucesso.",
+                  "status": 200,
+                  "message": "Usuário removido com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: user_uuid."
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
-      "put": {
+      "patch": {
         "summary": "Atualiza um usuário (Apenas Admin)",
         "tags": ["Users"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "user_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -662,10 +1034,35 @@
         },
         "responses": {
           "200": {
-            "description": "Usuário atualizado com sucesso"
+            "description": "Usuário atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "email": "rafael@exemplo.com",
+                    "user_type": "supervisor"
+                  },
+                  "status": 200,
+                  "message": "Usuário atualizado com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: user_uuid."
+                }
+              }
+            }
           },
           "500": {
             "description": "Erro interno do servidor"
@@ -682,15 +1079,41 @@
             "description": "Lista de produtos retornada com sucesso",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Product" }
+                "example": {
+                  "data": [
+                    {
+                      "created_at": "2025-09-08T16:46:27.813Z",
+                      "name": "Carro Transporte de Bloco",
+                      "description": "Projetado para movimentar blocos e materiais pesados com segurança. Estrutura tubular curvada e reforçada, suporta até 350kg. Pneu 4 lonas (ou maciço) 3.50/8 para terrenos acidentados. Ideal para construção civil.",
+                      "product_type": "carro de mão",
+                      "image": "https://hlzfhmneaphariqoewir.supabase.co/storage/v1/object/public/produtos/carro-de-mao/carro-transporte-bloco.png",
+                      "features": [
+                        "Estrutura tubular curvada reforçada para até 350kg.",
+                        "Pneu 4 lonas (ou maciço) 3.50/8 para alta tração em terrenos irregulares.",
+                        "Projetado para construção civil e logística de materiais pesados."
+                      ],
+                      "acronym": "CTDB",
+                      "composition": {},
+                      "uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
+                      "stock_quantity": "0"
+                    }
+                  ],
+                  "status": 200,
+                  "message": "Produtos encontrados com sucesso.",
+                  "success": true
                 }
               }
             }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -708,25 +1131,69 @@
         },
         "responses": {
           "201": {
-            "description": "Produto criado com sucesso"
+            "description": "Produto criado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "created_at": "2025-09-08T16:46:27.813Z",
+                      "name": "Carro Transporte de Bloco",
+                      "description": "Projetado para movimentar blocos e materiais pesados com segurança. Estrutura tubular curvada e reforçada, suporta até 350kg. Pneu 4 lonas (ou maciço) 3.50/8 para terrenos acidentados. Ideal para construção civil.",
+                      "product_type": "carro de mão",
+                      "image": "https://hlzfhmneaphariqoewir.supabase.co/storage/v1/object/public/produtos/carro-de-mao/carro-transporte-bloco.png",
+                      "features": [
+                        "Estrutura tubular curvada reforçada para até 350kg.",
+                        "Pneu 4 lonas (ou maciço) 3.50/8 para alta tração em terrenos irregulares.",
+                        "Projetado para construção civil e logística de materiais pesados."
+                      ],
+                      "acronym": "CTDB",
+                      "composition": {},
+                      "uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
+                      "stock_quantity": "0"
+                    }
+                  ],
+                  "status": 201,
+                  "message": "Produto registrado com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: name, description, product_type, image, acronym, stock_quantity"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
-    "/products/{uuid}": {
-      "put": {
+    "/products/{product_uuid}": {
+      "patch": {
         "summary": "Atualiza um produto",
         "tags": ["Products"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "product_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -758,10 +1225,55 @@
         },
         "responses": {
           "200": {
-            "description": "Produto atualizado com sucesso"
+            "description": "Produto atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "created_at": "2025-09-08T16:46:27.813Z",
+                    "name": "Carro Transporte de Bloco",
+                    "description": "Projetado para movimentar blocos e materiais pesados com segurança. Estrutura tubular curvada e reforçada, suporta até 350kg. Pneu 4 lonas (ou maciço) 3.50/8 para terrenos acidentados. Ideal para construção civil.",
+                    "product_type": "carro de mão",
+                    "image": "https://hlzfhmneaphariqoewir.supabase.co/storage/v1/object/public/produtos/carro-de-mao/carro-transporte-bloco.png",
+                    "features": [
+                      "Estrutura tubular curvada reforçada para até 350kg.",
+                      "Pneu 4 lonas (ou maciço) 3.50/8 para alta tração em terrenos irregulares.",
+                      "Projetado para construção civil e logística de materiais pesados."
+                    ],
+                    "acronym": "CTDB",
+                    "composition": {},
+                    "uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
+                    "stock_quantity": "0"
+                  },
+                  "status": 200,
+                  "message": "Produto atualizado com sucesso",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: product_uuid"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -771,7 +1283,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "product_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -779,13 +1291,40 @@
         ],
         "responses": {
           "200": {
-            "description": "Produto removido com sucesso"
+            "description": "Produto removido com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": "Produto removido com sucesso",
+                  "status": 200,
+                  "message": "Produto removido com sucesso",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: product_uuid"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
@@ -799,15 +1338,33 @@
             "description": "Lista de funcionários retornada com sucesso",
             "content": {
               "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": { "$ref": "#/components/schemas/Employee" }
+                "example": {
+                  "data": [
+                    {
+                      "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                      "name": "Rafael",
+                      "employee_type": "assistente",
+                      "delivered_activities_quantity": "0",
+                      "not_delivered_activities_quantity": "0",
+                      "produced_quantity": "0"
+                    }
+                  ],
+                  "status": 200,
+                  "message": "Dados retornados com sucesso",
+                  "success": true
                 }
               }
             }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       },
@@ -825,25 +1382,57 @@
         },
         "responses": {
           "201": {
-            "description": "Funcionário criado com sucesso"
+            "description": "Funcionário criado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "employee_type": "assistente",
+                    "delivered_activities_quantity": "0",
+                    "not_delivered_activities_quantity": "0",
+                    "produced_quantity": "0"
+                  },
+                  "status": 201,
+                  "message": "Funcionário registrado com sucesso",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: name, employee_type"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/employees/{uuid}": {
+    "/employees/{employee_uuid}": {
       "get": {
         "summary": "Busca um funcionário por UUID (Apenas Admin)",
         "tags": ["Employees"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "employee_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -851,13 +1440,45 @@
         ],
         "responses": {
           "200": {
-            "description": "Funcionário encontrado"
+            "description": "Funcionário encontrado",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "employee_type": "assistente",
+                    "delivered_activities_quantity": "0",
+                    "not_delivered_activities_quantity": "0",
+                    "produced_quantity": "0"
+                  },
+                  "status": 200,
+                  "message": "Dados do funcionário encontrados com sucesso",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: employee_uuid"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
@@ -867,7 +1488,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "employee_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -875,23 +1496,48 @@
         ],
         "responses": {
           "200": {
-            "description": "Funcionário removido com sucesso"
+            "description": "Funcionário removido com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": "Funcionário removido do sistema",
+                  "status": 200,
+                  "message": "Funcionário removido do sistema",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: employee_uuid"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
-      "put": {
-        "summary": "Atualiza um funcionário (Apenas Admin)",
+      "patch": {
+        "summary": "Atualiza dados de um funcionário (Apenas Admin)",
         "tags": ["Employees"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "employee_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -914,25 +1560,57 @@
         },
         "responses": {
           "200": {
-            "description": "Funcionário atualizado com sucesso"
+            "description": "Funcionário atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "employee_type": "assistente",
+                    "delivered_activities_quantity": "0",
+                    "not_delivered_activities_quantity": "0",
+                    "produced_quantity": "0"
+                  },
+                  "status": 200,
+                  "message": "Dados do Funcionário atualizados",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: employee_uuid"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/employees/activity/{uuid}": {
-      "put": {
+    "/employees/activity/{employee_uuid}": {
+      "patch": {
         "summary": "Atualiza a atividade de um funcionário",
         "tags": ["Employees"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "employee_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -940,22 +1618,57 @@
         ],
         "responses": {
           "200": {
-            "description": "Atividade atualizada com sucesso"
+            "description": "Atividade atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "employee_type": "assistente",
+                    "delivered_activities_quantity": "1",
+                    "not_delivered_activities_quantity": "0",
+                    "produced_quantity": "0"
+                  },
+                  "status": 200,
+                  "message": "Atividade do funcionário atualizada com sucesso.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: employee_uuid"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/employees/producedQuantity/{uuid}": {
-      "put": {
+    "/employees/produced-quantity/{employee_uuid}": {
+      "patch": {
         "summary": "Atualiza a quantidade produzida por um funcionário",
         "tags": ["Employees"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "employee_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -970,104 +1683,174 @@
                 "properties": {
                   "productsQuantity": { "type": "integer" }
                 }
+              },
+              "example": {
+                "productsQuantity": 50
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Quantidade atualizada com sucesso"
+            "description": "Quantidade atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "name": "Rafael",
+                    "employee_type": "soldador",
+                    "delivered_activities_quantity": "1",
+                    "not_delivered_activities_quantity": "0",
+                    "produced_quantity": "50"
+                  },
+                  "status": 200,
+                  "message": "Quantidade de produtos produzidos atualizada.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: employee_uuid, productsQuantity"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
-          }
-        }
-      }
-    },
-    "/feedback": {
-      "post": {
-        "summary": "Envia um feedback",
-        "tags": ["Feedback"],
-        "security": [{ "cookieAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": { "$ref": "#/components/schemas/Feedback" }
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
             }
           }
-        },
-        "responses": {
-          "201": {
-            "description": "Feedback enviado com sucesso"
-          },
-          "500": {
-            "description": "Erro interno do servidor"
-          }
         }
       }
     },
-    "/anualAnalysis": {
+    "/anual-analysis": {
       "get": {
         "summary": "Obtém análise anual (Apenas Admin)",
         "tags": ["AnualAnalysis"],
         "security": [{ "cookieAuth": [] }],
         "responses": {
           "200": {
-            "description": "Análise anual retornada com sucesso"
-          },
-          "403": {
-            "description": "Acesso negado"
+            "description": "Análise anual retornada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "id": "eb3826a9-5143-40f1-a03a-5852062659b1",
+                      "created_at": "2026-03-02T11:58:15.760Z",
+                      "month": "3",
+                      "year": "2026",
+                      "delivered": "5",
+                      "not_delivered": "1",
+                      "updated_at": "2026-03-19T00:00:00.000Z"
+                    }
+                  ],
+                  "status": 200,
+                  "message": "Dados encontrados com sucesso",
+                  "success": true
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/anualAnalysis/updateAnalysis": {
-      "put": {
+    "/anual-analysis/update-analysis": {
+      "patch": {
         "summary": "Atualiza a análise anual",
         "tags": ["AnualAnalysis"],
         "security": [{ "cookieAuth": [] }],
         "responses": {
           "200": {
-            "description": "Análise anual atualizada com sucesso"
+            "description": "Análise anual atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": "Analise mensal atualizada com sucesso.",
+                  "status": 200,
+                  "message": "Dados encontrados com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/goalsAnalysis": {
-      "get": {
-        "summary": "Obtém análise de metas (Apenas Admin)",
-        "tags": ["GoalsAnalysis"],
-        "security": [{ "cookieAuth": [] }],
-        "responses": {
-          "200": {
-            "description": "Análise de metas retornada com sucesso"
-          },
-          "403": {
-            "description": "Acesso negado"
-          },
-          "500": {
-            "description": "Erro interno do servidor"
-          }
-        }
-      }
-    },
-    "/productionOrder": {
+    "/production-order": {
       "get": {
         "summary": "Lista todas as ordens de produção",
         "tags": ["ProductionOrder"],
         "responses": {
           "200": {
-            "description": "Lista de ordens retornada com sucesso"
+            "description": "Lista de ordens retornada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "production_order_id": "58961aad-db2e-4b20-87a4-9f799b1e3693",
+                      "created_at": "2026-04-01T11:00:00.000Z",
+                      "production_order_title": "30 Carro Gaiola",
+                      "production_order_deadline": "2026-04-02T00:00:00.000Z",
+                      "production_order_status": "Pendente",
+                      "product_quantity": "30",
+                      "delivered_at": null,
+                      "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "production_order_description": "Descrição da ordem de produção",
+                      "delivery_observation": "",
+                      "delivered_product_quantity": "0",
+                      "stock_validation": false,
+                      "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                    }
+                  ],
+                  "status": 200,
+                  "message": "Dados encontrados com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
@@ -1085,21 +1868,68 @@
         },
         "responses": {
           "201": {
-            "description": "Ordem de produção criada com sucesso"
+            "description": "Ordem de produção criada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "production_order_id": "58961aad-db2e-4b20-87a4-9f799b1e3693",
+                    "created_at": "2026-04-01T11:00:00.000Z",
+                    "production_order_title": "30 Carro Gaiola",
+                    "production_order_deadline": "2026-04-02T00:00:00.000Z",
+                    "production_order_status": "Pendente",
+                    "product_quantity": "30",
+                    "delivered_at": null,
+                    "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "production_order_description": "Descrição da ordem de produção",
+                    "delivery_observation": "",
+                    "delivered_product_quantity": "0",
+                    "stock_validation": false,
+                    "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                  },
+                  "status": 201,
+                  "message": "Ordem de produção criada com sucesso.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: production_order_title, production_order_deadline, product_quantity, employee_uuid, supervisor_uuid, production_order_description, delivery_observation, stock_validation, order_id"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/productionOrder/{uuid}": {
+    "/production-order/{production_order_id}": {
       "get": {
         "summary": "Busca uma ordem de produção por UUID",
         "tags": ["ProductionOrder"],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "production_order_id",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -1107,10 +1937,57 @@
         ],
         "responses": {
           "200": {
-            "description": "Ordem de produção encontrada"
+            "description": "Ordem de produção encontrada",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "production_order_id": "58961aad-db2e-4b20-87a4-9f799b1e3693",
+                    "created_at": "2026-04-01T11:00:00.000Z",
+                    "production_order_title": "30 Carro Gaiola",
+                    "production_order_deadline": "2026-04-02T00:00:00.000Z",
+                    "production_order_status": "Pendente",
+                    "product_quantity": "30",
+                    "delivered_at": null,
+                    "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "production_order_description": "Descrição da ordem de produção",
+                    "delivery_observation": "",
+                    "delivered_product_quantity": "0",
+                    "stock_validation": false,
+                    "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                  },
+                  "status": 200,
+                  "message": "Ordem de produção encontrada.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: production_order_title, production_order_deadline, product_quantity, employee_uuid, supervisor_uuid, production_order_description, delivery_observation, stock_validation, order_id"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
@@ -1120,7 +1997,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "production_order_id",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -1128,23 +2005,48 @@
         ],
         "responses": {
           "200": {
-            "description": "Ordem removida com sucesso"
+            "description": "Ordem de produção deletada com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": "Ordem de produção deletada com sucesso.",
+                  "status": 200,
+                  "message": "Ordem de produção deletada com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: production_order_id"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       },
-      "put": {
+      "patch": {
         "summary": "Atualiza uma ordem de produção",
         "tags": ["ProductionOrder"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "uuid",
+            "name": "production_order_id",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -1181,27 +2083,102 @@
         },
         "responses": {
           "200": {
-            "description": "Ordem atualizada com sucesso"
+            "description": "Ordem de produção atualizada com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "production_order_id": "58961aad-db2e-4b20-87a4-9f799b1e3693",
+                    "created_at": "2026-04-01T11:00:00.000Z",
+                    "production_order_title": "30 Carro Gaiola",
+                    "production_order_deadline": "2026-04-02T00:00:00.000Z",
+                    "production_order_status": "Pendente",
+                    "product_quantity": "30",
+                    "delivered_at": null,
+                    "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "production_order_description": "Descrição da ordem de produção",
+                    "delivery_observation": "",
+                    "delivered_product_quantity": "0",
+                    "stock_validation": false,
+                    "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                  },
+                  "status": 200,
+                  "message": "Ordem de produção atualizada com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/productionOrder/deliver/{production_order_id}": {
-      "put": {
-        "summary": "Registra a entrega de uma ordem de produção",
+    "/production-order/validate/{production_order_id}": {
+      "patch": {
+        "summary": "Valida estoque da quantidade produzida",
         "tags": ["ProductionOrder"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "production_order_id",
             "in": "path",
+            "name": "production_order_id",
             "required": true,
             "schema": { "type": "string" }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "Validação de estoque realizada com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": "Validação realizada.",
+                  "status": 200,
+                  "message": "Validação de estoque realizada com sucesso.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando",
+                  "success": false,
+                  "error": "Campos obrigatórios: production_order_id"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/deliver-production-order/{production_order_id}": {
+      "post": {
+        "summary": "Realiza a entrega da ordem de produção.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1210,45 +2187,416 @@
             }
           }
         },
+        "tags": ["ProductionOrder"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "production_order_id",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Entrega registrada com sucesso"
+            "description": "Ordem de produção entregue com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "production_order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "created_at": "2026-04-01T11:33:50.567Z",
+                    "production_order_title": "30 Carro Gaiola",
+                    "production_order_deadline": "2026-04-02T00:00:00.000Z",
+                    "production_order_status": "Entregue",
+                    "product_quantity": "30",
+                    "delivered_at": "2026-04-01T10:00:00.000Z",
+                    "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "production_order_description": "",
+                    "delivery_observation": "",
+                    "delivered_product_quantity": "0",
+                    "stock_validation": false,
+                    "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                  },
+                  "status": 200,
+                  "message": "Ordem de produção entregue com sucesso.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "status": 422,
+                    "message": "Campos obrigatórios faltando.",
+                    "success": false,
+                    "error": "Campos obrigatórios: employee_uuid, delivered_product_quantity, requested_product_quantity"
+                  }
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/employees-analysis": {
+    "/employees-analysis/{employee_uuid}": {
       "get": {
         "summary": "Obtém análise de funcionários (Apenas Admin)",
         "tags": ["EmployeesAnalysis"],
         "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "employee_uuid",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Análise de funcionários retornada com sucesso"
+            "description": "Análise de funcionários retornada com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "deliveredRegisterQuantity": 1,
+                    "notDeliveredRegisterQuantity": 0,
+                    "employeeName": "Rafael",
+                    "actualMonth": "2026-04-01T00:00:00.000Z",
+                    "nextMonth": "2026-05-01T00:00:00.000Z"
+                  },
+                  "status": 200,
+                  "message": "Análise de atividade do funcionário encontrada com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: employee_uuid"
+                }
+              }
+            }
           },
           "500": {
-            "description": "Erro interno do servidor"
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
           }
         }
       }
     },
-    "/productionOrderAnalysis": {
+    "/production-order-analysis": {
       "get": {
         "summary": "Obtém análise de ordens de produção (Apenas Admin)",
         "tags": ["ProductionOrderAnalysis"],
         "security": [{ "cookieAuth": [] }],
         "responses": {
           "200": {
-            "description": "Análise de ordens retornada com sucesso"
+            "description": "Análise de ordem de produção encontrada com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "deliveredRegisterQuantity": 3,
+                    "notDeliveredRegisterQuantity": 3,
+                    "pendingRegisterQuantity": 0,
+                    "actualMonth": "2026-04-01T00:00:00.000Z",
+                    "nextMonth": "2026-05-01T00:00:00.000Z"
+                  },
+                  "status": 200,
+                  "message": "Análise de ordem de produção encontrada com sucesso.",
+                  "success": true
+                }
+              }
+            }
           },
-          "403": {
-            "description": "Acesso negado"
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/in-out-stock": {
+      "get": {
+        "summary": "Retorna dados sobre entrada e saída de estoque",
+        "tags": ["InOutStock"],
+        "responses": {
+          "200": {
+            "description": "Análise de estoque encontrada com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": [
+                    {
+                      "in_quantity": 220,
+                      "out_quantity": 0,
+                      "month": 4,
+                      "year": 2026
+                    }
+                  ],
+                  "status": 200,
+                  "message": "Análise de estoque encontrada com sucesso.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/in-out-stock/increment-in-stock": {
+      "post": {
+        "summary": "Incrementa o valor de entrada de estoque",
+        "tags": ["InOutStock"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "quantity": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Estoque incrementado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": null,
+                  "status": 200,
+                  "message": "Estoque incrementado com sucesso",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: quantity"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/in-out-stock/increment-out-stock": {
+      "post": {
+        "summary": "Incrementa a quantidade de items que saíram do estoque",
+        "tags": ["InOutStock"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "quantity": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Estoque decrementado com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": null,
+                  "status": 200,
+                  "message": "Estoque decrementado com sucesso.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: quantity"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/stock-updates": {
+      "get": {
+        "summary": "Retorna as últimas atualizações de ações no estoque",
+        "tags": ["StockUpdates"],
+        "responses": {
+          "200": {
+            "description": "Atualizações de estoque encontradas com sucesso.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "created_at": "2026-04-08T14:26:47.915Z",
+                    "product_quantity_title": "80 Carros de mão",
+                    "event": "Entrada",
+                    "date": "2026-04-08T00:00:00.000Z"
+                  },
+                  "status": 200,
+                  "message": "Atualizações de estoque encontradas com sucesso.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Registra uma atualização no estoque",
+        "tags": ["StockUpdates"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StockUpdates" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Atualização de estoque registrado.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": {
+                    "id": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "created_at": "2026-04-08T14:26:47.915Z",
+                    "product_quantity_title": "80 Carros de mão",
+                    "event": "Entrada",
+                    "date": "2026-04-08T00:00:00.000Z"
+                  },
+                  "status": 200,
+                  "message": "Atualização de estoque registrado.",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando.",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": 422,
+                  "message": "Campos obrigatórios faltando.",
+                  "success": false,
+                  "error": "Campos obrigatórios: product_quantity_title, event"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/feedback": {
+      "post": {
+        "summary": "Envia um feedback (Apenas para devs)",
+        "tags": ["Feedback"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Feedback" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Feedback enviado com sucesso"
           },
           "500": {
             "description": "Erro interno do servidor"
