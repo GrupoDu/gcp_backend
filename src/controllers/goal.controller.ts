@@ -33,15 +33,13 @@ class GoalController {
    * @param {Response} res - Response express
    * @see GoalController
    */
-  async getAllGoalsData(req: Request, res: Response): Promise<Response> {
+  async getGoalsData(req: Request, res: Response): Promise<Response> {
     try {
-      const allGoalsData = await this._goalService.getAllGoalsData();
+      const goals = await this._goalService.getAllGoalsData();
 
       return res
         .status(200)
-        .json(
-          successResponseWith(allGoalsData, "Dados encontrados com sucesso."),
-        );
+        .json(successResponseWith(goals, "Dados encontrados com sucesso."));
     } catch (err) {
       const error = err as Error;
       return res.status(500).json(errorResponseWith(error.message, 500));

@@ -26,7 +26,10 @@ class AnualAnalysisController {
    * @param {Response} res - Response express
    * @see AnualAnalysisController
    */
-  async getAllAnualAnalysisService(req: Request, res: Response) {
+  async getAllAnualAnalysisService(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
     try {
       const anualAnalysisData: IAnualAnalysis[] =
         await this._anualAnalysisService.getMontlyAnalysis();
@@ -53,7 +56,10 @@ class AnualAnalysisController {
    * @param {Response} res - Response express
    * @see AnualAnalysisController
    */
-  async updateDeliveredAnualAnalysis(req: Request, res: Response) {
+  async updateDeliveredAnualAnalysis(
+    req: Request,
+    res: Response,
+  ): Promise<Response> {
     try {
       const anualAnalysisUpdateResponse: string =
         await this._anualAnalysisService.updateDeliveredMontlyAnalysis();
