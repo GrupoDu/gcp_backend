@@ -25,7 +25,7 @@ import StockOperationRoutes from "./routes/stockOperation.routes.js";
 
 dotenv.config();
 const app: Express = express();
-const PORT = process.env.PORT || 8000;
+const PORT = process.env.DEV_PORT || 8000;
 const httpServer = createServer(app);
 const FRONTEND_URL = process.env.FRONTEND_URL || "";
 const DEV_URL = process.env.DEV_URL || "";
