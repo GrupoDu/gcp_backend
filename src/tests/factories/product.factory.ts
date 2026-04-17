@@ -4,7 +4,7 @@ import type { IProductTestType } from "../../types/product.interface.js";
 export const productFactory = (
   overrides: Partial<IProductTestType> = {},
 ): IProductTestType => ({
-  uuid: randomUUID(),
+  product_uuid: randomUUID(),
   name: "Test Product",
   description: "Test product description",
   product_type: "material",

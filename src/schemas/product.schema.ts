@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const ProductSchema = z.object({
-  uuid: z.string(),
+  product_uuid: z.string(),
   name: z.string(),
   description: z.string(),
   product_type: z.string(),
@@ -14,13 +14,13 @@ export const ProductSchema = z.object({
 });
 
 export const ProductCreateSchema = ProductSchema.omit({
-  uuid: true,
+  product_uuid: true,
   created_at: true,
   composition: true,
 });
 
 export const ProductUpdateSchema = ProductSchema.omit({
-  uuid: true,
+  product_uuid: true,
   created_at: true,
   composition: true,
 }).partial();

@@ -1,4 +1,3 @@
-import { responseMessages } from "../constants/messages.constants.js";
 import type {
   IProduct,
   IProductCreate,
@@ -42,7 +41,7 @@ class ProductService {
   async getProductById(product_uuid: string): Promise<IProduct> {
     const product: IProduct | null = await this._prisma.products.findUnique({
       where: {
-        uuid: product_uuid,
+        product_uuid: product_uuid,
       },
     });
 
@@ -85,7 +84,7 @@ class ProductService {
 
     return this._prisma.products.update({
       where: {
-        uuid: productUuid,
+        product_uuid: productUuid,
       },
       data: updateFields,
     });
@@ -100,7 +99,7 @@ class ProductService {
   async deleteProduct(productUuid: string): Promise<string> {
     await this._prisma.products.delete({
       where: {
-        uuid: productUuid,
+        product_uuid: productUuid,
       },
     });
 

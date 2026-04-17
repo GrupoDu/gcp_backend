@@ -68,7 +68,7 @@ class StockOperationService {
       );
 
       await this._productService.updateProductData(
-        { stock_quantity: Decimal(producedQuantity) },
+        { stock_quantity: producedQuantity },
         product_id,
       );
 

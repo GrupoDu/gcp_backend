@@ -250,6 +250,7 @@ export default class OrdersService {
           {
             ...production,
             ...newStatusAndDeadline,
+            delivered_product_quantity: 0,
           },
           order_id,
           tx,

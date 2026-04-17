@@ -22,7 +22,7 @@ class AnualAnalysisService {
    * @see {IAnualAnalysis}
    */
   async getMontlyAnalysis(): Promise<IAnualAnalysis[]> {
-    return this._prisma.anualAnalysis.findMany();
+    return this._prisma.anual_analysis.findMany();
   }
 
   /**
@@ -34,7 +34,7 @@ class AnualAnalysisService {
     const MONTH = new Date().getMonth() + 1;
     const YEAR = new Date().getFullYear();
 
-    await this._prisma.anualAnalysis.updateMany({
+    await this._prisma.anual_analysis.updateMany({
       where: {
         month: MONTH,
         year: YEAR,
