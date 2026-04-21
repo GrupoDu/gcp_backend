@@ -8,13 +8,13 @@ datasource db {
 }
 
 model anual_analysis {
-  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at    DateTime? @db.Timestamptz(6)
-  month         Int
-  year          Int
-  delivered     Int       @default(0)
-  not_delivered Int       @default(0)
-  updated_at    DateTime  @default(now()) @db.Date
+  anual_analysis_uuid String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at          DateTime? @db.Timestamptz(6)
+  month               Int
+  year                Int
+  delivered           Int       @default(0)
+  not_delivered       Int       @default(0)
+  updated_at          DateTime  @default(now()) @db.Date
 }
 
 model assistants_po_register {
@@ -22,14 +22,14 @@ model assistants_po_register {
   delivered                    Boolean          @default(false)
   delivered_at                 DateTime?        @db.Date
   assistant_as                 String
-  production_order_id          String           @db.Uuid
+  production_order_uuid        String           @db.Uuid
   assistant_uuid               String           @db.Uuid
-  employees                    employees        @relation(fields: [assistant_uuid], references: [employee_id], onDelete: NoAction, onUpdate: NoAction)
-  production_order             production_order @relation(fields: [production_order_id], references: [production_order_id], onDelete: NoAction, onUpdate: NoAction)
+  employees                    employees        @relation(fields: [assistant_uuid], references: [employee_uuid], onDelete: NoAction, onUpdate: NoAction)
+  production_order             production_order @relation(fields: [production_order_uuid], references: [production_order_uuid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model employees {
-  employee_id                                                      String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  employee_uuid                                                    String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name                                                             String
   employee_type                                                    String
   delivered_activities_quantity                                    Int                      @default(0)
@@ -44,7 +44,7 @@ model employees {
 }
 
 model goals {
-  goal_id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  goal_uuid        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at       DateTime   @default(now()) @db.Timestamptz(6)
   goal_title       String
   goal_description String?
@@ -52,17 +52,17 @@ model goals {
   goal_deadline    DateTime   @db.Date
   goal_status      String
   employee_goal    String?    @db.Uuid
-  employees        employees? @relation(fields: [employee_goal], references: [employee_id], onDelete: NoAction, onUpdate: NoAction)
+  employees        employees? @relation(fields: [employee_goal], references: [employee_uuid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model in_out_stock {
-  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at   DateTime @default(now()) @db.Timestamptz(6)
-  month        Int
-  year         Int
-  in_quantity  Int      @default(0)
-  out_quantity Int      @default(0)
-  updated_at   DateTime @default(now()) @db.Date
+  in_out_stock_uuid String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+  month             Int
+  year              Int
+  in_quantity       Int      @default(0)
+  out_quantity      Int      @default(0)
+  updated_at        DateTime @default(now()) @db.Date
 }
 
 model materials {
@@ -73,18 +73,18 @@ model materials {
 }
 
 model order_items {
-  order_item_id String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at    DateTime @default(now()) @db.Timestamptz(6)
-  quantity      Int      @default(1)
-  unit_price    Int
-  product_id    String   @db.Uuid
-  order_id      String   @db.Uuid
-  orders        orders   @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction)
-  products      products @relation(fields: [product_id], references: [product_uuid], onDelete: NoAction, onUpdate: NoAction)
+  order_item_uuid String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  quantity        Int      @default(1)
+  unit_price      Int
+  product_uuid    String   @db.Uuid
+  order_uuid      String   @db.Uuid
+  orders          orders   @relation(fields: [order_uuid], references: [order_uuid], onDelete: NoAction, onUpdate: NoAction)
+  products        products @relation(fields: [product_uuid], references: [product_uuid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model orders {
-  order_id             String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  order_uuid           String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at           DateTime           @default(now()) @db.Timestamptz(6)
   order_status         String             @default("Ainda não confirmado")
   order_description    String?
@@ -96,7 +96,7 @@ model orders {
 }
 
 model production_order {
-  production_order_id                                       String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  production_order_uuid                                     String                   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at                                                DateTime                 @default(now()) @db.Timestamptz(6)
   production_order_title                                    String
   production_order_description                              String?
@@ -107,7 +107,7 @@ model production_order {
   delivery_observation                                      String?
   delivered_product_quantity                                Int                      @default(0)
   stock_validation                                          Boolean                  @default(false)
-  order_id                                                  String                   @db.Uuid
+  order_uuid                                                String                   @db.Uuid
   cut_assistant                                             String?                  @db.Uuid
   fold_assistant                                            String?                  @db.Uuid
   finishing_assistant                                       String?                  @db.Uuid
@@ -115,13 +115,13 @@ model production_order {
   employee_uuid                                             String?                  @db.Uuid
   supervisor_uuid                                           String?                  @db.Uuid
   assistants_po_register                                    assistants_po_register[]
-  employees_production_order_cut_assistantToemployees       employees?               @relation("production_order_cut_assistantToemployees", fields: [cut_assistant], references: [employee_id], onDelete: NoAction, onUpdate: NoAction)
-  employees_production_order_employee_uuidToemployees       employees?               @relation("production_order_employee_uuidToemployees", fields: [employee_uuid], references: [employee_id], onDelete: NoAction, onUpdate: NoAction)
-  employees_production_order_finishing_assistantToemployees employees?               @relation("production_order_finishing_assistantToemployees", fields: [finishing_assistant], references: [employee_id], onDelete: NoAction, onUpdate: NoAction)
-  employees_production_order_fold_assistantToemployees      employees?               @relation("production_order_fold_assistantToemployees", fields: [fold_assistant], references: [employee_id], onDelete: NoAction, onUpdate: NoAction)
-  orders                                                    orders                   @relation(fields: [order_id], references: [order_id], onDelete: NoAction, onUpdate: NoAction)
-  employees_production_order_paint_assistantToemployees     employees?               @relation("production_order_paint_assistantToemployees", fields: [paint_assistant], references: [employee_id], onDelete: NoAction, onUpdate: NoAction)
-  users                                                     users?                   @relation(fields: [supervisor_uuid], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  employees_production_order_cut_assistantToemployees       employees?               @relation("production_order_cut_assistantToemployees", fields: [cut_assistant], references: [employee_uuid], onDelete: NoAction, onUpdate: NoAction)
+  employees_production_order_employee_uuidToemployees       employees?               @relation("production_order_employee_uuidToemployees", fields: [employee_uuid], references: [employee_uuid], onDelete: NoAction, onUpdate: NoAction)
+  employees_production_order_finishing_assistantToemployees employees?               @relation("production_order_finishing_assistantToemployees", fields: [finishing_assistant], references: [employee_uuid], onDelete: NoAction, onUpdate: NoAction)
+  employees_production_order_fold_assistantToemployees      employees?               @relation("production_order_fold_assistantToemployees", fields: [fold_assistant], references: [employee_uuid], onDelete: NoAction, onUpdate: NoAction)
+  orders                                                    orders                   @relation(fields: [order_uuid], references: [order_uuid], onDelete: NoAction, onUpdate: NoAction)
+  employees_production_order_paint_assistantToemployees     employees?               @relation("production_order_paint_assistantToemployees", fields: [paint_assistant], references: [employee_uuid], onDelete: NoAction, onUpdate: NoAction)
+  users                                                     users?                   @relation(fields: [supervisor_uuid], references: [user_uuid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model products {
@@ -139,17 +139,17 @@ model products {
 }
 
 model refresh_tokens {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at DateTime @default(now()) @db.Timestamptz(6)
-  token      String   @unique
-  expires_at DateTime @db.Date
-  is_revoked Boolean  @default(false)
-  user_uuid  String   @db.Uuid
-  users      users    @relation(fields: [user_uuid], references: [user_id], onDelete: NoAction, onUpdate: NoAction)
+  refresh_token_uuid String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
+  token              String   @unique
+  expires_at         DateTime @db.Date
+  is_revoked         Boolean  @default(false)
+  user_uuid          String   @db.Uuid
+  users              users    @relation(fields: [user_uuid], references: [user_uuid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model stock_updates {
-  id                     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  stock_updates_uuid     String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at             DateTime  @default(now()) @db.Timestamptz(6)
   product_quantity_title String
   event                  String
@@ -157,7 +157,7 @@ model stock_updates {
 }
 
 model users {
-  user_id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user_uuid        String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name             String
   email            String
   password         String

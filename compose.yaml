@@ -1,4 +1,13 @@
 services:
+  db:
+    image: postgres
+    container_name: erp_db_test
+    volumes:
+      - pgdata:/var/lib/postgresql
+    networks:
+      - api-network
+    environment:
+      - POSTGRES_PASSWORD=password
   api:
     build:
       context: .
@@ -19,3 +28,6 @@ networks:
   api-network:
     name: erp-network
     external: true
+
+volumes:
+  pgdata:

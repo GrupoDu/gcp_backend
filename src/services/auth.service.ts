@@ -39,7 +39,7 @@ class AuthService {
   ): Promise<ILoginResponse> {
     const user = await this._prisma.users.findFirst({
       where: { email },
-      select: { user_id: true, password: true, user_type: true },
+      select: { user_uuid: true, password: true, user_type: true },
     });
 
     if (!user) throw new Error("Credenciais inválidas.");
@@ -235,11 +235,11 @@ class AuthService {
    * @private
    */
   private generateAccessToken(user: {
-    user_id: string;
+    user_uuid: string;
     user_type: string;
   }): string {
     return jwt.sign(
-      { user_id: user.user_id, user_type: user.user_type },
+      { user_uuid: user.user_uuid, user_type: user.user_type },
       process.env.JWT_SECRET!,
       {
         expiresIn: "15m",
@@ -255,11 +255,11 @@ class AuthService {
    * @private
    */
   private generateRefreshToken(user: {
-    user_id: string;
+    user_uuid: string;
     user_type: string;
   }): string {
     return jwt.sign(
-      { user_id: user.user_id, user_type: user.user_type },
+      { user_uuid: user.user_uuid, user_type: user.user_type },
       process.env.REFRESH_SECRET!,
       {
         expiresIn: "7d",
