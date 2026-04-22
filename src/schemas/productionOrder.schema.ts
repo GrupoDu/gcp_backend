@@ -8,8 +8,9 @@ const ProductionOrderSchema = z.object({
   production_order_description: z.string().optional(),
   production_order_title: z.string(),
   production_order_status: z.string(),
-  production_order_id: z.uuid(),
+  production_order_uuid: z.uuid().optional(),
   production_order_deadline: z.date(),
+  product_quantity: z.number(),
   delivery_observation: z.string().optional(),
   supervisor_uuid: z.uuid().optional(),
   created_at: z.date(),
@@ -19,8 +20,9 @@ const ProductionOrderSchema = z.object({
   finishing_assistant: z.uuid().optional(),
   cut_assistant: z.uuid().optional(),
   fold_assistant: z.uuid().optional(),
+  product_uuid: z.uuid(),
   paint_assistant: z.uuid().optional(),
-  stock_validation: z.boolean(),
+  stock_validation: z.boolean().optional(),
 });
 
 /**
@@ -29,15 +31,11 @@ const ProductionOrderSchema = z.object({
  * @see ProductionOrderSchema
  */
 export const CreateProductionOrderSchema = ProductionOrderSchema.omit({
-  production_order_id: true,
-  created_at: true,
   delivered_at: true,
-  employee_uuid: true,
+  created_at: true,
   delivery_observation: true,
-  production_order_description: true,
-  delivered_product_quantity: true,
   stock_validation: true,
-  supervisor_uuid: true,
+  delivered_product_quantity: true,
 });
 
 export const UpdateProductionOrderSchema = ProductionOrderSchema.partial();
