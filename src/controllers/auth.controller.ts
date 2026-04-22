@@ -122,7 +122,7 @@ class AuthController {
 
     try {
       if (!refreshToken) {
-        debbugLogger(["Refresh token não fornecido."]);
+        debbugLogger(["Refresh token não fornecido.", "Verificando se é o primeiro login..."]);
         return res
           .status(401)
           .json(errorResponseWith("Refresh token não fornecido.", 401));
