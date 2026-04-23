@@ -35,11 +35,11 @@
       },
       "LoginRequest": {
         "type": "object",
-        "required": ["email", "senha", "user_type"],
+        "required": ["email", "senha", "user_role"],
         "properties": {
           "email": { "type": "string", "format": "email" },
           "senha": { "type": "string", "format": "password" },
-          "user_type": { "type": "string" }
+          "user_role": { "type": "string" }
         }
       },
       "Goal": {
@@ -61,13 +61,13 @@
       },
       "User": {
         "type": "object",
-        "required": ["user_id", "name", "email", "password", "user_type"],
+        "required": ["user_id", "name", "email", "password", "user_role"],
         "properties": {
           "user_id": { "type": "string", "format": "uuid" },
           "name": { "type": "string" },
           "email": { "type": "string", "format": "email" },
           "password": { "type": "string", "format": "password" },
-          "user_type": { "type": "string" }
+          "user_role": { "type": "string" }
         }
       },
       "Product": {
@@ -96,11 +96,11 @@
       },
       "Employee": {
         "type": "object",
-        "required": ["name", "employee_type"],
+        "required": ["name", "employee_role"],
         "properties": {
           "employee_uuid": { "type": "string", "format": "uuid" },
           "name": { "type": "string" },
-          "employee_type": { "type": "string" }
+          "employee_role": { "type": "string" }
         }
       },
       "Feedback": {
@@ -273,7 +273,7 @@
               "example": {
                 "email": "usuario@grupodu.com",
                 "password": "123456",
-                "user_type": "admin"
+                "user_role": "admin"
               }
             }
           }
@@ -287,7 +287,7 @@
                   "data": {
                     "user": {
                       "user_id": "6aaf3e59-6d26-40d8-94ef-36e468af493d",
-                      "user_type": "admin"
+                      "user_role": "admin"
                     }
                   },
                   "status": 200,
@@ -398,7 +398,7 @@
                   "data": {
                     "payload": {
                       "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
-                      "user_type": "admin",
+                      "user_role": "admin",
                       "iat": 1516239022,
                       "exp": 1475878357
                     }
@@ -720,7 +720,7 @@
                       "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                       "name": "Rafael",
                       "email": "rafael@exemplo.com",
-                      "user_type": "admin"
+                      "user_role": "admin"
                     }
                   ],
                   "status": 200,
@@ -764,7 +764,7 @@
                     "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
                     "email": "rafael@exemplo.com",
-                    "user_type": "admin"
+                    "user_role": "admin"
                   },
                   "status": 201,
                   "message": "Usuário criado com sucesso.",
@@ -781,7 +781,7 @@
                   "status": 422,
                   "message": "Campos obrigatórios faltando.",
                   "success": false,
-                  "error": "Campos obrigatórios: name, email, password, user_type."
+                  "error": "Campos obrigatórios: name, email, password, user_role."
                 }
               }
             }
@@ -813,7 +813,7 @@
                     "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
                     "email": "rafael@exemplo.com",
-                    "user_type": "admin"
+                    "user_role": "admin"
                   },
                   "status": 200,
                   "success": true,
@@ -855,7 +855,7 @@
                 "example": {
                   "data": {
                     "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
-                    "user_type": "admin",
+                    "user_role": "admin",
                     "iat": 1516239022,
                     "exp": 1475878357
                   },
@@ -915,7 +915,7 @@
                     "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
                     "email": "rafael@exemplo.com",
-                    "user_type": "admin"
+                    "user_role": "admin"
                   },
                   "status": 200,
                   "success": true,
@@ -1023,7 +1023,7 @@
                   "name": { "type": "string" },
                   "email": { "type": "string", "format": "email" },
                   "password": { "type": "string", "format": "password" },
-                  "user_type": { "type": "string" }
+                  "user_role": { "type": "string" }
                 }
               }
             }
@@ -1039,7 +1039,7 @@
                     "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
                     "email": "rafael@exemplo.com",
-                    "user_type": "supervisor"
+                    "user_role": "supervisor"
                   },
                   "status": 200,
                   "message": "Usuário atualizado com sucesso.",
@@ -1340,7 +1340,7 @@
                     {
                       "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                       "name": "Rafael",
-                      "employee_type": "assistente",
+                      "employee_role": "assistente",
                       "delivered_activities_quantity": "0",
                       "not_delivered_activities_quantity": "0",
                       "produced_quantity": "0"
@@ -1386,7 +1386,7 @@
                   "data": {
                     "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
-                    "employee_type": "assistente",
+                    "employee_role": "assistente",
                     "delivered_activities_quantity": "0",
                     "not_delivered_activities_quantity": "0",
                     "produced_quantity": "0"
@@ -1406,7 +1406,7 @@
                   "status": 422,
                   "message": "Campos obrigatórios faltando.",
                   "success": false,
-                  "error": "Campos obrigatórios: name, employee_type"
+                  "error": "Campos obrigatórios: name, employee_role"
                 }
               }
             }
@@ -1444,7 +1444,7 @@
                   "data": {
                     "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
-                    "employee_type": "assistente",
+                    "employee_role": "assistente",
                     "delivered_activities_quantity": "0",
                     "not_delivered_activities_quantity": "0",
                     "produced_quantity": "0"
@@ -1549,7 +1549,7 @@
                 "minProperties": 1,
                 "properties": {
                   "name": { "type": "string" },
-                  "employee_type": { "type": "string" }
+                  "employee_role": { "type": "string" }
                 }
               }
             }
@@ -1564,7 +1564,7 @@
                   "data": {
                     "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
-                    "employee_type": "assistente",
+                    "employee_role": "assistente",
                     "delivered_activities_quantity": "0",
                     "not_delivered_activities_quantity": "0",
                     "produced_quantity": "0"
@@ -1622,7 +1622,7 @@
                   "data": {
                     "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
-                    "employee_type": "assistente",
+                    "employee_role": "assistente",
                     "delivered_activities_quantity": "1",
                     "not_delivered_activities_quantity": "0",
                     "produced_quantity": "0"
@@ -1696,7 +1696,7 @@
                   "data": {
                     "employee_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
-                    "employee_type": "soldador",
+                    "employee_role": "soldador",
                     "delivered_activities_quantity": "1",
                     "not_delivered_activities_quantity": "0",
                     "produced_quantity": "50"
@@ -1802,7 +1802,7 @@
         }
       }
     },
-    "/production-order": {
+    "/production-orders": {
       "get": {
         "summary": "Lista todas as ordens de produção",
         "tags": ["ProductionOrder"],
@@ -1845,7 +1845,9 @@
             "description": "Erro interno do servidor",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Error" }
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
               }
             }
           }
@@ -1920,7 +1922,7 @@
         }
       }
     },
-    "/production-order/{production_order_id}": {
+    "/production-orders/{production_order_id}": {
       "get": {
         "summary": "Busca uma ordem de produção por UUID",
         "tags": ["ProductionOrder"],
@@ -2122,7 +2124,7 @@
         }
       }
     },
-    "/production-order/validate/{production_order_id}": {
+    "/production-orders/validate/{production_order_id}": {
       "patch": {
         "summary": "Valida estoque da quantidade produzida",
         "tags": ["ProductionOrder"],
@@ -2174,7 +2176,7 @@
       }
     },
     "/deliver-production-order/{production_order_id}": {
-      "post": {
+      "patch": {
         "summary": "Realiza a entrega da ordem de produção.",
         "requestBody": {
           "required": true,
@@ -2597,6 +2599,365 @@
           },
           "500": {
             "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Verifica o status da API",
+        "tags": ["Health"],
+        "responses": {
+          "200": {
+            "description": "API está online",
+            "content": {
+              "application/json": {
+                "example": {
+                  "status": "ok"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/assistants-po-registers": {
+      "get": {
+        "summary": "Lista todos os registros de assistentes em ordens de produção",
+        "tags": ["AssistantsPORegisters"],
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de registros retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/AssistantsPORegisters" }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Error" }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria um novo registro de assistente em uma ordem de produção",
+        "tags": ["AssistantsPORegisters"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["production_order_uuid", "assistant_uuid", "assistant_as"],
+                "properties": {
+                  "production_order_uuid": { "type": "string", "format": "uuid" },
+                  "assistant_uuid": { "type": "string", "format": "uuid" },
+                  "assistant_as": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Registro criado com sucesso"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/assistants-po-registers/deliver": {
+      "put": {
+        "summary": "Marca um registro de assistente como entregue",
+        "tags": ["AssistantsPORegisters"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["production_order_uuid", "assistant_uuid", "assistant_as"],
+                "properties": {
+                  "production_order_uuid": { "type": "string", "format": "uuid" },
+                  "assistant_uuid": { "type": "string", "format": "uuid" },
+                  "assistant_as": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registro atualizado com sucesso"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/assistants-po-registers/{production_order_uuid}": {
+      "get": {
+        "summary": "Lista registros de assistentes por ID da ordem de produção",
+        "tags": ["AssistantsPORegisters"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "production_order_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registros encontrados com sucesso"
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "get": {
+        "summary": "Lista todos os pedidos",
+        "tags": ["Orders"],
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de pedidos retornada com sucesso"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria um novo pedido",
+        "tags": ["Orders"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Order" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pedido criado com sucesso"
+          }
+        }
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "summary": "Busca um pedido por ID",
+        "tags": ["Orders"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pedido encontrado"
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza um pedido",
+        "tags": ["Orders"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Order" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pedido atualizado com sucesso"
+          }
+        }
+      }
+    },
+    "/orders/{order_id}/status": {
+      "patch": {
+        "summary": "Atualiza o status de um pedido",
+        "tags": ["Orders"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "order_status": { "type": "string" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Status atualizado com sucesso"
+          }
+        }
+      }
+    },
+    "/order-items/{order_id}": {
+      "get": {
+        "summary": "Lista itens de um pedido",
+        "tags": ["OrderItems"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lista de itens retornada com sucesso"
+          }
+        }
+      },
+      "post": {
+        "summary": "Adiciona itens a um pedido",
+        "tags": ["OrderItems"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": { "$ref": "#/components/schemas/OrderItem" }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Itens adicionados com sucesso"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove item de um pedido",
+        "tags": ["OrderItems"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["product_id"],
+                "properties": {
+                  "product_id": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Item removido com sucesso"
+          }
+        }
+      }
+    },
+    "/stock-operation/process-stock-operation": {
+      "post": {
+        "summary": "Processa uma operação de estoque",
+        "tags": ["StockOperation"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "production_order_id",
+                  "product_quantity_title",
+                  "event",
+                  "inStockIncrementQuantity",
+                  "product_id",
+                  "validation",
+                  "producedQuantity"
+                ],
+                "properties": {
+                  "production_order_id": { "type": "string", "format": "uuid" },
+                  "product_quantity_title": { "type": "string" },
+                  "event": { "type": "string" },
+                  "inStockIncrementQuantity": { "type": "integer" },
+                  "product_id": { "type": "string", "format": "uuid" },
+                  "validation": { "type": "boolean" },
+                  "producedQuantity": { "type": "integer" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Operação processada com sucesso"
           }
         }
       }
