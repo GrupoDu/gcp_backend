@@ -28,27 +28,26 @@ class AuthService {
    *
    * @param {string} email - Email do usuário
    * @param {string} password - Senha do usuário
-   * @param {string} user_type - Tipo de usuário
+   * @param {string} user_role - Tipo de usuário
    * @returns {ILoginResponse} - Objeto contendo o usuário e os tokens de acesso e refresh
    * @see {ILoginResponse}
    */
   async userLogin(
     email: string,
     password: string,
-    user_type: string,
+    user_role: string,
   ): Promise<ILoginResponse> {
     const user = await this._prisma.users.findFirst({
       where: { email },
-      select: { user_uuid: true, password: true, user_type: true },
     });
 
     if (!user) throw new Error("Credenciais inválidas.");
 
+    const isUserActive = !user.is_active;
     const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) throw new Error("Credenciais inválidas.");
-
-    const isUserTypeMismatch = user.user_type !== user_type;
-    if (isUserTypeMismatch) throw new Error("Credenciais inválidas.");
+    const isUserRoleMismatch = user.user_role !== user_role;
+    const invalidCredencials = !isPasswordValid || isUserRoleMismatch || isUserActive
+    if (invalidCredencials) throw new Error("Credenciais inválidas.");
 
     // Gera tokens
     const accessToken = this.generateAccessToken(user);
@@ -58,14 +57,14 @@ class AuthService {
     await this._prisma.refresh_tokens.create({
       data: {
         token: refreshToken,
-        user_uuid: user.user_uuid, // ✅ Campo correto
+        user_uuid: user.user_uuid,
         expires_at: this.calculateExpirationDate(),
         is_revoked: false,
       },
     });
 
     return {
-      user: { user_uuid: user.user_uuid, user_type: user.user_type },
+      user: { user_uuid: user.user_uuid, user_role: user.user_role },
       accessToken,
       refreshToken,
     };
@@ -109,7 +108,7 @@ class AuthService {
 
       const user = await tx.users.findUnique({
         where: { user_uuid: decoded.user_uuid },
-        select: { user_uuid: true, user_type: true },
+        select: { user_uuid: true, user_role: true },
       });
 
       if (!user) throw new Error("Usuário não encontrado.");
@@ -236,16 +235,16 @@ class AuthService {
   /**
    * Gera um token de acesso.
    *
-   * @param {string} user - Objeto com user_id e user_type
+   * @param {string} user - Objeto com user_id e user_role
    * @returns {string} - Token de acesso
    * @private
    */
   private generateAccessToken(user: {
     user_uuid: string;
-    user_type: string;
+    user_role: string;
   }): string {
     return jwt.sign(
-      { user_uuid: user.user_uuid, user_type: user.user_type },
+      { user_uuid: user.user_uuid, user_role: user.user_role },
       process.env.JWT_SECRET!,
       {
         expiresIn: "15m",
@@ -262,10 +261,10 @@ class AuthService {
    */
   private generateRefreshToken(user: {
     user_uuid: string;
-    user_type: string;
+    user_role: string;
   }): string {
     return jwt.sign(
-      { user_uuid: user.user_uuid, user_type: user.user_type },
+      { user_uuid: user.user_uuid, user_role: user.user_role },
       process.env.REFRESH_SECRET!,
       {
         expiresIn: "7d",

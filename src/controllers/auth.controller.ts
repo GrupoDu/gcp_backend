@@ -59,10 +59,10 @@ class AuthController {
    * @see AuthController
    */
   async userLogin(req: Request, res: Response): Promise<Response> {
-    const { email, password, user_type } = req.body as IUserLogin;
+    const { email, password, user_role } = req.body as IUserLogin;
 
     try {
-      const loginValues = { email, password, user_type };
+      const loginValues = { email, password, user_role };
       const { schemaErr, isMissingFields, requiredFieldsMessage } =
         checkMissingFields(loginValues, UserLoginSchema);
 
@@ -73,7 +73,7 @@ class AuthController {
       }
 
       const { user, accessToken, refreshToken } =
-        await this._authService.userLogin(email, password, user_type);
+        await this._authService.userLogin(email, password, user_role);
 
       const cookieOptions = this.getCookieOptions();
 

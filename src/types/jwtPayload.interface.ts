@@ -1,4 +1,4 @@
 export interface IJwtPayload {
   user_uuid: string;
-  user_type: string;
+  user_role: string;
 }

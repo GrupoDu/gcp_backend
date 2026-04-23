@@ -8,5 +8,5 @@ import * as z from "zod";
 export const UserLoginSchema = z.object({
   email: z.string(),
   password: z.string(),
-  user_type: z.string(),
+  user_role: z.string(),
 });

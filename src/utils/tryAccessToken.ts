@@ -4,7 +4,7 @@ import type { ITokenPayloadResponse } from "../types/tokenPayloadResponse.interf
 export function tryAccessToken(token: string): ITokenPayloadResponse {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as {
-      user_type: string;
+      user_role: string;
     };
     return { isValid: true, payload: decoded };
   } catch (err) {
