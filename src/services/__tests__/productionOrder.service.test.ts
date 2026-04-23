@@ -40,7 +40,7 @@ describe("Testes de update de registro.", () => {
 
     jwtVerifySpy.mockReturnValue({
       user_id: "123",
-      user_type: "admin",
+      user_role: "admin",
     });
     productionOrderService = new ProductionOrderService(prisma);
   });

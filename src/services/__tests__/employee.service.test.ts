@@ -14,12 +14,12 @@ describe("Testes de funcionário.", () => {
     employeeList = [
       {
         employee_id: "550e8400-e29b-41d4-a716-446655440000",
-        employee_type: "Funcionário",
+        employee_role: "Funcionário",
         name: "Pablo",
       },
       {
         employee_id: randomUUID(),
-        employee_type: "Funcionário",
+        employee_role: "Funcionário",
         name: "Gabriel",
       },
     ];
@@ -30,7 +30,7 @@ describe("Testes de funcionário.", () => {
   it("Deve registrar novo funcionário.", async () => {
     const fakeEmployee: IEmployee = {
       employee_id: randomUUID(),
-      employee_type: "Funcionário",
+      employee_role: "Funcionário",
       name: "Marcio",
     };
 
@@ -54,7 +54,7 @@ describe("Testes de funcionário.", () => {
   it("Deve conseguir editar funcionário.", async () => {
     prisma.employee.update.mockResolvedValue({
       employee_id: "550e8400-e29b-41d4-a716-446655440000",
-      employee_type: "Funcionário",
+      employee_role: "Funcionário",
       name: "Marcelo",
     });
 

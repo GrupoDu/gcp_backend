@@ -33,7 +33,7 @@ describe("Testes de registro", () => {
       name: "Mario",
       email: "mario@email.com",
       password: "1234",
-      user_type: "cliente",
+      user_role: "cliente",
     };
 
     prisma.user.create.mockResolvedValue(newMockedUser);
@@ -49,25 +49,25 @@ describe("Testes de registro", () => {
         name: "",
         email: "pedro@email.com",
         password: "123",
-        user_type: "admin",
+        user_role: "admin",
       },
       emptyEmail: {
         name: "",
         email: "pedro@email.com",
         password: "123",
-        user_type: "admin",
+        user_role: "admin",
       },
       emptyPassword: {
         name: "Pedro",
         email: "pedro@email.com",
         password: "",
-        user_type: "admin",
+        user_role: "admin",
       },
-      emptyUserType: {
+      emptyUserRole: {
         name: "Pedro",
         email: "pedro@email.com",
         password: "123",
-        user_type: "",
+        user_role: "",
       },
     };
 
@@ -83,7 +83,7 @@ describe("Testes de registro", () => {
       email: "wrongÉmail @gmail.com",
       name: "Pedro",
       password: "12345",
-      user_type: "cliente",
+      user_role: "cliente",
     };
 
     await expect(
@@ -102,25 +102,25 @@ describe("Testes de update.", () => {
         user_id: randomUUID(),
         name: "Pedro",
         email: "pedro@email.com",
-        user_type: "cliente",
+        user_role: "cliente",
       },
       {
         user_id: randomUUID(),
         name: "Marcos",
         email: "marcos@email.com",
-        user_type: "admin",
+        user_role: "admin",
       },
       {
         user_id: randomUUID(),
         name: "Italo",
         email: "italo@email.com",
-        user_type: "admin",
+        user_role: "admin",
       },
       {
         user_id: randomUUID(),
         name: "Thiago",
         email: "thiago@email.com",
-        user_type: "cliente",
+        user_role: "cliente",
       },
     ];
 

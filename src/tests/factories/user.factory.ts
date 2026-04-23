@@ -6,6 +6,6 @@ export const userFactory = (overrides: Partial<IUser> = {}): IUser => ({
   name: "Test User",
   email: "test@example.com",
   password: "hashedpassword123",
-  user_type: "admin",
+  user_role: "admin",
   ...overrides,
 });

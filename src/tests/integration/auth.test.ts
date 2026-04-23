@@ -22,7 +22,7 @@ describe("Auth Integration Test", () => {
       const user = {
         email: "test@example.com",
         password: "password",
-        user_type: "admin",
+        user_role: "admin",
       };
 
       const response = await request(app).post("/login/").send(user);

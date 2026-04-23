@@ -6,7 +6,7 @@ export const employeeFactory = (
 ): IEmployeeTestType => ({
   employee_id: randomUUID(),
   name: "Test Employee",
-  employee_type: "assistant",
+  employee_role: "assistant",
   delivered_activities_quantity: 10,
   not_delivered_activities_quantity: 5,
   produced_quantity: 100,
