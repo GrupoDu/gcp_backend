@@ -51,7 +51,7 @@ class EmployeeService {
         select: {
           employee_uuid: true,
           name: true,
-          employee_type: true,
+          employee_role: true,
           delivered_activities_quantity: true,
           not_delivered_activities_quantity: true,
           produced_quantity: true,
