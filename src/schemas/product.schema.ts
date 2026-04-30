@@ -2,14 +2,15 @@ import * as z from "zod";
 
 export const ProductSchema = z.object({
   product_uuid: z.string(),
-  name: z.string(),
-  description: z.string(),
-  product_type: z.string(),
-  created_at: z.date().optional(),
+  name: z.string().nonempty(),
+  description: z.string().nonempty(),
+  product_type: z.string().nonempty(),
   image: z.string(),
+  unit_price: z.number(),
   features: z.array(z.string()).optional(),
+  created_at: z.date().optional(),
   acronym: z.string().optional(),
-  composition: z.json().optional(),
+  composition: z.any().optional(),
   stock_quantity: z.number().optional(),
 });
 

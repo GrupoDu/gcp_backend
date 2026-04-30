@@ -1,7 +1,7 @@
 import * as z from "zod";
 
 export const OrderSchema = z.object({
-  order_id: z.string(),
+  order_uuid: z.string().optional(),
   created_at: z.date().optional(),
   order_status: z.string(),
   order_deadline: z.date(),
