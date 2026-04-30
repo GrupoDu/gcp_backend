@@ -41,11 +41,16 @@ class AuthController {
    * @returns {CookieOptions} Opções de cookie
    */
   private getCookieOptions(): CookieOptions {
-    const isProduction = process.env.NODE_ENV === "production";
+    // const isProduction = process.env["NODE_ENV"] === "production";
+
+    // IMPORTANTE!
+    // sameSite e secure mocados APENAS PARA TESTES
+    // Quando o sistema for para produção, deve ser colocado com base em
+    // "isProduction"
     return {
       httpOnly: true,
-      secure: isProduction,
-      sameSite: isProduction ? "none" : "lax",
+      secure: false,
+      sameSite: "lax",
       path: "/",
     };
   }
@@ -121,8 +126,11 @@ class AuthController {
     debbugLogger(["Rodando refresh..."]);
 
     try {
-      if (!refreshToken) {
-        debbugLogger(["Refresh token não fornecido.", "Verificando se é o primeiro login..."]);
+      if (!refreshToken || refreshToken === "undefined") {
+        debbugLogger([
+          "Refresh token não fornecido.",
+          "Verificando se é o primeiro login...",
+        ]);
         return res
           .status(401)
           .json(errorResponseWith("Refresh token não fornecido.", 401));
