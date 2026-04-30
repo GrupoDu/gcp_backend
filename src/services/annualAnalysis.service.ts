@@ -4,10 +4,10 @@ import type { IAnualAnalysis } from "../types/anualAnalysis.interface.js";
 /**
  * Service responsável por gerenciar análises anuais.
  *
- * @class {AnualAnalysisService}
+ * @class {AnnualAnalysisService}
  * @see {AnualAnalysisController}
  */
-class AnualAnalysisService {
+class AnnualAnalysisService {
   private _prisma: PrismaClient;
 
   /** @param {PrismaClient} prisma - Prisma client */
@@ -22,7 +22,7 @@ class AnualAnalysisService {
    * @see {IAnualAnalysis}
    */
   async getMontlyAnalysis(): Promise<IAnualAnalysis[]> {
-    return this._prisma.anual_analysis.findMany();
+    return this._prisma.annual_analysis.findMany();
   }
 
   /**
@@ -34,7 +34,7 @@ class AnualAnalysisService {
     const MONTH = new Date().getMonth() + 1;
     const YEAR = new Date().getFullYear();
 
-    await this._prisma.anual_analysis.updateMany({
+    await this._prisma.annual_analysis.updateMany({
       where: {
         month: MONTH,
         year: YEAR,
@@ -48,4 +48,4 @@ class AnualAnalysisService {
   }
 }
 
-export default AnualAnalysisService;
+export default AnnualAnalysisService;

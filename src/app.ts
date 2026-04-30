@@ -11,7 +11,7 @@ import EmployeeRoutes from "./routes/employee.routes.js";
 import AuthRoutes from "./routes/auth.routes.js";
 import EmployeeAnalysisRoutes from "./routes/employeeAnalysis.routes.js";
 import ProductionOrderAnalysisRoutes from "./routes/productionOrderAnalysis.routes.js";
-import AnualAnaylsisRoutes from "./routes/anualAnalysis.routes.js";
+import AnualAnaylsisRoutes from "./routes/annualAnalysis.routes.js";
 import FeedbackRoutes from "./routes/feedback.routes.js";
 import InOutStockRoutes from "./routes/inoutStock.routes.js";
 import StockUpdatesRoutes from "./routes/stockUpdates.routes.js";
@@ -22,6 +22,7 @@ import DeliverProductionOrderRoutes from "./routes/deliverProductionOrder.routes
 import OrdersRoutes from "./routes/orders.routes.js";
 import OrderItemsRoutes from "./routes/orderItems.routes.js";
 import StockOperationRoutes from "./routes/stockOperation.routes.js";
+import ImageUploadRoutes from "./routes/imageUpload.routes.js";
 
 dotenv.config();
 const app: Express = express();
@@ -30,8 +31,8 @@ const httpServer = createServer(app);
 const FRONTEND_URL = process.env.FRONTEND_URL || "";
 const DEV_URL = process.env.DEV_URL || "";
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(cookieParser());
 app.use(
@@ -59,6 +60,7 @@ app.use("/deliver-production-order", DeliverProductionOrderRoutes);
 app.use("/orders", OrdersRoutes);
 app.use("/order-items", OrderItemsRoutes);
 app.use("/stock-operation", StockOperationRoutes);
+app.use("/upload-image", ImageUploadRoutes);
 
 app.get("/health", (req: Request, res: Response) => res.json({ status: "ok" }));
 

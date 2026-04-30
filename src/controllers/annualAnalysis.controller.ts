@@ -1,4 +1,4 @@
-import type AnualAnalysisService from "../services/anualAnalysis.service.js";
+import type AnnualAnalysisService from "../services/annualAnalysis.service.js";
 import type { Request, Response } from "express";
 import type { IAnualAnalysis } from "../types/anualAnalysis.interface.js";
 import errorResponseWith from "../utils/errorResponseWith.js";
@@ -7,15 +7,15 @@ import successResponseWith from "../utils/successResponseWith.js";
 /**
  * Controller responsável por gerenciar a análise anual.
  *
- * @class AnualAnalysisController
- * @see AnualAnalysisService
+ * @class AnnualAnalysisController
+ * @see AnnualAnalysisService
  */
-class AnualAnalysisController {
-  private _anualAnalysisService: AnualAnalysisService;
+class AnnualAnalysisController {
+  private _annualAnalysisService: AnnualAnalysisService;
 
-  /** @param {AnualAnalysisService} anualAnalysisService - Serviço de análise anual */
-  constructor(anualAnalysisService: AnualAnalysisService) {
-    this._anualAnalysisService = anualAnalysisService;
+  /** @param {AnnualAnalysisService} annualAnalysisService - Serviço de análise anual */
+  constructor(annualAnalysisService: AnnualAnalysisService) {
+    this._annualAnalysisService = annualAnalysisService;
   }
 
   /**
@@ -24,21 +24,21 @@ class AnualAnalysisController {
    * @returns {Promise<Response>} Objeto com todas as análises anuais
    * @param {Request} req - Request express
    * @param {Response} res - Response express
-   * @see AnualAnalysisController
+   * @see AnnualAnalysisController
    */
   async getAllAnualAnalysisService(
     req: Request,
     res: Response,
   ): Promise<Response> {
     try {
-      const anualAnalysisData: IAnualAnalysis[] =
-        await this._anualAnalysisService.getMontlyAnalysis();
+      const annualAnalysisData: IAnualAnalysis[] =
+        await this._annualAnalysisService.getMontlyAnalysis();
 
       return res
         .status(200)
         .json(
           successResponseWith(
-            anualAnalysisData,
+            annualAnalysisData,
             "Dados encontrados com sucesso.",
           ),
         );
@@ -54,21 +54,21 @@ class AnualAnalysisController {
    * @returns {Promise<Response>} Objeto com a análise anual atualizada
    * @param {Request} req - Request express
    * @param {Response} res - Response express
-   * @see AnualAnalysisController
+   * @see AnnualAnalysisController
    */
   async updateDeliveredAnualAnalysis(
     req: Request,
     res: Response,
   ): Promise<Response> {
     try {
-      const anualAnalysisUpdateResponse: string =
-        await this._anualAnalysisService.updateDeliveredMontlyAnalysis();
+      const annualAnalysisUpdateResponse: string =
+        await this._annualAnalysisService.updateDeliveredMontlyAnalysis();
 
       return res
         .status(200)
         .json(
           successResponseWith(
-            anualAnalysisUpdateResponse,
+            annualAnalysisUpdateResponse,
             "Análise anual atualizada com sucesso.",
           ),
         );
@@ -79,4 +79,4 @@ class AnualAnalysisController {
   }
 }
 
-export default AnualAnalysisController;
+export default AnnualAnalysisController;
