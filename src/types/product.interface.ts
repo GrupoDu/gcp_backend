@@ -10,10 +10,11 @@ export interface IProduct {
   product_type: string;
   created_at: Date;
   image: string;
+  stock_quantity: number;
+  unit_price: number;
   features?: string[];
   acronym?: string | null;
   composition?: JsonValue;
-  stock_quantity: number;
 }
 
 /**
