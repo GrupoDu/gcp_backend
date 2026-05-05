@@ -1,6 +1,6 @@
 import type { PrismaClient } from "../../generated/prisma/client.js";
 import type {
-  IOrderItemsDetails,
+  IOrderItems,
   IOrderItemsCreate,
 } from "../types/orderItems.interface.js";
 
@@ -25,7 +25,7 @@ export default class OrderItemsService {
    * @see {IOrderItemsDetails}
    * @returns {Promise<IOrderItemsDetails[]>} - Array de itens de pedido
    */
-  async getOrderItems(order_uuid: string): Promise<IOrderItemsDetails[]> {
+  async getOrderItems(order_uuid: string): Promise<IOrderItems[]> {
     return this._prisma.order_items.findMany({
       where: { order_uuid },
     });
@@ -43,13 +43,14 @@ export default class OrderItemsService {
   async addItemsToOrder(
     orderItemsDetails: IOrderItemsCreate,
     order_uuid: string,
-  ): Promise<IOrderItemsDetails> {
+  ): Promise<IOrderItems> {
     return this._prisma.order_items.create({
       data: {
         product_uuid: orderItemsDetails.product_uuid,
         order_uuid,
         unit_price: orderItemsDetails.unit_price,
         quantity: orderItemsDetails.quantity,
+        total: orderItemsDetails.unit_price * orderItemsDetails.quantity,
       },
     });
   }
