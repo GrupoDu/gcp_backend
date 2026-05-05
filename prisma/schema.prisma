@@ -75,26 +75,83 @@ model materials {
 }
 
 model order_items {
-  order_item_uuid String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at      DateTime @default(now()) @db.Timestamptz(6)
-  quantity        Int      @default(1)
-  unit_price      Int
-  product_uuid    String   @db.Uuid
-  order_uuid      String   @db.Uuid
-  orders          orders   @relation(fields: [order_uuid], references: [order_uuid], onDelete: NoAction, onUpdate: NoAction)
-  products        products @relation(fields: [product_uuid], references: [product_uuid], onDelete: NoAction, onUpdate: NoAction)
+  order_item_uuid     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at          DateTime @default(now()) @db.Timestamptz(6)
+  quantity            Int      @default(1)
+  unit_price          Int
+  discount_percentage Float    @default(0)
+  ipi                 Float    @default(0)
+  additional_amount   Int      @default(0)
+  total               Int
+  product_uuid        String   @db.Uuid
+  order_uuid          String   @db.Uuid
+  orders              orders   @relation(fields: [order_uuid], references: [order_uuid], onDelete: NoAction, onUpdate: NoAction)
+  products            products @relation(fields: [product_uuid], references: [product_uuid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model orders {
-  order_uuid           String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at           DateTime           @default(now()) @db.Timestamptz(6)
-  order_status         String             @default("Ainda não confirmado")
-  order_description    String?
+  order_uuid       String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at       DateTime           @default(now()) @db.Timestamptz(6)
+  order_status     String             @default("Ainda não confirmado")
+  order_deadline   DateTime           @db.Date
+  billing_uuid     String             @db.Uuid
+  revenue_uuid     String             @db.Uuid
+  client_uuid      String             @db.Uuid
+  billing          billing            @relation(fields: [billing_uuid], references: [billing_uuid], onDelete: NoAction, onUpdate: NoAction)
+  revenue          revenues           @relation(fields: [revenue_uuid], references: [revenue_uuid], onDelete: NoAction, onUpdate: NoAction)
+  clients          clients            @relation(fields: [client_uuid], references: [client_uuid], onDelete: NoAction, onUpdate: NoAction)
+  totalPrice       Int                @default(0)
+  delivery         deliveries?
+  order_items      order_items[]
+  production_order production_order[]
+}
+
+model revenues {
+  revenue_uuid     String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at       DateTime @default(now()) @db.Timestamptz(6)
+  client_uuid      String   @db.Uuid
+  revenue_address  String
+  revenue_cnpj     String
+  revenue_phone    String
+  revenue_email    String
+  revenue_landline String?
+  clients          clients  @relation(fields: [client_uuid], references: [client_uuid], onDelete: NoAction, onUpdate: NoAction)
+  orders           orders[]
+}
+
+model billing {
+  billing_uuid    String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime @default(now()) @db.Timestamptz(6)
+  client_uuid     String   @db.Uuid
+  billing_address String
+  name            String?
+  clients         clients  @relation(fields: [client_uuid], references: [client_uuid], onDelete: NoAction, onUpdate: NoAction)
+  orders          orders[]
+}
+
+model clients {
+  client_uuid     String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime   @default(now()) @db.Timestamptz(6)
+  client_name     String
+  client_cnpj     String
+  client_address  String
+  client_phone    String
+  client_landline String?
+  revenues        revenues[]
+  billings        billing[]
+  orders          orders[]
+}
+
+
+model deliveries {
+  delivery_uuid        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at           DateTime @default(now()) @db.Timestamptz(6)
+  order_uuid           String   @unique @db.Uuid
+  delivery_address     String
+  building             String
+  reference            String?
   delivery_observation String?
-  order_title          String
-  order_deadline       DateTime           @db.Date
-  order_items          order_items[]
-  production_order     production_order[]
+  orders               orders   @relation(fields: [order_uuid], references: [order_uuid], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model production_order {
