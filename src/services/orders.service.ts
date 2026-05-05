@@ -1,7 +1,7 @@
 import type { PrismaClient } from "../../generated/prisma/client.js";
 import type {
   IOrder,
-  IOrderCreate,
+  IOrderCreateInput,
   IOrderUpdate,
 } from "../types/orders.interface.js";
 import type {
@@ -25,6 +25,18 @@ export default class OrdersService {
   private _productionOrderService: ProductionOrderService;
   private static readonly FOUR_DAYS = 4 * 24 * 60 * 60 * 1000;
 
+  private readonly _includeData = {
+    billing: true,
+    revenue: true,
+    delivery: true,
+    clients: true,
+    order_items: {
+      include: {
+        products: true,
+      },
+    },
+  };
+
   /** @param {PrismaClient} prisma - Prisma client */
   constructor(prisma: PrismaClient) {
     this._prisma = prisma;
@@ -38,11 +50,14 @@ export default class OrdersService {
    * @returns {Promise<IOrder[]>} Array de pedidos
    */
   async getOrders(): Promise<IOrder[]> {
-    return this._prisma.orders.findMany({
+    const orders = await this._prisma.orders.findMany({
+      include: this._includeData,
       orderBy: {
         order_status: "asc",
       },
     });
+
+    return orders as unknown as IOrder[];
   }
 
   /**
@@ -53,30 +68,65 @@ export default class OrdersService {
    * @returns {Promise<IOrder>} - Pedido encontrado
    */
   async getOrderById(order_uuid: string): Promise<IOrder> {
-    const targetOrder: IOrder | null = await this._prisma.orders.findUnique({
+    const targetOrder = await this._prisma.orders.findUnique({
       where: { order_uuid },
+      include: this._includeData,
     });
 
     if (!targetOrder) throw new Error("Pedido não encontrado");
 
-    return targetOrder;
+    return targetOrder as unknown as IOrder;
   }
 
   /**
    * Cria um pedido
    *
    * @returns {Promise<IOrder>} - Pedido criado
-   * @param {IOrderCreate} order - Detalhes do pedido
-   * @see {IOrderCreate}
+   * @param {IOrderCreateInput} orderData - Detalhes do pedido
+   * @see {IOrderCreateInput}
    * @see {IOrder}
    */
-  async createOrder(order: IOrderCreate): Promise<IOrder> {
-    return this._prisma.orders.create({
+  async createOrder(orderData: IOrderCreateInput): Promise<IOrder> {
+    const {
+      billing_uuid,
+      revenue_uuid,
+      client_uuid,
+      order_deadline,
+      order_items,
+      delivery,
+    } = orderData;
+
+    const newOrder = await this._prisma.orders.create({
       data: {
-        ...order,
-        order_status: "Ainda não confirmado",
+        order_deadline: new Date(order_deadline),
+        order_status: "Pendente",
+        billing: { connect: { billing_uuid } },
+        revenue: { connect: { revenue_uuid } },
+        clients: { connect: { client_uuid } },
+        delivery: { create: delivery },
+        order_items: {
+          create: order_items.map((item) => ({
+            quantity: item.quantity,
+            unit_price: item.unit_price,
+            discount_percentage: item.discount_percentage ?? 0,
+            ipi: item.ipi ?? 0,
+            additional_amount: item.additional_amount ?? 0,
+            total: this.calculateProductTotalPrice(
+              item.quantity,
+              item.unit_price,
+              item.discount_percentage,
+              item.ipi,
+              item.additional_amount,
+            ),
+            product_uuid: item.product_uuid,
+          })),
+        },
+        totalPrice: this.calculateFinalPrice(order_items),
       },
+      include: this._includeData,
     });
+
+    return newOrder as unknown as IOrder;
   }
 
   /**
@@ -101,7 +151,7 @@ export default class OrdersService {
     return this._prisma.orders.update({
       where: { order_uuid },
       data: updatedFields,
-    });
+    }) as unknown as IOrder;
   }
 
   /**
@@ -126,12 +176,12 @@ export default class OrdersService {
     if (!currentOrder) throw new Error("Pedido não encontrado");
 
     enum statusTypes {
-      notConfirmed = "Ainda não confirmado",
+      pending = "Pendente",
       inProduction = "Em produção",
       available = "Disponível",
       sent = "Enviado",
       produced = "Produzido",
-      finished = "Finalizado",
+      delivered = "Entregue",
     }
 
     const isStatusValid: boolean = Object.values(statusTypes).includes(
@@ -145,20 +195,20 @@ export default class OrdersService {
         order_uuid,
         order_status,
         productionOrders,
-      );
+      ) as unknown as IOrder;
     }
 
     if (tx) {
       return tx.orders.update({
         where: { order_uuid },
         data: { order_status },
-      });
+      }) as unknown as IOrder;
     }
 
     return this._prisma.orders.update({
       where: { order_uuid },
       data: { order_status },
-    });
+    }) as unknown as IOrder;
   }
 
   /**
@@ -308,6 +358,35 @@ export default class OrdersService {
         ),
       ),
     );
+  }
+
+  private calculateProductTotalPrice(
+    quantity: number,
+    unit_price: number,
+    discount_percentage?: number,
+    additional_amount?: number,
+    ipi?: number,
+  ) {
+    const price = quantity * unit_price;
+    const discount = discount_percentage ? discount_percentage / 100 : 0;
+    const additional = additional_amount ? additional_amount / 100 : 0;
+    return price - discount + (ipi || 0) + additional;
+  }
+
+  private calculateFinalPrice(
+    products: Array<{
+      product_uuid: string;
+      quantity: number;
+      unit_price: number;
+      discount_percentage?: number;
+      ipi?: number;
+      additional_amount?: number;
+      total: number;
+    }>,
+  ) {
+    return products.reduce((total, product) => {
+      return total + product.total;
+    }, 0);
   }
 
   /**

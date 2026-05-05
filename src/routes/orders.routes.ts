@@ -12,7 +12,7 @@ router.get("/", getTokenMiddleware, (req: Request, res: Response) =>
   ordersController.getOrders(req, res),
 );
 
-router.get("/:order_id", getTokenMiddleware, (req: Request, res: Response) =>
+router.get("/:order_uuid", getTokenMiddleware, (req: Request, res: Response) =>
   ordersController.getOrderById(req, res),
 );
 
@@ -20,12 +20,12 @@ router.post("/", getTokenMiddleware, (req: Request, res: Response) =>
   ordersController.createOrder(req, res),
 );
 
-router.put("/:order_id", getTokenMiddleware, (req: Request, res: Response) =>
+router.put("/:order_uuid", getTokenMiddleware, (req: Request, res: Response) =>
   ordersController.updateOrder(req, res),
 );
 
 router.patch(
-  "/:order_id/status",
+  "/:order_uuid/status",
   getTokenMiddleware,
   (req: Request, res: Response) => ordersController.updateOrderStatus(req, res),
 );
