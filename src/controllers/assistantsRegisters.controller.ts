@@ -1,4 +1,4 @@
-import type AssistantsPoRegistersService from "../services/assistantsPoRegisters.service.js";
+import type AssistantsRegistersService from "../services/assistantsRegisters.service.js";
 import type { Request, Response } from "express";
 import errorResponseWith from "../utils/errorResponseWith.js";
 import successResponseWith from "../utils/successResponseWith.js";
@@ -7,13 +7,13 @@ import {
   MISSING_FIELDS_MESSAGE,
 } from "../constants/messages.constants.js";
 import type {
-  IAssistantPORegisterIdentifiers,
-  IAssistantsPORegisterCreate,
-} from "../types/assistantsPoRegisters.interface.js";
+  IAssistantsRegisterIdentifiers,
+  IAssistantsRegisterCreate,
+} from "../types/assistantsRegisters.interface.js";
 import checkMissingFields from "../utils/checkMissingFields.js";
-import AssistantPORegisterIdentifiers, {
-  AssistantsPORegisterCreateSchema,
-} from "../schemas/AssistantsPORegisters.schema.js";
+import AssistantsRegisterIdentifiers, {
+  AssistantsRegisterCreateSchema,
+} from "../schemas/assistantsRegisters.schema.js";
 import { hasValidString } from "../utils/hasValidString.js";
 
 /**
@@ -22,12 +22,12 @@ import { hasValidString } from "../utils/hasValidString.js";
  * @class AssistantsPORegistersController
  * @see AssistantsPoRegistersService
  */
-export default class AssistantsPORegistersController {
-  private _assistantsPoRegistersService: AssistantsPoRegistersService;
+export default class AssistantsRegistersController {
+  private _assistantsRegistersService: AssistantsRegistersService;
 
   /** @param {AssistantsPoRegistersService} assistantsPoRegistersService - Serviço de registros de atividade dos assistentes */
-  constructor(assistantsPoRegistersService: AssistantsPoRegistersService) {
-    this._assistantsPoRegistersService = assistantsPoRegistersService;
+  constructor(assistantsPoRegistersService: AssistantsRegistersService) {
+    this._assistantsRegistersService = assistantsPoRegistersService;
   }
 
   /**
@@ -44,7 +44,7 @@ export default class AssistantsPORegistersController {
   ): Promise<Response> {
     try {
       const allAssistantsPORegisters =
-        await this._assistantsPoRegistersService.getAllAssistantsPORegisters();
+        await this._assistantsRegistersService.getAllAssistantsRegisters();
 
       return res
         .status(200)
@@ -68,7 +68,7 @@ export default class AssistantsPORegistersController {
    * @param {Response} res - Response express
    * @see AssistantsPoRegistersController
    */
-  async getAssistantsPORegistersByProductionOrderId(
+  async getAssistantsRegistersByProductionOrderId(
     req: Request,
     res: Response,
   ): Promise<Response> {
@@ -88,7 +88,7 @@ export default class AssistantsPORegistersController {
       }
 
       const assistantsPORegistersByProductionOrderId =
-        await this._assistantsPoRegistersService.getAssistantsPORegistersByProductionOrderId(
+        await this._assistantsRegistersService.getAssistantRegistersByAssistantId(
           production_order_uuid,
         );
       return res
@@ -117,12 +117,11 @@ export default class AssistantsPORegistersController {
     req: Request,
     res: Response,
   ): Promise<Response> {
-    const newAssistantPORegisterValues =
-      req.body as IAssistantsPORegisterCreate;
+    const newAssistantRegisterValues = req.body as IAssistantsRegisterCreate;
     const { isMissingFields, requiredFieldsMessage, schemaErr } =
       checkMissingFields(
-        newAssistantPORegisterValues,
-        AssistantsPORegisterCreateSchema,
+        newAssistantRegisterValues,
+        AssistantsRegisterCreateSchema,
       );
 
     try {
@@ -133,8 +132,8 @@ export default class AssistantsPORegistersController {
       }
 
       const newAssistantPORegister =
-        await this._assistantsPoRegistersService.createAssistantPORegister(
-          newAssistantPORegisterValues,
+        await this._assistantsRegistersService.createAssistantRegister(
+          newAssistantRegisterValues,
         );
 
       return res
@@ -164,9 +163,9 @@ export default class AssistantsPORegistersController {
     req: Request,
     res: Response,
   ): Promise<Response> {
-    const identifierValues = req.body as IAssistantPORegisterIdentifiers;
+    const identifierValues = req.body as IAssistantsRegisterIdentifiers;
     const { isMissingFields, requiredFieldsMessage, schemaErr } =
-      checkMissingFields(identifierValues, AssistantPORegisterIdentifiers);
+      checkMissingFields(identifierValues, AssistantsRegisterIdentifiers);
 
     try {
       if (isMissingFields) {
@@ -176,7 +175,7 @@ export default class AssistantsPORegistersController {
       }
 
       const assistantPORegisterUpdateResponse =
-        await this._assistantsPoRegistersService.updateAssistantPORegisterAsDelivered(
+        await this._assistantsRegistersService.updateAssistantRegisterAsDelivered(
           identifierValues,
         );
 
