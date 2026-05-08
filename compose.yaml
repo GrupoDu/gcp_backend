@@ -11,14 +11,23 @@ services:
   api:
     build:
       context: .
+      dockerfile: Dockerfile
       target: dev
     develop:
       watch:
-        - path: ./
-          action: sync
+        - action: sync
+          path: ./
           target: /api
           ignore:
             - node_modules
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: tsconfig.json
+        - action: rebuild
+          path: Dockerfile
+        - action: rebuild
+          path: compose.yaml
     env_file:
       - .env
     ports:
