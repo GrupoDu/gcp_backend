@@ -16,9 +16,6 @@ import { hasValidString } from "../utils/hasValidString.js";
 
 /**
  * Controller responsável por gerenciar as ordens de produção.
- *
- * @class ProductionOrderController
- * @see ProductionOrderService
  */
 class ProductionOrderController {
   private _productionOrderService: ProductionOrderService;
@@ -30,11 +27,6 @@ class ProductionOrderController {
 
   /**
    * Método responsável por buscar todas as ordens de produção
-   *
-   * @returns {Promise<Response>} - Objeto com todas as ordens de produção
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see ProductionOrderController
    */
   async getAllProductionOrders(req: Request, res: Response): Promise<Response> {
     try {
@@ -56,23 +48,18 @@ class ProductionOrderController {
   }
 
   /**
-   * Método responsável por buscar uma ordem de produção pelo seu ID
-   *
-   * @returns {Promise<Response>} - Objeto com ordem de produção encontrada
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see {ProductionOrderController}
+   * Método responsável por buscar uma ordem de produção pelo seu UUID
    */
   async getProductionOrderById(req: Request, res: Response): Promise<Response> {
-    const { production_order_id } = req.params;
+    const { production_order_uuid } = req.params;
 
     try {
-      if (!hasValidString(production_order_id)) {
+      if (!hasValidString(production_order_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["production_order_id"]),
+              REQUIRED_FIELDS_MESSAGE(["production_order_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
@@ -81,7 +68,7 @@ class ProductionOrderController {
 
       const targetProductionOrder =
         await this._productionOrderService.getProductionOrderById(
-          production_order_id,
+          production_order_uuid,
         );
 
       return res
@@ -100,10 +87,6 @@ class ProductionOrderController {
 
   /**
    * Método responável por criar ordem de produção
-   *
-   * @returns {Promise<Response>} - Objeto com ordem de produção criada
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
    */
   async createProductionOrder(req: Request, res: Response): Promise<Response> {
     const newProductionOrderValues = req.body as IProductionOrderCreate;
@@ -147,22 +130,17 @@ class ProductionOrderController {
 
   /**
    * Método responável por remover ordem de produção
-   *
-   * @returns {Promise<Response>} - Objeto com ordem de produção removida
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see {ProductionOrderController}
    */
   async removeProductionOrder(req: Request, res: Response): Promise<Response> {
-    const { production_order_id } = req.params;
+    const { production_order_uuid } = req.params;
 
     try {
-      if (!hasValidString(production_order_id)) {
+      if (!hasValidString(production_order_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["production_order_id"]),
+              REQUIRED_FIELDS_MESSAGE(["production_order_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
@@ -171,7 +149,7 @@ class ProductionOrderController {
 
       const removeResponse =
         await this._productionOrderService.removeProductionOrder(
-          production_order_id,
+          production_order_uuid,
         );
 
       return res
@@ -190,23 +168,18 @@ class ProductionOrderController {
 
   /**
    * Método responsável por atualizar ordem de produção
-   *
-   * @returns {Promise<Response>} - Objeto com ordem de produção atualizada
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see {ProductionOrderController}
    */
   async updateProductionOrder(req: Request, res: Response): Promise<Response> {
     const ProductionOrderNewValues = req.body as IProductionOrderUpdate;
-    const { production_order_id } = req.params;
+    const { production_order_uuid } = req.params;
 
     try {
-      if (!hasValidString(production_order_id)) {
+      if (!hasValidString(production_order_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["production_order_id"]),
+              REQUIRED_FIELDS_MESSAGE(["production_order_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
@@ -216,7 +189,7 @@ class ProductionOrderController {
       const updatedProductionOrder =
         await this._productionOrderService.updateProductionOrder(
           ProductionOrderNewValues,
-          production_order_id,
+          production_order_uuid,
         );
 
       return res
@@ -235,25 +208,20 @@ class ProductionOrderController {
 
   /**
    * Método responsável por validar estoque de uma ordem de produção
-   *
-   * @returns {Promise<Response>} - Objeto com ordem de produção atualizada
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see {ProductionOrderController}
    */
   async stockProductionValidation(
     req: Request,
     res: Response,
   ): Promise<Response> {
-    const { production_order_id } = req.params;
+    const { production_order_uuid } = req.params;
 
     try {
-      if (!hasValidString(production_order_id)) {
+      if (!hasValidString(production_order_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["production_order_id"]),
+              REQUIRED_FIELDS_MESSAGE(["production_order_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
@@ -261,7 +229,7 @@ class ProductionOrderController {
       }
 
       await this._productionOrderService.stockProductionValidation(
-        production_order_id,
+        production_order_uuid,
       );
 
       return res

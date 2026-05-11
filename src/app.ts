@@ -17,12 +17,16 @@ import InOutStockRoutes from "./routes/inoutStock.routes.js";
 import StockUpdatesRoutes from "./routes/stockUpdates.routes.js";
 import cookieParser from "cookie-parser";
 import { createServer } from "http";
-import AssistantsPoRegistersRoutes from "./routes/assistantsPoRegisters.routes.js";
+import AssistantsPoRegistersRoutes from "./routes/assistantsRegisters.routes.js";
 import DeliverProductionOrderRoutes from "./routes/deliverProductionOrder.routes.js";
 import OrdersRoutes from "./routes/orders.routes.js";
 import OrderItemsRoutes from "./routes/orderItems.routes.js";
 import StockOperationRoutes from "./routes/stockOperation.routes.js";
 import ImageUploadRoutes from "./routes/imageUpload.routes.js";
+import BillingRoutes from "./routes/billing.routes.js";
+import RevenueRoutes from "./routes/revenue.routes.js";
+import DeliveriesRoutes from "./routes/deliveries.routes.js";
+import ClientRoutes from "./routes/client.routes.js";
 
 dotenv.config();
 const app: Express = express();
@@ -61,6 +65,10 @@ app.use("/orders", OrdersRoutes);
 app.use("/order-items", OrderItemsRoutes);
 app.use("/stock-operation", StockOperationRoutes);
 app.use("/upload-image", ImageUploadRoutes);
+app.use("/billing", BillingRoutes);
+app.use("/revenues", RevenueRoutes);
+app.use("/deliveries", DeliveriesRoutes);
+app.use("/clients", ClientRoutes);
 
 app.get("/health", (req: Request, res: Response) => res.json({ status: "ok" }));
 

@@ -1,11 +1,38 @@
+import type { IOrderItems } from "./orderItems.interface.js";
+
 export interface IOrder {
   order_uuid: string;
   created_at: Date;
   order_status: string;
   order_deadline: Date;
-  order_title: string;
-  order_description: string | null;
-  delivery_observation: string | null;
+  order_items: IOrderItems[];
+  billing_uuid: string;
+  revenue_uuid: string;
+  delivery_uuid: string;
+  client_uuid: string;
+  totalPrice: number;
+}
+
+export interface IOrderCreateInput {
+  order_deadline: string | Date;
+  billing_uuid: string;
+  revenue_uuid: string;
+  client_uuid: string;
+  delivery: {
+    delivery_address: string;
+    building: string;
+    reference?: string;
+    delivery_observation?: string;
+  };
+  order_items: Array<{
+    product_uuid: string;
+    quantity: number;
+    unit_price: number;
+    discount_percentage?: number;
+    ipi?: number;
+    additional_amount?: number;
+    total: number;
+  }>;
 }
 
 /**

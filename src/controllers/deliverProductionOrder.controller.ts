@@ -8,9 +8,6 @@ import { hasValidString } from "../utils/hasValidString.js";
 
 /**
  * Controller responsável por gerenciar a quantidade de produtos entregues.
- *
- * @class DeliverProductionOrderController
- * @see DeliverProductionOrderService
  */
 class DeliverProductionOrderController {
   private _deliverProductionOrderService: DeliverProductionOrderService;
@@ -22,25 +19,20 @@ class DeliverProductionOrderController {
 
   /**
    * Método responsável por gerenciar a quantidade de produtos entregues.
-   *
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @returns {Promise<Response>} Objeto com a quantidade de produtos entregues
-   * @see DeliverProductionOrderService
    */
   async deliverProductionOrder(req: Request, res: Response): Promise<Response> {
-    const { production_order_id } = req.params;
-    const { delivered_product_quantity, requested_product_quantity } =
+    const { production_order_uuid } = req.params;
+    const { delivered_product_quantity, quantity_to_produce } =
       req.body as IDeliverValuesType;
     const deliveryData = {
       delivered_product_quantity,
-      requested_product_quantity,
+      quantity_to_produce,
     };
     const { isMissingFields, requiredFieldsMessage, schemaErr } =
       checkMissingFields(deliveryData, DeliverProductionOrderSchema);
 
     try {
-      if (!hasValidString(production_order_id) || isMissingFields) {
+      if (!hasValidString(production_order_uuid) || isMissingFields) {
         return res
           .status(422)
           .json(errorResponseWith(schemaErr, 422, requiredFieldsMessage));
@@ -48,9 +40,9 @@ class DeliverProductionOrderController {
 
       const deliveredProductionOrder =
         await this._deliverProductionOrderService.deliverProductionOrder(
-          production_order_id,
+          production_order_uuid,
           delivered_product_quantity,
-          requested_product_quantity,
+          quantity_to_produce,
         );
 
       return res
@@ -63,22 +55,6 @@ class DeliverProductionOrderController {
         );
     } catch (err) {
       const error = err as Error;
-      const assistantsTaskNotDelivered =
-        error.message.includes("não concluíram");
-      const assistantsNotDefined = error.message.includes(
-        "assistentes foram definidos.",
-      );
-
-      if (assistantsTaskNotDelivered)
-        return res
-          .status(400)
-          .json(errorResponseWith(error.message, 400, error.message));
-
-      if (assistantsNotDefined)
-        return res
-          .status(400)
-          .json(errorResponseWith(error.message, 400, error.message));
-
       return res.status(500).json(errorResponseWith(error.message, 500));
     }
   }
@@ -86,7 +62,7 @@ class DeliverProductionOrderController {
 
 interface IDeliverValuesType {
   delivered_product_quantity: number;
-  requested_product_quantity: number;
+  quantity_to_produce: number;
 }
 
 export default DeliverProductionOrderController;

@@ -16,9 +16,6 @@ dotenv.config();
 
 /**
  * Controller responsável por gerenciar as operações relacionadas ao usuário.
- *
- * @class UserController
- * @see UserService
  */
 class UserController {
   private _userService: UserService;
@@ -30,11 +27,6 @@ class UserController {
 
   /**
    * Método responsável por retorna todos os usuários
-   *
-   * @returns {Promise<Response>} - Objeto com todos os usuários
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see UserService
    */
   async getAllUsers(req: Request, res: Response): Promise<Response> {
     try {
@@ -53,11 +45,6 @@ class UserController {
 
   /**
    * Método responsável por buscar um usuário pelo seu UUID
-   *
-   * @returns {Promise<Response>} - Objeto com usuário encontrado
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see UserService
    */
   async getUserById(req: Request, res: Response): Promise<Response> {
     try {
@@ -88,11 +75,6 @@ class UserController {
 
   /**
    * Método responsável por buscar todos os supervisores
-   *
-   * @returns {Promise<Response>} - Objeto com todos os supervisores
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see UserController
    */
   async getAllSupervisorsUser(req: Request, res: Response): Promise<Response> {
     try {
@@ -114,11 +96,6 @@ class UserController {
 
   /**
    * Método responsável por registrar novo usuário
-   *
-   * @returns {Promise<Response>} - Objeto com usuário registrado
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see UserController
    */
   async createNewUser(req: Request, res: Response): Promise<Response> {
     const newUserInfos = req.body as IUserCreate;
@@ -148,11 +125,6 @@ class UserController {
 
   /**
    * Método responsável por remover um usuário
-   *
-   * @returns {Promise<Response>} - Objeto com usuário removido e mensagem de sucesso
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see {UserController}
    */
   async deactivateUser(req: Request, res: Response): Promise<Response> {
     try {
@@ -189,11 +161,6 @@ class UserController {
 
   /**
    * Método responsável por atualizar dados de um usuário
-   *
-   * @returns {Promise<Response>} - Objeto com usuário atualizado e mensagem de sucesso
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see {UserController}
    */
   async updateUserData(req: Request, res: Response): Promise<Response> {
     const updateInfos = req.body as IUserUpdate;

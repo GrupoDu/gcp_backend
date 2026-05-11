@@ -1,5 +1,6 @@
 export interface IGoal {
   goal_uuid: string;
+  created_at: Date;
   goal_title: string;
   goal_description: string | null;
   goal_type: string;
@@ -11,9 +12,9 @@ export interface IGoal {
 /**
  * @extends {IGoal}
  * @see {IGoal}
- * @Omit goal_id
+ * @Omit goal_uuid
  */
-export interface IGoalCreate extends Omit<IGoal, "goal_uuid"> {}
+export interface IGoalCreate extends Omit<IGoal, "goal_uuid" | "created_at"> {}
 
 /**
  * @extends {IGoal}
@@ -27,6 +28,6 @@ export interface IEmployeeGoal extends Omit<IGoal, "employee_goal"> {
 /**
  * @extends {IGoal}
  * @see {IGoal}
- * @omit goal_id
+ * @omit goal_uuid
  */
-export interface IGoalUpdate extends Partial<Omit<IGoal, "goal_uuid">> {}
+export interface IGoalUpdate extends Partial<IGoalCreate> {}

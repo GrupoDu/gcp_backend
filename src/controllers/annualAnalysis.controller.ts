@@ -1,6 +1,5 @@
 import type AnnualAnalysisService from "../services/annualAnalysis.service.js";
 import type { Request, Response } from "express";
-import type { IAnualAnalysis } from "../types/anualAnalysis.interface.js";
 import errorResponseWith from "../utils/errorResponseWith.js";
 import successResponseWith from "../utils/successResponseWith.js";
 
@@ -31,7 +30,7 @@ class AnnualAnalysisController {
     res: Response,
   ): Promise<Response> {
     try {
-      const annualAnalysisData: IAnualAnalysis[] =
+      const annualAnalysisData =
         await this._annualAnalysisService.getMontlyAnalysis();
 
       return res

@@ -13,9 +13,6 @@ dotenv.config();
 
 /**
  * Service responsável por gerenciar ordens de produção.
- *
- * @class ProductionOrderService
- * @see ProductionOrderController
  */
 class ProductionOrderService {
   private _prisma: PrismaClient;
@@ -27,28 +24,21 @@ class ProductionOrderService {
 
   /**
    * Busca todas as ordens de produção.
-   *
-   * @returns {Promise<IProductionOrder[]>} Array de ordens de produção
-   * @see {IProductionOrder}
    */
   async getAllProductionOrders(): Promise<IProductionOrder[]> {
-    return this._prisma.production_order.findMany({
+    return this._prisma.production_orders.findMany({
       orderBy: { production_order_status: "desc" },
     });
   }
 
   /**
    * Busca uma ordem de produção por ID.
-   *
-   * @param {string} production_order_uuid - ID da ordem de produção
-   * @throws {Error} - Ordem de produção não encontrada
-   * @returns {Promise<IProductionOrder>} - Ordem de produção
    */
   async getProductionOrderById(
     production_order_uuid: string,
   ): Promise<IProductionOrder> {
     const targetProductionOrder: IProductionOrder | null =
-      await this._prisma.production_order.findUnique({
+      await this._prisma.production_orders.findUnique({
         where: {
           production_order_uuid,
         },
@@ -62,35 +52,24 @@ class ProductionOrderService {
 
   /**
    * Busca Ordem de produção por ID do pedido
-   *
-   * @param {string} order_uuid - ID do pedido
-   * @param {PrismaTransactionClient} tx - Transaction
-   * @returns {Promise<IProductionOrder[]>} - Array de ordens de produção
-   * @see {IProductionOrder}
    */
   async getProductionOrdersByOrderId(
     order_uuid: string,
     tx?: PrismaTransactionClient,
   ): Promise<IProductionOrder[]> {
     if (tx) {
-      return tx.production_order.findMany({
+      return tx.production_orders.findMany({
         where: { order_uuid },
       });
     }
 
-    return this._prisma.production_order.findMany({
+    return this._prisma.production_orders.findMany({
       where: { order_uuid },
     });
   }
 
   /**
    * Cria uma ordem de produção.
-   *
-   * @param {IProductionOrderCreate} newProductionOrderValues - Dados da nova ordem de produção
-   * @param {string} order_id - ID do pedido
-   * @param {PrismaTransactionClient} tx - Transaction
-   * @returns {Promise<IProductionOrder>} - Nova ordem de produção
-   * @see {IProductionOrderCreate}
    */
   async createProductionOrder(
     newProductionOrderValues: IProductionOrderCreate,
@@ -98,15 +77,18 @@ class ProductionOrderService {
     tx?: PrismaTransactionClient,
   ): Promise<IProductionOrder> {
     if (tx) {
-      return tx.production_order.create({
-        data: { ...newProductionOrderValues, order_uuid: order_id ?? "", delivered_at: null },
+      return tx.production_orders.create({
+        data: {
+          ...newProductionOrderValues,
+          order_uuid: order_id ?? "",
+          delivered_at: null,
+        },
       });
     }
 
-    const newProductionOrder: IProductionOrder =
-      await this._prisma.production_order.create({
-        data: newProductionOrderValues,
-      });
+    const newProductionOrder = await this._prisma.production_orders.create({
+      data: newProductionOrderValues,
+    });
 
     io.emit("productionOrderNotify", newProductionOrder);
 
@@ -115,12 +97,6 @@ class ProductionOrderService {
 
   /**
    * Remove uma ordem de produção.
-   *
-   * @param {string} production_order_uuid - ID da ordem de produção
-   * @param {string} order_uuid - ID do pedido
-   * @param {PrismaTransactionClient} tx - Transaction
-   * @returns {Promise<string>} - Mensagem de sucesso
-   * @see {PrismaTransactionClient}
    */
   async removeProductionOrder(
     production_order_uuid: string,
@@ -128,13 +104,7 @@ class ProductionOrderService {
     tx?: PrismaTransactionClient,
   ): Promise<string> {
     if (tx) {
-      await tx.assistants_po_register.deleteMany({
-        where: {
-          production_order_uuid: production_order_uuid,
-        },
-      });
-
-      await tx.production_order.delete({
+      await tx.production_orders.delete({
         where: {
           production_order_uuid,
           order_uuid: order_uuid ?? "",
@@ -144,14 +114,7 @@ class ProductionOrderService {
       return "Ordem de produção deletada com sucesso.";
     }
 
-    // Se não há transação ativa, precisamos remover os registros de assistentes primeiro
-    await this._prisma.assistants_po_register.deleteMany({
-      where: {
-        production_order_uuid: production_order_uuid,
-      },
-    });
-
-    await this._prisma.production_order.delete({
+    await this._prisma.production_orders.delete({
       where: {
         production_order_uuid,
       },
@@ -162,13 +125,6 @@ class ProductionOrderService {
 
   /**
    * Atualiza uma ordem de produção.
-   *
-   * @param {IProductionOrderUpdate} productionOrderNewValues - Novos valores da ordem de produção
-   * @param {string} production_order_uuid - ID da ordem de produção
-   * @returns {Promise<IProductionOrder>} - Ordem de produção atualizada
-   * @throws {Error} - Nenhum campo fornecido
-   * @see {IProductionOrderUpdate}
-   * @see {verifyDeliveredProductQuantity}
    */
   async updateProductionOrder(
     productionOrderNewValues: IProductionOrderUpdate,
@@ -177,16 +133,22 @@ class ProductionOrderService {
     const productionOrderUpdatedFields = removeUndefinedUpdateFields(
       productionOrderNewValues,
     );
-    const hasNoUpdateFields = productionOrderUpdatedFields.length < 1;
+    const hasNoUpdateFields =
+      Object.keys(productionOrderUpdatedFields).length < 1;
 
     if (hasNoUpdateFields) throw new Error("Nenhum campo fornecido.");
 
-    this.verifyDeliveredProductQuantity(
-      Number(productionOrderUpdatedFields.delivered_product_quantity),
-      Number(productionOrderUpdatedFields.requested_product_quantity),
-    );
+    if (
+      productionOrderUpdatedFields.delivered_product_quantity !== undefined &&
+      productionOrderUpdatedFields.quantity_to_produce !== undefined
+    ) {
+      this.verifyDeliveredProductQuantity(
+        Number(productionOrderUpdatedFields.delivered_product_quantity),
+        Number(productionOrderUpdatedFields.quantity_to_produce),
+      );
+    }
 
-    return this._prisma.production_order.update({
+    return this._prisma.production_orders.update({
       where: {
         production_order_uuid,
       },
@@ -196,14 +158,11 @@ class ProductionOrderService {
 
   /**
    * Valida o estoque de produção.
-   *
-   * @param {string} production_order_uuid - ID da ordem de produção
-   * @returns {Promise<IProductionOrder>} - Ordem de produção validada
    */
   async stockProductionValidation(
     production_order_uuid: string,
   ): Promise<IProductionOrder> {
-    return this._prisma.production_order.update({
+    return this._prisma.production_orders.update({
       where: {
         production_order_uuid,
       },
@@ -215,11 +174,6 @@ class ProductionOrderService {
 
   /**
    * Verifica se a quantidade entregue é maior que a quantidade requisitada.
-   *
-   * @param {number} delivered_product_quantity - Quantidade entregue
-   * @param {number} requested_product_quantity - Quantidade requisitada
-   * @throws {Error} - Quantidade entregue maior que a quantidade requisitada
-   * @private
    */
   private verifyDeliveredProductQuantity(
     delivered_product_quantity: number,

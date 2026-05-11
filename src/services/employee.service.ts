@@ -9,9 +9,6 @@ import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.ut
 
 /**
  * Service de gestão de dados de empregados.
- *
- * @class {EmployeeService}
- * @see EmployeeController
  */
 class EmployeeService {
   private _prisma: PrismaClient;
@@ -23,9 +20,6 @@ class EmployeeService {
 
   /**
    * Procura todos os funcionários
-   *
-   * @returns {Promise<IEmployee[]>} Array de funcionários
-   * @see {IEmployee}
    */
   async getAllEmployeesData(): Promise<IEmployee[]> {
     return this._prisma.employees.findMany({
@@ -37,24 +31,12 @@ class EmployeeService {
 
   /**
    * Procura um funcionário pelo ID
-   *
-   * @param {string} employee_uuid - ID de funcionário
-   * @returns {Promise<IEmployee>} Dados do funcionário
-   * @see {IEmployee}
    */
   async getEmployeeDataById(employee_uuid: string): Promise<IEmployee> {
-    const employeeData: IEmployee | null =
+    const employeeData =
       await this._prisma.employees.findUnique({
         where: {
           employee_uuid,
-        },
-        select: {
-          employee_uuid: true,
-          name: true,
-          employee_role: true,
-          delivered_activities_quantity: true,
-          not_delivered_activities_quantity: true,
-          produced_quantity: true,
         },
       });
 
@@ -65,10 +47,6 @@ class EmployeeService {
 
   /**
    * Registra um funcionário
-   *
-   * @param {IEmployeeCreate} employeeData - Dados do novo funcionário
-   * @returns {Promise<IEmployee>} Novo funcionário
-   * @see {IEmployeeCreate}
    */
   async registerNewEmployee(employeeData: IEmployeeCreate): Promise<IEmployee> {
     return this._prisma.employees.create({
@@ -78,12 +56,6 @@ class EmployeeService {
 
   /**
    * Atualiza dados de um funcionário
-   *
-   * @param {IEmployeeUpdate} employeeNewData - Dados atualizados do funcionário
-   * @param {string} employee_uuid - ID do funcionário
-   * @returns {Promise<IEmployee>} - Dados do funcionário atualizados
-   * @see {IEmployee}
-   * @see {IEmployeeUpdate}
    */
   async updateEmployeeData(
     employeeNewData: IEmployeeUpdate,
@@ -101,9 +73,6 @@ class EmployeeService {
 
   /**
    * Remove funcionário do sistema
-   *
-   * @param {string} employee_uuid - ID do funcionário
-   * @returns {Promise<string>} - Mensagem de funcionário removido do sistema
    */
   async removeEmployeeData(employee_uuid: string): Promise<string> {
     if (!employee_uuid) throw new Error(responseMessages.fillAllFieldMessage);
@@ -119,10 +88,6 @@ class EmployeeService {
 
   /**
    * Incrementa quantidade de atividades entregues do funcionário
-   *
-   * @param {string} employee_uuid - ID do funcionário
-   * @returns {Promise<IEmployee>} - Funcionário com atividade incrementada
-   * @see {IEmployee}
    */
   async incrementEmployeeActivitiesQuantity(
     employee_uuid: string,
@@ -141,11 +106,6 @@ class EmployeeService {
 
   /**
    * Incrementa quantidade de produtos produzidos do funcionário
-   *
-   * @param {string} employee_uuid - ID do funcionário
-   * @param {number} productProducedQuantity - Quantidade de produtos produzidos
-   * @returns {Promise<IEmployee>} - Funcionário com quantidade de produtos produzidos incrementada
-   * @see {IEmployee}
    */
   async incrementEmployeeProductsProducedQuantity(
     employee_uuid: string,

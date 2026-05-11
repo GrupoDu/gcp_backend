@@ -1,9 +1,9 @@
 import type { PrismaClient } from "../../generated/prisma/client.js";
 import type {
-  IEmployeeGoal,
   IGoal,
   IGoalCreate,
   IGoalUpdate,
+  IEmployeeGoal,
 } from "../types/goal.interface.js";
 import { responseMessages } from "../constants/messages.constants.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
@@ -11,9 +11,6 @@ import { isValidDate } from "../utils/isValidDate.js";
 
 /**
  * Service responsável por gerenciar metas.
- *
- * @class GoalService
- * @see GoalController
  */
 class GoalService {
   private _prisma: PrismaClient;
@@ -25,9 +22,6 @@ class GoalService {
 
   /**
    * Busca todas as metas.
-   *
-   * @returns {Promise<IGoal[]>} - Lista de metas
-   * @see {IGoal}
    */
   async getAllGoalsData(): Promise<IGoal[]> {
     return this._prisma.goals.findMany();
@@ -35,21 +29,12 @@ class GoalService {
 
   /**
    * Cria uma meta.
-   *
-   * @param {IGoalCreate} newGoalData - Dados da nova meta
-   * @returns {Promise<IGoal>} - Meta criada
-   * @see {createEmployeeGoal}
-   * @see {isValidDate}
-   * @see {IGoalCreate}
-   * @see {IGoal}
    */
   async createNewGoal(newGoalData: IGoalCreate): Promise<IGoal> {
     isValidDate(newGoalData.goal_deadline.toString());
 
     const isEmployeeGoal = newGoalData.goal_type === "Funcionário";
-    if (isEmployeeGoal) {
-      return this.createEmployeeGoal(newGoalData);
-    }
+    if (isEmployeeGoal) return this.createEmployeeGoal(newGoalData);
 
     return this._prisma.goals.create({
       data: newGoalData,
@@ -58,12 +43,6 @@ class GoalService {
 
   /**
    * Cria uma meta para o funcionário
-   *
-   * @param {IGoalCreate} newGoalData - Dados da nova meta
-   * @returns {Promise<IEmployeeGoal>} - Meta criada
-   * @see {IGoalCreate}
-   * @see {IEmployeeGoal}
-   * @private
    */
   private async createEmployeeGoal(
     newGoalData: IGoalCreate,
@@ -78,9 +57,6 @@ class GoalService {
 
   /**
    * Remove uma meta
-   *
-   * @param {string} goalUuid - ID da meta
-   * @returns {Promise<string>} - Mensagem de meta deletada com sucesso
    */
   async deleteGoal(goalUuid: string): Promise<string> {
     if (!goalUuid) throw new Error(responseMessages.fillAllFieldMessage);
@@ -98,12 +74,6 @@ class GoalService {
 
   /**
    * Atualiza uma meta
-   *
-   * @param {IGoalUpdate} goalData - Dados atualizados da meta
-   * @param {string} goalUuid - ID da meta
-   * @returns {Promise<IGoal>} - Meta atualizada
-   * @see {IGoalUpdate}
-   * @see {IGoal}
    */
   async updateGoalData(
     goalData: IGoalUpdate,

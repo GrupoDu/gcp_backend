@@ -5,15 +5,15 @@ import type {
 
 export interface IProduct {
   product_uuid: string;
-  name: string;
-  description?: string | null;
-  product_type: string;
   created_at: Date;
+  name: string;
+  product_type: string;
   image: string;
   stock_quantity: number;
   unit_price: number;
   features?: string[];
   acronym?: string | null;
+  description?: string | null;
   composition?: JsonValue;
 }
 

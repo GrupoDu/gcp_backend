@@ -4,19 +4,20 @@ export interface IUser {
   email: string;
   password: string;
   user_role: string;
+  is_active: boolean;
 }
 
 /**
  * @extends {IUser}
  * @see {IUser}
- * @Omit user_id
+ * @Omit user_uuid
  */
 export interface IUserUpdate extends Partial<Omit<IUser, "user_uuid">> {}
 
 /**
  * @see {IUser}
  * @extends {IUser}
- * @Omit user_id
+ * @Omit user_uuid
  */
 export interface IUserCreate extends Omit<IUser, "user_uuid"> {}
 

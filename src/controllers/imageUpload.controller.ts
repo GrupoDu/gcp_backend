@@ -30,7 +30,7 @@ export default class ImageUploadController {
     const form = formidable({ multiples: false });
 
     try {
-      const [fields, files] = await form.parse(req);
+      const [, files] = await form.parse(req);
       const image = files.image?.[0];
 
       const { isMissingFields, requiredFieldsMessage, schemaErr } =

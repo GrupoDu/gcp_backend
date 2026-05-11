@@ -4,9 +4,6 @@ import { io } from "../server.js";
 
 /**
  * Service responsável por gerenciar análises de entrada e saída de estoque.
- *
- * @class InOutStockService
- * @see InOutStockController
  */
 class InOutStockService {
   private _prisma: PrismaClient;
@@ -20,29 +17,15 @@ class InOutStockService {
 
   /**
    * Analisa as entradas e saídas de estoque.
-   *
-   * @returns {Promise<IInOutStockAnalysis[]>} - Array de análises de entrada e saída de estoque
-   * @see {InOutStockController}
    */
   async getInOutStockAnalysis(): Promise<IInOutStockAnalysis[]> {
     return this._prisma.in_out_stock.findMany({
       where: { month: InOutStockService.MONTH, year: InOutStockService.YEAR },
-      select: {
-        in_quantity: true,
-        out_quantity: true,
-        month: true,
-        year: true,
-      },
     });
   }
 
   /**
    * Incrementa a quantidade de entrada no mês atual.
-   *
-   * @param {number} quantity - Quantidade a ser atualizada
-   * @see {MONTH}
-   * @see {YEAR}
-   * @returns {Promise<void>}
    */
   async incrementMonthlyInStockQuantity(quantity: number): Promise<void> {
     await this._prisma.in_out_stock.updateMany({
@@ -55,11 +38,6 @@ class InOutStockService {
 
   /**
    * Incrementa a quantidade de saída no mês atual.
-   *
-   * @param {number} quantity - Quantidade a ser atualizada
-   * @see {MONTH}
-   * @see {YEAR}
-   * @returns {Promise<void>}
    */
   async incrementMonthlyOutStockQuantity(quantity: number): Promise<void> {
     await this._prisma.in_out_stock.updateMany({

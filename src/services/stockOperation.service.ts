@@ -10,9 +10,6 @@ import type { PrismaClient } from "../../generated/prisma/client.js";
 
 /**
  * Service responsável por gerenciar operações combinadas de estoque.
- *
- * @class StockOperationService
- * @see StockOperationController
  */
 class StockOperationService {
   private _prisma: PrismaClient;
@@ -32,15 +29,6 @@ class StockOperationService {
 
   /**
    * Executa operação combinada de estoque.
-   *
-   * @param {IStockOperationCreate} stockOperationData - Dados da operação de estoque
-   * @returns {Promise<IStockOperationResult>} - Resultado da operação combinada
-   * @see {IStockOperationCreate}
-   * @see {IStockOperationResult}
-   * @see {StockUpdatesService}
-   * @see {InOutStockService}
-   * @see {ProductService}
-   * @see {ProductionOrderService}
    */
   async processStockOperation(
     stockOperationData: IStockOperationCreate,

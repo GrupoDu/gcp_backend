@@ -13,9 +13,6 @@ import { OrderItemCreateSchema } from "../schemas/orderItem.schema.js";
 
 /**
  * Controller responsável por gerenciar os itens de um pedido
- *
- * @class OrderItemsController
- * @see OrderItemsService
  */
 class OrderItemsController {
   private _orderItemsService: OrderItemsService;
@@ -27,29 +24,25 @@ class OrderItemsController {
 
   /**
    * Retorna os itens de um pedido
-   *
-   * @returns {Promise<Response>} - Objeto com itens do pédido
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see OrderItemsController
    */
   async getOrderItems(req: Request, res: Response): Promise<Response> {
     try {
-      const { order_id } = req.params;
+      const { order_uuid } = req.params;
 
-      if (!hasValidString(order_id)) {
+      if (!hasValidString(order_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["order_id"]),
+              REQUIRED_FIELDS_MESSAGE(["order_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
           );
       }
 
-      const orderItems = await this._orderItemsService.getOrderItems(order_id);
+      const orderItems =
+        await this._orderItemsService.getOrderItems(order_uuid);
 
       return res
         .status(200)
@@ -67,26 +60,21 @@ class OrderItemsController {
 
   /**
    * Adiciona um item ao pedido
-   *
-   * @returns {Promise<Response>} - Objeto com item adicionado ao pedido
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see OrderItemsController
    */
   async addItemsToOrder(req: Request, res: Response): Promise<Response> {
     const orderItemsData = req.body as IOrderItemsCreate;
-    const { order_id } = req.params;
+    const { order_uuid } = req.params;
 
     try {
       const { isMissingFields, requiredFieldsMessage, schemaErr } =
         checkMissingFields(orderItemsData, OrderItemCreateSchema);
 
-      if (!hasValidString(order_id)) {
+      if (!hasValidString(order_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["order_id"]),
+              REQUIRED_FIELDS_MESSAGE(["order_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
@@ -99,21 +87,9 @@ class OrderItemsController {
           .json(errorResponseWith(schemaErr, 422, requiredFieldsMessage));
       }
 
-      // Depois implementar essa verificação!!!
-      // if (
-      //   orderItemsData.unit_price.lessThan(0) ||
-      //   orderItemsData.quantity.lessThan(0)
-      // ) {
-      //   return res.status(400).json({
-      //     success: false,
-      //     message:
-      //       "unit_price deve ser maior ou igual a 0 e quantity deve ser maior que 0",
-      //   });
-      // }
-
       const newOrderItem = await this._orderItemsService.addItemsToOrder(
         orderItemsData,
-        order_id,
+        order_uuid,
       );
 
       return res
@@ -133,23 +109,18 @@ class OrderItemsController {
 
   /**
    * Remove um item do pedido
-   *
-   * @returns {Promise<Response>} - Objeto com item removido do pedido
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see OrderItemsController
    */
   async removeItemFromOrder(req: Request, res: Response): Promise<Response> {
-    const { order_id } = req.params;
-    const { product_id } = req.body as { product_id: string };
+    const { order_uuid } = req.params;
+    const { product_uuid } = req.body as { product_uuid: string };
 
     try {
-      if (!hasValidString(order_id) || !hasValidString(product_id)) {
+      if (!hasValidString(order_uuid) || !hasValidString(product_uuid)) {
         return res
           .status(422)
           .json(
             errorResponseWith(
-              REQUIRED_FIELDS_MESSAGE(["order_id", "product_id"]),
+              REQUIRED_FIELDS_MESSAGE(["order_uuid", "product_uuid"]),
               422,
               MISSING_FIELDS_MESSAGE,
             ),
@@ -157,8 +128,8 @@ class OrderItemsController {
       }
 
       const result = await this._orderItemsService.removeItemFromOrder(
-        order_id,
-        product_id,
+        order_uuid,
+        product_uuid,
       );
 
       if (!result) {

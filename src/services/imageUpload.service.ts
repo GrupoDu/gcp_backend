@@ -29,7 +29,7 @@ export default class ImageUploadService {
 
     console.log(`[Upload] Tentando upload de ${fileName} (${image.mimetype}) para o bucket produtos`);
 
-    const { data, error } = await this._supabase.storage
+    const { error } = await this._supabase.storage
       .from("produtos")
       .upload(fileName, fileBuffer, {
         contentType: image.mimetype || "image/png",

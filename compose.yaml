@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres
+    image: postgres:18.3-alpine3.23
     container_name: erp_test_db
     volumes:
       - pgdata:/var/lib/postgresql
@@ -11,14 +11,23 @@ services:
   api:
     build:
       context: .
+      dockerfile: Dockerfile
       target: dev
     develop:
       watch:
-        - path: ./
-          action: sync
+        - action: sync
+          path: ./
           target: /api
           ignore:
             - node_modules
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: tsconfig.json
+        - action: rebuild
+          path: Dockerfile
+        - action: rebuild
+          path: compose.yaml
     env_file:
       - .env
     ports:

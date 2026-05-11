@@ -9,9 +9,6 @@ import EmployeeService from "./employee.service.js";
 
 /**
  * Service para análise de dados de produção de um funcionário.
- *
- * @class EmployeeAnalysisService
- * @see EmployeeAnalysisController
  */
 class EmployeeAnalysisService {
   private _prisma: PrismaClient;
@@ -27,12 +24,6 @@ class EmployeeAnalysisService {
 
   /**
    * Realiza a análise de dados de produção de um funcionário.
-   *
-   * @param {string} employee_id - ID do funcionário
-   * @returns {Promise<IEmployeeProductionAnalysis>} - Dados de produção do funcionário
-   * @see {IEmployeeProductionAnalysis}
-   * @see {getCachedData}
-   * @see {saveDataToCache}
    */
   async employeeActivityAnalysis(
     employee_id: string,
@@ -50,31 +41,12 @@ class EmployeeAnalysisService {
     return this.saveDataToCache(employee_id);
   }
 
-  /**
-   * Recupera dados de produção do funcionário em cache.
-   *
-   * @param {string} cacheKey - Chave do cache
-   * @returns {IEmployeeProductionAnalysis | undefined} - Dados de produção do funcionário em cache
-   * @private
-   * @see {IEmployeeProductionAnalysis}
-   */
   private getCachedData(
     cacheKey: string,
   ): IEmployeeProductionAnalysis | undefined {
     return cacheInstance.get<IEmployeeProductionAnalysis>(cacheKey);
   }
 
-  /**
-   * Salva novos dados ao cache.
-   *
-   * @returns {Promise<IEmployeeProductionAnalysis>} - Dados salvos no cache
-   * @param {string} employee_id - ID do funcionário
-   * @see {IEmployeeProductionAnalysis}
-   * @see {CACHE_PREFIX}
-   * @see {CACHE_TTL}
-   * @see {EmployeeService}
-   * @private
-   */
   private async saveDataToCache(
     employee_id: string,
   ): Promise<IEmployeeProductionAnalysis> {
@@ -107,49 +79,25 @@ class EmployeeAnalysisService {
     return fullEmployeeDataAnalysis;
   }
 
-  /**
-   * Busca os registros de atividade do funcionário
-   *
-   * @param {string} employee_id - ID do funcionário
-   * @returns {Promise<number>} - Quantidade de registros entregues
-   * @see {getEmployeeRegisterData}
-   * @private
-   */
   private async getEmployeeDeliveredRegistersQuantity(
     employee_id: string,
   ): Promise<number> {
     return this.getEmployeeRegisterData(employee_id, "Entregue");
   }
 
-  /**
-   * Busca os registros de atividade não entregues do funcionário
-   *
-   * @param {string} employee_id - ID do funcionário
-   * @returns {Promise<number>} - Quantidade de registros não entregues
-   * @see {getEmployeeRegisterData}
-   * @private
-   */
   private async getEmployeeNotDeliveredRegistersQuantity(
     employee_id: string,
   ): Promise<number> {
     return this.getEmployeeRegisterData(employee_id, "Não entregue");
   }
 
-  /**
-   * Busca os registros de atividade do funcionário
-   *
-   * @param {string} employee_id - ID do funcionário
-   * @param {string} production_order_status - ID da ordem de produção
-   * @returns {Promise<number>} - Quantidade de registros
-   * @private
-   */
   private async getEmployeeRegisterData(
     employee_id: string,
     production_order_status: string,
   ): Promise<number> {
-    return this._prisma.production_order.count({
+    return this._prisma.production_orders.count({
       where: {
-        employee_uuid: employee_id,
+        welder_uuid: employee_id,
         production_order_status,
         production_order_deadline: {
           gte: getMonthRange(getTodayDate()).actualMonth,

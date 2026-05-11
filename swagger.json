@@ -44,63 +44,57 @@
       },
       "Goal": {
         "type": "object",
-        "required": ["goal_id", "goal_title", "goal_type", "goal_deadline"],
+        "required": ["goal_uuid", "goal_title", "goal_type", "goal_deadline", "goal_status"],
         "properties": {
-          "goal_id": { "type": "string", "format": "uuid" },
+          "goal_uuid": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
           "goal_title": { "type": "string" },
           "goal_description": { "type": "string", "nullable": true },
           "goal_type": { "type": "string" },
-          "goal_deadline": { "type": "string", "format": "date-time" },
-          "employee_goal": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
-          },
+          "goal_deadline": { "type": "string", "format": "date" },
+          "employee_goal": { "type": "string", "nullable": true, "format": "uuid" },
           "goal_status": { "type": "string" }
         }
       },
       "User": {
         "type": "object",
-        "required": ["user_id", "name", "email", "password", "user_role"],
+        "required": ["user_uuid", "name", "email", "password", "user_role"],
         "properties": {
-          "user_id": { "type": "string", "format": "uuid" },
+          "user_uuid": { "type": "string", "format": "uuid" },
           "name": { "type": "string" },
           "email": { "type": "string", "format": "email" },
           "password": { "type": "string", "format": "password" },
-          "user_role": { "type": "string" }
+          "user_role": { "type": "string" },
+          "is_active": { "type": "boolean" }
         }
       },
       "Product": {
         "type": "object",
-        "required": ["uuid", "name", "description", "product_type", "image"],
+        "required": ["product_uuid", "name", "product_type", "image", "stock_quantity", "unit_price"],
         "properties": {
-          "uuid": { "type": "string", "format": "uuid" },
-          "name": { "type": "string" },
-          "description": { "type": "string" },
-          "product_type": { "type": "string" },
+          "product_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
+          "name": { "type": "string" },
+          "product_type": { "type": "string" },
           "image": { "type": "string" },
-          "features": {
-            "type": "array",
-            "items": { "type": "string" }
-          },
+          "features": { "type": "array", "items": { "type": "string" } },
+          "stock_quantity": { "type": "integer" },
+          "unit_price": { "type": "integer" },
           "acronym": { "type": "string", "nullable": true },
-          "composition": {
-            "type": "object",
-            "description": "Campo JSON flexível"
-          },
-          "stock_quantity": {
-            "type": "integer"
-          }
+          "description": { "type": "string", "nullable": true },
+          "composition": { "type": "object", "description": "Campo JSON flexível" }
         }
       },
       "Employee": {
         "type": "object",
-        "required": ["name", "employee_role"],
+        "required": ["employee_uuid", "name", "employee_role"],
         "properties": {
           "employee_uuid": { "type": "string", "format": "uuid" },
           "name": { "type": "string" },
-          "employee_role": { "type": "string" }
+          "employee_role": { "type": "string" },
+          "delivered_activities_quantity": { "type": "integer" },
+          "not_delivered_activities_quantity": { "type": "integer" },
+          "produced_quantity": { "type": "integer" }
         }
       },
       "Feedback": {
@@ -113,82 +107,105 @@
       },
       "ProductionOrder": {
         "type": "object",
-        "required": [
-          "production_order_id",
-          "production_order_title",
-          "production_order_deadline",
-          "delivered_product_quantity"
-        ],
+        "required": ["production_order_uuid", "production_order_deadline", "production_order_status", "quantity_to_produce", "produced_quantity", "product_uuid", "order_uuid"],
         "properties": {
-          "production_order_id": { "type": "string", "format": "uuid" },
-          "production_order_title": { "type": "string" },
-          "production_order_description": {
-            "type": "string",
-            "nullable": true
-          },
-          "production_order_deadline": {
-            "type": "string",
-            "format": "date-time"
-          },
+          "production_order_uuid": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "production_order_deadline": { "type": "string", "format": "date" },
+          "production_order_status": { "type": "string" },
+          "quantity_to_produce": { "type": "integer" },
+          "produced_quantity": { "type": "integer" },
+          "stock_validation": { "type": "boolean" },
           "delivery_observation": { "type": "string", "nullable": true },
           "delivered_product_quantity": { "type": "integer" },
-          "created_at": { "type": "string", "format": "date-time" },
-          "stock_validation": { "type": "boolean" },
-          "delivered_at": { "type": "string", "format": "date-time" },
-          "cut_assistant": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
-          },
-          "fold_assistant": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
-          },
-          "finishing_assistant": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
-          },
-          "paint_assistant": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
-          },
-          "employee_uuid": {
-            "type": "string",
-            "nullable": true,
-            "format": "uuid"
-          },
-          "supervisor_uuid": { "type": "string", "format": "uuid" }
+          "production_order_description": { "type": "string", "nullable": true },
+          "delivered_at": { "type": "string", "format": "date", "nullable": true },
+          "order_uuid": { "type": "string", "format": "uuid" },
+          "product_uuid": { "type": "string", "format": "uuid" },
+          "welder_uuid": { "type": "string", "format": "uuid", "nullable": true },
+          "supervisor_uuid": { "type": "string", "format": "uuid", "nullable": true }
         }
       },
       "Order": {
-        "required": ["order_id", "order_title", "order_deadline"],
+        "type": "object",
+        "required": ["order_uuid", "order_status", "order_deadline", "billing_uuid", "revenue_uuid", "delivery_uuid", "client_uuid"],
         "properties": {
-          "order_id": { "type": "string", "format": "uuid" },
-          "order_title": { "type": "string" },
-          "order_deadline": { "type": "string", "format": "date-time" },
+          "order_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
           "order_status": { "type": "string" },
-          "order_description": { "type": "string", "nullable": true },
-          "delivery_observation": { "type": "string", "nullable": true }
+          "order_deadline": { "type": "string", "format": "date" },
+          "billing_uuid": { "type": "string", "format": "uuid" },
+          "revenue_uuid": { "type": "string", "format": "uuid" },
+          "delivery_uuid": { "type": "string", "format": "uuid" },
+          "client_uuid": { "type": "string", "format": "uuid" },
+          "totalPrice": { "type": "integer", "nullable": true },
+          "order_items": { "type": "array", "items": { "$ref": "#/components/schemas/OrderItem" } }
         }
       },
       "OrderItem": {
-        "required": [
-          "order_item_id",
-          "order_id",
-          "product_id",
-          "quantity",
-          "unit_price"
-        ],
+        "type": "object",
+        "required": ["order_item_uuid", "quantity", "unit_price", "total", "product_uuid", "order_uuid"],
         "properties": {
-          "order_item_id": { "type": "string", "format": "uuid" },
-          "order_id": { "type": "string", "format": "uuid" },
-          "product_id": { "type": "string", "format": "uuid" },
+          "order_item_uuid": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
           "quantity": { "type": "integer" },
-          "unit_price": { "type": "number", "format": "double" }
+          "unit_price": { "type": "integer" },
+          "discount_percentage": { "type": "number" },
+          "ipi": { "type": "number" },
+          "additional_amount": { "type": "integer" },
+          "total": { "type": "integer" },
+          "product_uuid": { "type": "string", "format": "uuid" },
+          "order_uuid": { "type": "string", "format": "uuid" }
+        }
+      },
+      "Billing": {
+        "type": "object",
+        "required": ["billing_uuid", "billing_address", "client_uuid"],
+        "properties": {
+          "billing_uuid": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "billing_address": { "type": "string" },
+          "client_uuid": { "type": "string", "format": "uuid" },
+          "name": { "type": "string", "nullable": true }
+        }
+      },
+      "Revenue": {
+        "type": "object",
+        "required": ["revenue_uuid", "revenue_address", "revenue_cnpj", "revenue_phone", "revenue_email", "client_uuid"],
+        "properties": {
+          "revenue_uuid": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "revenue_address": { "type": "string" },
+          "revenue_cnpj": { "type": "string" },
+          "revenue_landline": { "type": "string", "nullable": true },
+          "revenue_phone": { "type": "string" },
+          "revenue_email": { "type": "string", "format": "email" },
+          "client_uuid": { "type": "string", "format": "uuid" }
+        }
+      },
+      "Client": {
+        "type": "object",
+        "required": ["client_uuid", "client_name", "client_cnpj", "client_address", "client_phone"],
+        "properties": {
+          "client_uuid": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "client_name": { "type": "string" },
+          "client_cnpj": { "type": "string" },
+          "client_address": { "type": "string" },
+          "client_phone": { "type": "string" },
+          "client_landline": { "type": "string", "nullable": true }
+        }
+      },
+      "Delivery": {
+        "type": "object",
+        "required": ["delivery_uuid", "building", "delivery_address"],
+        "properties": {
+          "delivery_uuid": { "type": "string", "format": "uuid" },
+          "created_at": { "type": "string", "format": "date-time" },
+          "building": { "type": "string" },
+          "delivery_address": { "type": "string" },
+          "reference": { "type": "string", "nullable": true },
+          "delivery_observation": { "type": "string", "nullable": true }
         }
       },
       "DeliveryOrder": {
@@ -236,10 +253,12 @@
       },
       "StockUpdates": {
         "type": "object",
-        "required": ["product_quantity_title", "event"],
+        "required": ["stock_updates_uuid", "product_quantity_title", "event", "date"],
         "properties": {
+          "stock_updates_uuid": { "type": "string", "format": "uuid" },
           "product_quantity_title": { "type": "string" },
-          "event": { "type": "string" }
+          "event": { "type": "string" },
+          "date": { "type": "string", "format": "date" }
         }
       },
       "Error": {
@@ -286,7 +305,7 @@
                 "example": {
                   "data": {
                     "user": {
-                      "user_id": "6aaf3e59-6d26-40d8-94ef-36e468af493d",
+                      "user_uuid": "6aaf3e59-6d26-40d8-94ef-36e468af493d",
                       "user_role": "admin"
                     }
                   },
@@ -484,7 +503,7 @@
                 "example": {
                   "data": [
                     {
-                      "goal_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                      "goal_uuid": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                       "goal_title": "Título da meta",
                       "goal_description": "Descrição da meta",
                       "goal_type": "Geral",
@@ -531,7 +550,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "goal_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "goal_uuid": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "goal_title": "Título da meta",
                     "goal_description": "Descrição da meta",
                     "goal_type": "Geral",
@@ -644,7 +663,7 @@
                 "type": "object",
                 "minProperties": 1,
                 "properties": {
-                  "goal_id": { "type": "string" },
+                  "goal_uuid": { "type": "string" },
                   "goal_title": { "type": "string" },
                   "goal_description": { "type": "string", "nullable": true },
                   "goal_type": { "type": "string" },
@@ -663,7 +682,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "goal_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "goal_uuid": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "goal_title": "Título da meta",
                     "goal_description": "Descrição da meta",
                     "goal_type": "Geral",
@@ -717,7 +736,7 @@
                 "example": {
                   "data": [
                     {
-                      "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                      "user_uuid": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                       "name": "Rafael",
                       "email": "rafael@exemplo.com",
                       "user_role": "admin"
@@ -761,7 +780,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "user_uuid": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
                     "email": "rafael@exemplo.com",
                     "user_role": "admin"
@@ -810,7 +829,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "user_uuid": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
                     "email": "rafael@exemplo.com",
                     "user_role": "admin"
@@ -912,7 +931,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "user_uuid": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
                     "email": "rafael@exemplo.com",
                     "user_role": "admin"
@@ -1036,7 +1055,7 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "user_id": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
+                    "user_uuid": "185cdd98-20d7-4f36-aa59-4a9d1cc089e9",
                     "name": "Rafael",
                     "email": "rafael@exemplo.com",
                     "user_role": "supervisor"
@@ -1060,6 +1079,29 @@
                 }
               }
             }
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      }
+    },
+    "/users/deactivate/{user_uuid}": {
+      "patch": {
+        "summary": "Desativa um usuário",
+        "tags": ["Users"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "user_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário desativado com sucesso"
           },
           "500": {
             "description": "Erro interno do servidor"
@@ -1091,7 +1133,7 @@
                       ],
                       "acronym": "CTDB",
                       "composition": {},
-                      "uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
+                      "product_uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
                       "stock_quantity": "0"
                     }
                   ],
@@ -1146,7 +1188,7 @@
                       ],
                       "acronym": "CTDB",
                       "composition": {},
-                      "uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
+                      "product_uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
                       "stock_quantity": "0"
                     }
                   ],
@@ -1184,6 +1226,34 @@
       }
     },
     "/products/{product_uuid}": {
+      "get": {
+        "summary": "Busca um produto por UUID",
+        "tags": ["Products"],
+        "parameters": [
+          {
+            "name": "product_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto encontrado",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Product" }
+              }
+            }
+          },
+          "422": {
+            "description": "Campos obrigatórios faltando."
+          },
+          "500": {
+            "description": "Erro interno do servidor"
+          }
+        }
+      },
       "patch": {
         "summary": "Atualiza um produto",
         "tags": ["Products"],
@@ -1239,7 +1309,7 @@
                     ],
                     "acronym": "CTDB",
                     "composition": {},
-                    "uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
+                    "product_uuid": "4d757ad7-3542-48aa-990a-01d8d367c696",
                     "stock_quantity": "0"
                   },
                   "status": 200,
@@ -1814,24 +1884,21 @@
                 "example": {
                   "data": [
                     {
-                      "production_order_id": "58961aad-db2e-4b20-87a4-9f799b1e3693",
+                      "production_order_uuid": "58961aad-db2e-4b20-87a4-9f799b1e3693",
                       "created_at": "2026-04-01T11:00:00.000Z",
-                      "production_order_title": "30 Carro Gaiola",
                       "production_order_deadline": "2026-04-02T00:00:00.000Z",
                       "production_order_status": "Pendente",
-                      "product_quantity": "30",
+                      "quantity_to_produce": 30,
+                      "produced_quantity": 0,
                       "delivered_at": null,
-                      "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                      "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                      "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                      "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                      "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "product_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "order_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                      "welder_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                       "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                       "production_order_description": "Descrição da ordem de produção",
                       "delivery_observation": "",
-                      "delivered_product_quantity": "0",
-                      "stock_validation": false,
-                      "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                      "delivered_product_quantity": 0,
+                      "stock_validation": false
                     }
                   ],
                   "status": 200,
@@ -1872,24 +1939,21 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "production_order_id": "58961aad-db2e-4b20-87a4-9f799b1e3693",
+                    "production_order_uuid": "58961aad-db2e-4b20-87a4-9f799b1e3693",
                     "created_at": "2026-04-01T11:00:00.000Z",
-                    "production_order_title": "30 Carro Gaiola",
                     "production_order_deadline": "2026-04-02T00:00:00.000Z",
                     "production_order_status": "Pendente",
-                    "product_quantity": "30",
+                    "quantity_to_produce": 30,
+                    "produced_quantity": 0,
                     "delivered_at": null,
-                    "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "product_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "order_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "welder_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "production_order_description": "Descrição da ordem de produção",
                     "delivery_observation": "",
-                    "delivered_product_quantity": "0",
-                    "stock_validation": false,
-                    "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                    "delivered_product_quantity": 0,
+                    "stock_validation": false
                   },
                   "status": 201,
                   "message": "Ordem de produção criada com sucesso.",
@@ -1906,7 +1970,7 @@
                   "status": 422,
                   "message": "Campos obrigatórios faltando.",
                   "success": false,
-                  "error": "Campos obrigatórios: production_order_title, production_order_deadline, product_quantity, employee_uuid, supervisor_uuid, production_order_description, delivery_observation, stock_validation, order_id"
+                  "error": "Campos obrigatórios: production_order_deadline, quantity_to_produce, product_uuid, order_uuid, welder_uuid, supervisor_uuid"
                 }
               }
             }
@@ -1922,13 +1986,13 @@
         }
       }
     },
-    "/production-orders/{production_order_id}": {
+    "/production-orders/{production_order_uuid}": {
       "get": {
         "summary": "Busca uma ordem de produção por UUID",
         "tags": ["ProductionOrder"],
         "parameters": [
           {
-            "name": "production_order_id",
+            "name": "production_order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -1941,24 +2005,21 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "production_order_id": "58961aad-db2e-4b20-87a4-9f799b1e3693",
+                    "production_order_uuid": "58961aad-db2e-4b20-87a4-9f799b1e3693",
                     "created_at": "2026-04-01T11:00:00.000Z",
-                    "production_order_title": "30 Carro Gaiola",
                     "production_order_deadline": "2026-04-02T00:00:00.000Z",
                     "production_order_status": "Pendente",
-                    "product_quantity": "30",
+                    "quantity_to_produce": 30,
+                    "produced_quantity": 0,
                     "delivered_at": null,
-                    "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "product_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "order_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "welder_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "production_order_description": "Descrição da ordem de produção",
                     "delivery_observation": "",
-                    "delivered_product_quantity": "0",
-                    "stock_validation": false,
-                    "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                    "delivered_product_quantity": 0,
+                    "stock_validation": false
                   },
                   "status": 200,
                   "message": "Ordem de produção encontrada.",
@@ -1975,7 +2036,7 @@
                   "status": 422,
                   "message": "Campos obrigatórios faltando.",
                   "success": false,
-                  "error": "Campos obrigatórios: production_order_title, production_order_deadline, product_quantity, employee_uuid, supervisor_uuid, production_order_description, delivery_observation, stock_validation, order_id"
+                  "error": "Campos obrigatórios: production_order_uuid"
                 }
               }
             }
@@ -1996,7 +2057,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "production_order_id",
+            "name": "production_order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -2024,7 +2085,7 @@
                   "status": 422,
                   "message": "Campos obrigatórios faltando.",
                   "success": false,
-                  "error": "Campos obrigatórios: production_order_id"
+                  "error": "Campos obrigatórios: production_order_uuid"
                 }
               }
             }
@@ -2045,7 +2106,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "production_order_id",
+            "name": "production_order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string" }
@@ -2066,15 +2127,14 @@
                   },
                   "production_order_deadline": {
                     "type": "string",
-                    "format": "date-time"
+                    "format": "date"
                   },
-                  "product_quantity": { "type": "number", "format": "decimal" },
-                  "cut_assistant": { "type": "string", "nullable": true },
-                  "fold_assistant": { "type": "string", "nullable": true },
-                  "finishing_assistant": { "type": "string", "nullable": true },
-                  "paint_assistant": { "type": "string", "nullable": true },
-                  "employee_uuid": { "type": "string", "nullable": true },
-                  "supervisor_uuid": { "type": "string" }
+                  "quantity_to_produce": { "type": "integer" },
+                  "produced_quantity": { "type": "integer" },
+                  "product_uuid": { "type": "string", "format": "uuid" },
+                  "order_uuid": { "type": "string", "format": "uuid" },
+                  "welder_uuid": { "type": "string", "format": "uuid" },
+                  "supervisor_uuid": { "type": "string", "format": "uuid" }
                 }
               }
             }
@@ -2087,24 +2147,21 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "production_order_id": "58961aad-db2e-4b20-87a4-9f799b1e3693",
+                    "production_order_uuid": "58961aad-db2e-4b20-87a4-9f799b1e3693",
                     "created_at": "2026-04-01T11:00:00.000Z",
-                    "production_order_title": "30 Carro Gaiola",
                     "production_order_deadline": "2026-04-02T00:00:00.000Z",
                     "production_order_status": "Pendente",
-                    "product_quantity": "30",
+                    "quantity_to_produce": 30,
+                    "produced_quantity": 0,
                     "delivered_at": null,
-                    "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "product_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "order_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "welder_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "production_order_description": "Descrição da ordem de produção",
                     "delivery_observation": "",
-                    "delivered_product_quantity": "0",
-                    "stock_validation": false,
-                    "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                    "delivered_product_quantity": 0,
+                    "stock_validation": false
                   },
                   "status": 200,
                   "message": "Ordem de produção atualizada com sucesso.",
@@ -2124,7 +2181,7 @@
         }
       }
     },
-    "/production-orders/validate/{production_order_id}": {
+    "/production-orders/validate/{production_order_uuid}": {
       "patch": {
         "summary": "Valida estoque da quantidade produzida",
         "tags": ["ProductionOrder"],
@@ -2132,7 +2189,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "production_order_id",
+            "name": "production_order_uuid",
             "required": true,
             "schema": { "type": "string" }
           }
@@ -2159,7 +2216,7 @@
                   "status": 422,
                   "message": "Campos obrigatórios faltando",
                   "success": false,
-                  "error": "Campos obrigatórios: production_order_id"
+                  "error": "Campos obrigatórios: production_order_uuid"
                 }
               }
             }
@@ -2175,14 +2232,14 @@
         }
       }
     },
-    "/deliver-production-order/{production_order_id}": {
+    "/deliver-production-order/{production_order_uuid}": {
       "patch": {
         "summary": "Realiza a entrega da ordem de produção.",
         "requestBody": {
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/DeliveryOrder" }
+              "schema": { "$ref": "#/components/schemas/DeliverProductionOrder" }
             }
           }
         },
@@ -2190,7 +2247,7 @@
         "parameters": [
           {
             "in": "path",
-            "name": "production_order_id",
+            "name": "production_order_uuid",
             "required": true,
             "schema": { "type": "string" }
           }
@@ -2202,24 +2259,22 @@
               "application/json": {
                 "example": {
                   "data": {
-                    "production_order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "production_order_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "created_at": "2026-04-01T11:33:50.567Z",
                     "production_order_title": "30 Carro Gaiola",
                     "production_order_deadline": "2026-04-02T00:00:00.000Z",
                     "production_order_status": "Entregue",
-                    "product_quantity": "30",
+                    "quantity_to_produce": 30,
+                    "produced_quantity": 30,
                     "delivered_at": "2026-04-01T10:00:00.000Z",
-                    "cut_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "fold_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "finishing_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "paint_assistant": "41649f15-f75d-4b2b-b196-091ef97bff4a",
-                    "employee_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "product_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "order_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
+                    "welder_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "supervisor_uuid": "41649f15-f75d-4b2b-b196-091ef97bff4a",
                     "production_order_description": "",
                     "delivery_observation": "",
-                    "delivered_product_quantity": "0",
-                    "stock_validation": false,
-                    "order_id": "41649f15-f75d-4b2b-b196-091ef97bff4a"
+                    "delivered_product_quantity": 0,
+                    "stock_validation": false
                   },
                   "status": 200,
                   "message": "Ordem de produção entregue com sucesso.",
@@ -2237,7 +2292,7 @@
                     "status": 422,
                     "message": "Campos obrigatórios faltando.",
                     "success": false,
-                    "error": "Campos obrigatórios: employee_uuid, delivered_product_quantity, requested_product_quantity"
+                    "error": "Campos obrigatórios: welder_uuid, delivered_product_quantity, requested_product_quantity"
                   }
                 }
               }
@@ -2762,14 +2817,14 @@
         }
       }
     },
-    "/orders/{order_id}": {
+    "/orders/{order_uuid}": {
       "get": {
-        "summary": "Busca um pedido por ID",
+        "summary": "Busca um pedido por UUID",
         "tags": ["Orders"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "order_id",
+            "name": "order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
@@ -2787,7 +2842,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "order_id",
+            "name": "order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
@@ -2808,14 +2863,14 @@
         }
       }
     },
-    "/orders/{order_id}/status": {
+    "/orders/{order_uuid}/status": {
       "patch": {
         "summary": "Atualiza o status de um pedido",
         "tags": ["Orders"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "order_id",
+            "name": "order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
@@ -2841,14 +2896,14 @@
         }
       }
     },
-    "/order-items/{order_id}": {
+    "/order-items/{order_uuid}": {
       "get": {
         "summary": "Lista itens de um pedido",
         "tags": ["OrderItems"],
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "order_id",
+            "name": "order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
@@ -2866,7 +2921,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "order_id",
+            "name": "order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
@@ -2895,7 +2950,7 @@
         "security": [{ "cookieAuth": [] }],
         "parameters": [
           {
-            "name": "order_id",
+            "name": "order_uuid",
             "in": "path",
             "required": true,
             "schema": { "type": "string", "format": "uuid" }
@@ -2907,9 +2962,9 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["product_id"],
+                "required": ["product_uuid"],
                 "properties": {
-                  "product_id": { "type": "string", "format": "uuid" }
+                  "product_uuid": { "type": "string", "format": "uuid" }
                 }
               }
             }
@@ -2934,20 +2989,20 @@
               "schema": {
                 "type": "object",
                 "required": [
-                  "production_order_id",
+                  "production_order_uuid",
                   "product_quantity_title",
                   "event",
                   "inStockIncrementQuantity",
-                  "product_id",
+                  "product_uuid",
                   "validation",
                   "producedQuantity"
                 ],
                 "properties": {
-                  "production_order_id": { "type": "string", "format": "uuid" },
+                  "production_order_uuid": { "type": "string", "format": "uuid" },
                   "product_quantity_title": { "type": "string" },
                   "event": { "type": "string" },
                   "inStockIncrementQuantity": { "type": "integer" },
-                  "product_id": { "type": "string", "format": "uuid" },
+                  "product_uuid": { "type": "string", "format": "uuid" },
                   "validation": { "type": "boolean" },
                   "producedQuantity": { "type": "integer" }
                 }
@@ -2958,6 +3013,388 @@
         "responses": {
           "200": {
             "description": "Operação processada com sucesso"
+          }
+        }
+      }
+    },
+    "/upload-image": {
+      "post": {
+        "summary": "Faz o upload de uma imagem",
+        "tags": ["Upload"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "image": { "type": "string", "format": "binary" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Upload realizado com sucesso",
+            "content": {
+              "application/json": {
+                "example": {
+                  "data": { "imageUrl": "https://..." },
+                  "status": 201,
+                  "message": "Upload realizado com sucesso",
+                  "success": true
+                }
+              }
+            }
+          },
+          "422": { "description": "Erro de validação" },
+          "500": { "description": "Erro interno do servidor" }
+        }
+      }
+    },
+    "/billing": {
+      "get": {
+        "summary": "Lista todos os faturamentos",
+        "tags": ["Billing"],
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de faturamentos retornada com sucesso"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria um faturamento",
+        "tags": ["Billing"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["billing_address", "client_uuid"],
+                "properties": {
+                  "billing_address": { "type": "string" },
+                  "client_uuid": { "type": "string", "format": "uuid" },
+                  "name": { "type": "string", "nullable": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Faturamento criado com sucesso"
+          }
+        }
+      }
+    },
+    "/billing/{billing_uuid}": {
+      "get": {
+        "summary": "Busca faturamento por UUID",
+        "tags": ["Billing"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "billing_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Faturamento encontrado"
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza faturamento",
+        "tags": ["Billing"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "billing_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "billing_address": { "type": "string" },
+                  "client_uuid": { "type": "string", "format": "uuid" },
+                  "name": { "type": "string", "nullable": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Faturamento atualizado com sucesso"
+          }
+        }
+      }
+    },
+    "/revenues": {
+      "get": {
+        "summary": "Lista todos os dados de faturamento (revenues)",
+        "tags": ["Revenues"],
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de revenues retornada com sucesso"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria um dado de faturamento",
+        "tags": ["Revenues"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Revenue" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Revenue criado com sucesso"
+          }
+        }
+      }
+    },
+    "/revenues/{revenue_uuid}": {
+      "get": {
+        "summary": "Busca revenue por UUID",
+        "tags": ["Revenues"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "revenue_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Revenue encontrado"
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza revenue",
+        "tags": ["Revenues"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "revenue_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "revenue_address": { "type": "string" },
+                  "revenue_cnpj": { "type": "string" },
+                  "revenue_landline": { "type": "string", "nullable": true },
+                  "revenue_phone": { "type": "string" },
+                  "revenue_email": { "type": "string", "format": "email" },
+                  "client_uuid": { "type": "string", "format": "uuid" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Revenue atualizado com sucesso"
+          }
+        }
+      }
+    },
+    "/deliveries": {
+      "get": {
+        "summary": "Lista todas as entregas",
+        "tags": ["Deliveries"],
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de entregas retornada com sucesso"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria uma entrega",
+        "tags": ["Deliveries"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Delivery" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Entrega criada com sucesso"
+          }
+        }
+      }
+    },
+    "/deliveries/{delivery_uuid}": {
+      "get": {
+        "summary": "Busca entrega por UUID",
+        "tags": ["Deliveries"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "delivery_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entrega encontrada"
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza entrega",
+        "tags": ["Deliveries"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "delivery_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "building": { "type": "string" },
+                  "delivery_address": { "type": "string" },
+                  "reference": { "type": "string", "nullable": true },
+                  "delivery_observation": { "type": "string", "nullable": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Entrega atualizada com sucesso"
+          }
+        }
+      }
+    },
+    "/clients": {
+      "get": {
+        "summary": "Lista todos os clientes",
+        "tags": ["Clients"],
+        "security": [{ "cookieAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "Lista de clientes retornada com sucesso"
+          }
+        }
+      },
+      "post": {
+        "summary": "Cria um cliente",
+        "tags": ["Clients"],
+        "security": [{ "cookieAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Client" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Cliente criado com sucesso"
+          }
+        }
+      }
+    },
+    "/clients/{client_uuid}": {
+      "get": {
+        "summary": "Busca cliente por UUID",
+        "tags": ["Clients"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "client_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cliente encontrado"
+          }
+        }
+      },
+      "put": {
+        "summary": "Atualiza cliente",
+        "tags": ["Clients"],
+        "security": [{ "cookieAuth": [] }],
+        "parameters": [
+          {
+            "name": "client_uuid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "format": "uuid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "client_name": { "type": "string" },
+                  "client_cnpj": { "type": "string" },
+                  "client_address": { "type": "string" },
+                  "client_phone": { "type": "string" },
+                  "client_landline": { "type": "string", "nullable": true }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Cliente atualizado com sucesso"
           }
         }
       }

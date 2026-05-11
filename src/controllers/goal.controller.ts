@@ -13,9 +13,6 @@ import { hasValidString } from "../utils/hasValidString.js";
 
 /**
  * Controller responsável por gerenciar as operações relacionadas a meta.
- *
- * @class GoalController
- * @see GoalService
  */
 class GoalController {
   private _goalService: GoalService;
@@ -27,11 +24,6 @@ class GoalController {
 
   /**
    * Busca todos os dados de meta.
-   *
-   * @returns {Promise<Response>} - Objeto com mensagem de sucesso
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see GoalController
    */
   async getGoalsData(req: Request, res: Response): Promise<Response> {
     try {
@@ -48,11 +40,6 @@ class GoalController {
 
   /**
    * Método responsável por criar uma nova meta.
-   *
-   * @returns {Promise<Response>} - Objeto com mensagem de sucesso
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see GoalController
    */
   async createNewGoal(req: Request, res: Response): Promise<Response> {
     const newGoalInfos = req.body as IGoalCreate;
@@ -80,11 +67,6 @@ class GoalController {
 
   /**
    * Método responsável por remover uma meta.
-   *
-   * @returns {Promise<Response>} - Objeto com mensagem de sucesso
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see GoalController
    */
   async removeGoalData(req: Request, res: Response): Promise<Response> {
     try {
@@ -120,11 +102,6 @@ class GoalController {
 
   /**
    * Método responsável por atualizar os dados de uma meta.
-   *
-   * @returns {Promise<Response>} - Objeto com mensagem de sucesso
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see GoalController
    */
   async updateGoalData(req: Request, res: Response): Promise<Response> {
     const updateGoalValues = req.body as IGoalUpdate;

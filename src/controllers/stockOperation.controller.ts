@@ -11,9 +11,6 @@ import { toRecord } from "../utils/toRecord.js";
 
 /**
  * Controller responsável por gerenciar operações combinadas de estoque.
- *
- * @class StockOperationController
- * @see StockOperationService
  */
 class StockOperationController {
   private _stockOperationService: StockOperationService;
@@ -25,11 +22,6 @@ class StockOperationController {
 
   /**
    * Método responsável por processar operação combinada de estoque
-   *
-   * @returns {Promise<Response>} - Objeto com resultado da operação combinada
-   * @param {Request} req - Request express
-   * @param {Response} res - Response express
-   * @see StockOperationController
    */
   async processStockOperation(req: Request, res: Response): Promise<Response> {
     const stockOperationData = req.body as IStockOperationCreate;
@@ -68,10 +60,6 @@ class StockOperationController {
 
   /**
    * Valida os dados de entrada
-   *
-   * @param {IStockOperationCreate} entries - Valores vindo do body
-   * @returns {boolean} - Retorna se os valores são validos
-   * @private
    */
   private validateEntries(entries: IStockOperationCreate): boolean {
     const {

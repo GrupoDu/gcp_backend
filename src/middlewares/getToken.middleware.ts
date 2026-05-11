@@ -51,6 +51,11 @@ export function getTokenMiddleware(
       return res.status(401).json({ message: "Token inválido." });
     if (isTokenExpiredError)
       return res.status(401).json({ message: "Token expirado." });
+    if (error.message === "TOKEN_NOT_PROVIDED")
+      return res.status(401).json({
+        message: "Token não fornecido.",
+        error: error.message,
+      });
 
     return res.status(500).json({
       message: responseMessages.catchErrorMessage,
