@@ -2,6 +2,11 @@ import type AnnualAnalysisService from "../services/annualAnalysis.service.js";
 import type { Request, Response } from "express";
 import errorResponseWith from "../utils/errorResponseWith.js";
 import successResponseWith from "../utils/successResponseWith.js";
+import { hasValidString } from "../utils/hasValidString.js";
+import {
+  MISSING_FIELDS_MESSAGE,
+  REQUIRED_FIELDS_MESSAGE,
+} from "../constants/messages.constants.js";
 
 /**
  * Controller responsável por gerenciar a análise anual.
@@ -74,6 +79,39 @@ class AnnualAnalysisController {
     } catch (err) {
       const error = err as Error;
       return res.status(500).json(errorResponseWith(error.message, 500));
+    }
+  }
+
+  async updateTotalProduction(req: Request, res: Response): Promise<Response> {
+    try {
+      const { quantity } = req.body as { quantity: string };
+
+      if (hasValidString(quantity)) {
+        return res
+          .status(422)
+          .json(
+            errorResponseWith(
+              REQUIRED_FIELDS_MESSAGE(["quantity"]),
+              422,
+              MISSING_FIELDS_MESSAGE,
+            ),
+          );
+      }
+
+      await this._annualAnalysisService.updateMontlyTotalProduction(quantity);
+
+      return res
+        .status(200)
+        .json(
+          successResponseWith(
+            "Analise mensal atualizada com sucesso",
+            "Analise mensal atualizada com sucesso",
+          ),
+        );
+    } catch (err) {
+      const error = err as Error;
+
+      return res.status(500).json(errorResponseWith(error.message));
     }
   }
 }

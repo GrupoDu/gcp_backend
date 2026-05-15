@@ -40,6 +40,23 @@ class AnnualAnalysisService {
 
     return "Analise mensal atualizada com sucesso.";
   }
+
+  async updateMontlyTotalProduction(quantity: number): Promise<string> {
+    const MONTH = new Date().getMonth() + 1;
+    const YEAR = new Date().getFullYear();
+
+    await this._prisma.annual_analysis.updateMany({
+      where: {
+        month: MONTH,
+        year: YEAR,
+      },
+      data: {
+        total_production: { increment: quantity },
+      },
+    });
+
+    return "Analise mensal atualizada com sucesso.";
+  }
 }
 
 export default AnnualAnalysisService;

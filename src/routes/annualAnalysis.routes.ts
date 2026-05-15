@@ -24,5 +24,12 @@ router.patch(
   (req: Request, res: Response) =>
     annualAnalysisController.updateDeliveredAnualAnalysis(req, res),
 );
+router.patch(
+  "/update-production",
+  getTokenMiddleware,
+  adminAuthMiddleware,
+  (req: Request, res: Response) =>
+    annualAnalysisController.updateTotalProduction(req, res),
+);
 
 export default router;
