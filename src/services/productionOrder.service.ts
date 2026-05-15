@@ -28,6 +28,16 @@ class ProductionOrderService {
   async getAllProductionOrders(): Promise<IProductionOrder[]> {
     return this._prisma.production_orders.findMany({
       orderBy: { production_order_status: "desc" },
+      include: {
+        orders: true,
+        products: true,
+        welders: {
+          select: {
+            employee_uuid: true,
+            name: true,
+          },
+        },
+      },
     });
   }
 
@@ -41,6 +51,16 @@ class ProductionOrderService {
       await this._prisma.production_orders.findUnique({
         where: {
           production_order_uuid,
+        },
+        include: {
+          orders: true,
+          products: true,
+          welders: {
+            select: {
+              employee_uuid: true,
+              name: true,
+            },
+          },
         },
       });
 

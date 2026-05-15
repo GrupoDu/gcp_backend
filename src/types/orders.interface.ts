@@ -10,13 +10,24 @@ export interface IOrder {
   revenue_uuid: string;
   delivery_uuid: string;
   client_uuid: string;
-  totalPrice: number;
+  total_price: number;
 }
 
 export interface IOrderCreateInput {
   order_deadline: string | Date;
-  billing_uuid: string;
-  revenue_uuid: string;
+  billing: {
+    client_uuid: string;
+    billing_address: string;
+    name?: string;
+  };
+  revenue: {
+    revenue_address: string;
+    revenue_cnpj: string;
+    revenue_landline?: string | null;
+    revenue_phone: string;
+    revenue_email: string;
+    client_uuid: string;
+  };
   client_uuid: string;
   delivery: {
     delivery_address: string;
@@ -32,6 +43,7 @@ export interface IOrderCreateInput {
     ipi?: number;
     additional_amount?: number;
     total: number;
+    order_uuid: string;
   }>;
 }
 

@@ -18,26 +18,26 @@ router.post("/", getTokenMiddleware, (req: Request, res: Response) =>
   productionOrderController.createProductionOrder(req, res),
 );
 router.get(
-  "/:production_order_id",
+  "/:production_order_uuid",
   getTokenMiddleware,
   (req: Request, res: Response) =>
     productionOrderController.getProductionOrderById(req, res),
 );
 router.delete(
-  "/:production_order_id",
+  "/:production_order_uuid",
   getTokenMiddleware,
   adminAuthMiddleware,
   (req: Request, res: Response) =>
     productionOrderController.removeProductionOrder(req, res),
 );
 router.patch(
-  "/:production_order_id",
+  "/:production_order_uuid",
   getTokenMiddleware,
   (req: Request, res: Response) =>
     productionOrderController.updateProductionOrder(req, res),
 );
 router.patch(
-  "/validate/:production_order_id",
+  "/validate/:production_order_uuid",
   getTokenMiddleware,
   (req: Request, res: Response) =>
     productionOrderController.stockProductionValidation(req, res),

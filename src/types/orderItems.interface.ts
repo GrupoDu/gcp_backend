@@ -3,10 +3,10 @@ export interface IOrderItems {
   created_at: Date;
   quantity: number;
   unit_price: number;
-  additional_amount: number;
+  additional_amount?: number | undefined;
   total: number;
-  discount_percentage?: number;
-  ipi?: number;
+  discount_percentage?: number | undefined;
+  ipi?: number | undefined;
   product_uuid: string;
   order_uuid: string;
 }

@@ -12,6 +12,7 @@ import ProductionOrderService from "./productionOrder.service.js";
 import { getTodayDate } from "../utils/getTodayDate.js";
 import removeUndefinedUpdateFields from "../utils/removeUndefinedUpdateFields.utils.js";
 import type { PrismaTransactionClient } from "../../lib/prisma.js";
+import type { IOrderItemsCreate } from "../types/orderItems.interface.js";
 
 /**
  * Service responsável por gerenciar pedidos.
@@ -72,40 +73,47 @@ export default class OrdersService {
    */
   async createOrder(orderData: IOrderCreateInput): Promise<IOrder> {
     const {
-      billing_uuid,
-      revenue_uuid,
+      billing,
+      revenue,
       client_uuid,
       order_deadline,
       order_items,
       delivery,
     } = orderData;
 
+    // Pré-calcula os itens com seus respectivos totais
+    const itemsWithTotal: IOrderItemsCreate[] = order_items.map((item) => ({
+      ...item,
+      total: this.calculateProductTotalPrice(
+        item.quantity,
+        item.unit_price,
+        item.discount_percentage ?? 0,
+        item.ipi ?? 0,
+        item.additional_amount ?? 0,
+      ),
+    }));
+    const totalPrice = this.calculateFinalPrice(itemsWithTotal);
+
     const newOrder = await this._prisma.orders.create({
       data: {
         order_deadline: new Date(order_deadline),
         order_status: "Pendente",
-        billing: { connect: { billing_uuid } },
-        revenue: { connect: { revenue_uuid } },
+        billing: { create: billing },
+        revenue: { create: revenue },
         clients: { connect: { client_uuid } },
         delivery: { create: delivery },
         order_items: {
-          create: order_items.map((item) => ({
+          create: itemsWithTotal.map((item) => ({
+            products: { connect: { product_uuid: item.product_uuid } },
             quantity: item.quantity,
             unit_price: item.unit_price,
-            discount_percentage: item.discount_percentage ?? 0,
-            ipi: item.ipi ?? 0,
-            additional_amount: item.additional_amount ?? 0,
-            total: this.calculateProductTotalPrice(
-              item.quantity,
-              item.unit_price,
-              item.discount_percentage,
-              item.ipi,
-              item.additional_amount,
-            ),
-            product_uuid: item.product_uuid,
+            discount_percentage: item.discount_percentage || 0,
+            ipi: item.ipi || 0,
+            additional_amount: item.additional_amount || 0,
+            total: item.total,
           })),
         },
-        totalPrice: this.calculateFinalPrice(order_items),
+        total_price: totalPrice,
       },
       include: this._includeData,
     });
@@ -297,14 +305,14 @@ export default class OrdersService {
   private calculateProductTotalPrice(
     quantity: number,
     unit_price: number,
-    discount_percentage?: number,
-    additional_amount?: number,
-    ipi?: number,
+    discount_percentage: number = 0,
+    ipi: number = 0,
+    additional_amount: number = 0,
   ) {
-    const price = quantity * unit_price;
-    const discount = discount_percentage ? discount_percentage / 100 : 0;
-    const additional = additional_amount ? additional_amount / 100 : 0;
-    return price - discount + (ipi || 0) + additional;
+    const basePrice = quantity * unit_price;
+    const discountAmount = basePrice * (discount_percentage / 100);
+
+    return basePrice - discountAmount + ipi + additional_amount;
   }
 
   private calculateFinalPrice(
@@ -312,9 +320,9 @@ export default class OrdersService {
       product_uuid: string;
       quantity: number;
       unit_price: number;
-      discount_percentage?: number;
-      ipi?: number;
-      additional_amount?: number;
+      discount_percentage?: number | undefined;
+      ipi?: number | undefined;
+      additional_amount?: number | undefined;
       total: number;
     }>,
   ) {

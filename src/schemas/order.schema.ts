@@ -2,8 +2,19 @@ import * as z from "zod";
 
 export const OrderSchema = z.object({
   order_deadline: z.string().or(z.date()),
-  billing_uuid: z.string().uuid(),
-  revenue_uuid: z.string().uuid(),
+  billing: z.object({
+    client_uuid: z.string().uuid(),
+    billing_address: z.string(),
+    name: z.string().optional(),
+  }),
+  revenue: z.object({
+    revenue_address: z.string(),
+    revenue_cnpj: z.string(),
+    revenue_phone: z.string(),
+    revenue_email: z.string(),
+    client_uuid: z.string(),
+    revenue_landline: z.string().optional(),
+  }),
   client_uuid: z.string().uuid(),
   delivery: z.object({
     delivery_address: z.string(),

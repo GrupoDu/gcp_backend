@@ -6,7 +6,7 @@ import * as z from "zod";
  */
 const ProductionOrderSchema = z.object({
   production_order_uuid: z.string().uuid().optional(),
-  production_order_description: z.string().optional().nullable(),
+  production_order_description: z.string().optional(),
   production_order_status: z.string(),
   production_order_deadline: z.date(),
   quantity_to_produce: z.number().int().nonnegative(),
