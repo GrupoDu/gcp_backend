@@ -9,6 +9,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=password
   api:
+    container_name: erp_grupodu_dev_v0.1.1
     build:
       context: .
       dockerfile: Dockerfile
@@ -27,7 +28,7 @@ services:
         - action: rebuild
           path: Dockerfile
         - action: rebuild
-          path: compose.dev.yaml
+          path: docker-compose.dev.yaml
     env_file:
       - .env
     ports:

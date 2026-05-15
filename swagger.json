@@ -6,7 +6,7 @@
     "contact": {
       "email": "joao.lubf@gmail.com"
     },
-    "version": "0.1.0"
+    "version": "0.1.1"
   },
   "servers": [
     {
@@ -44,7 +44,13 @@
       },
       "Goal": {
         "type": "object",
-        "required": ["goal_uuid", "goal_title", "goal_type", "goal_deadline", "goal_status"],
+        "required": [
+          "goal_uuid",
+          "goal_title",
+          "goal_type",
+          "goal_deadline",
+          "goal_status"
+        ],
         "properties": {
           "goal_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
@@ -52,7 +58,11 @@
           "goal_description": { "type": "string", "nullable": true },
           "goal_type": { "type": "string" },
           "goal_deadline": { "type": "string", "format": "date" },
-          "employee_goal": { "type": "string", "nullable": true, "format": "uuid" },
+          "employee_goal": {
+            "type": "string",
+            "nullable": true,
+            "format": "uuid"
+          },
           "goal_status": { "type": "string" }
         }
       },
@@ -70,7 +80,14 @@
       },
       "Product": {
         "type": "object",
-        "required": ["product_uuid", "name", "product_type", "image", "stock_quantity", "unit_price"],
+        "required": [
+          "product_uuid",
+          "name",
+          "product_type",
+          "image",
+          "stock_quantity",
+          "unit_price"
+        ],
         "properties": {
           "product_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
@@ -82,7 +99,10 @@
           "unit_price": { "type": "integer" },
           "acronym": { "type": "string", "nullable": true },
           "description": { "type": "string", "nullable": true },
-          "composition": { "type": "object", "description": "Campo JSON flexível" }
+          "composition": {
+            "type": "object",
+            "description": "Campo JSON flexível"
+          }
         }
       },
       "Employee": {
@@ -107,7 +127,15 @@
       },
       "ProductionOrder": {
         "type": "object",
-        "required": ["production_order_uuid", "production_order_deadline", "production_order_status", "quantity_to_produce", "produced_quantity", "product_uuid", "order_uuid"],
+        "required": [
+          "production_order_uuid",
+          "production_order_deadline",
+          "production_order_status",
+          "quantity_to_produce",
+          "produced_quantity",
+          "product_uuid",
+          "order_uuid"
+        ],
         "properties": {
           "production_order_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
@@ -118,17 +146,40 @@
           "stock_validation": { "type": "boolean" },
           "delivery_observation": { "type": "string", "nullable": true },
           "delivered_product_quantity": { "type": "integer" },
-          "production_order_description": { "type": "string", "nullable": true },
-          "delivered_at": { "type": "string", "format": "date", "nullable": true },
+          "production_order_description": {
+            "type": "string",
+            "nullable": true
+          },
+          "delivered_at": {
+            "type": "string",
+            "format": "date",
+            "nullable": true
+          },
           "order_uuid": { "type": "string", "format": "uuid" },
           "product_uuid": { "type": "string", "format": "uuid" },
-          "welder_uuid": { "type": "string", "format": "uuid", "nullable": true },
-          "supervisor_uuid": { "type": "string", "format": "uuid", "nullable": true }
+          "welder_uuid": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "supervisor_uuid": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          }
         }
       },
       "Order": {
         "type": "object",
-        "required": ["order_uuid", "order_status", "order_deadline", "billing_uuid", "revenue_uuid", "delivery_uuid", "client_uuid"],
+        "required": [
+          "order_uuid",
+          "order_status",
+          "order_deadline",
+          "billing_uuid",
+          "revenue_uuid",
+          "delivery_uuid",
+          "client_uuid"
+        ],
         "properties": {
           "order_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
@@ -139,12 +190,22 @@
           "delivery_uuid": { "type": "string", "format": "uuid" },
           "client_uuid": { "type": "string", "format": "uuid" },
           "totalPrice": { "type": "integer", "nullable": true },
-          "order_items": { "type": "array", "items": { "$ref": "#/components/schemas/OrderItem" } }
+          "order_items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrderItem" }
+          }
         }
       },
       "OrderItem": {
         "type": "object",
-        "required": ["order_item_uuid", "quantity", "unit_price", "total", "product_uuid", "order_uuid"],
+        "required": [
+          "order_item_uuid",
+          "quantity",
+          "unit_price",
+          "total",
+          "product_uuid",
+          "order_uuid"
+        ],
         "properties": {
           "order_item_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
@@ -171,7 +232,14 @@
       },
       "Revenue": {
         "type": "object",
-        "required": ["revenue_uuid", "revenue_address", "revenue_cnpj", "revenue_phone", "revenue_email", "client_uuid"],
+        "required": [
+          "revenue_uuid",
+          "revenue_address",
+          "revenue_cnpj",
+          "revenue_phone",
+          "revenue_email",
+          "client_uuid"
+        ],
         "properties": {
           "revenue_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
@@ -185,7 +253,13 @@
       },
       "Client": {
         "type": "object",
-        "required": ["client_uuid", "client_name", "client_cnpj", "client_address", "client_phone"],
+        "required": [
+          "client_uuid",
+          "client_name",
+          "client_cnpj",
+          "client_address",
+          "client_phone"
+        ],
         "properties": {
           "client_uuid": { "type": "string", "format": "uuid" },
           "created_at": { "type": "string", "format": "date-time" },
@@ -253,7 +327,12 @@
       },
       "StockUpdates": {
         "type": "object",
-        "required": ["stock_updates_uuid", "product_quantity_title", "event", "date"],
+        "required": [
+          "stock_updates_uuid",
+          "product_quantity_title",
+          "event",
+          "date"
+        ],
         "properties": {
           "stock_updates_uuid": { "type": "string", "format": "uuid" },
           "product_quantity_title": { "type": "string" },
@@ -263,7 +342,13 @@
       },
       "WeldersActivities": {
         "type": "object",
-        "required": ["welder_activity_uuid", "registered_at", "produced_quantity", "welder_uuid", "product_uuid"],
+        "required": [
+          "welder_activity_uuid",
+          "registered_at",
+          "produced_quantity",
+          "welder_uuid",
+          "product_uuid"
+        ],
         "properties": {
           "welder_activity_uuid": { "type": "string", "format": "uuid" },
           "registered_at": { "type": "string", "format": "date-time" },
@@ -274,7 +359,12 @@
       },
       "CreateWeldersActivities": {
         "type": "object",
-        "required": ["registered_at", "produced_quantity", "welder_uuid", "product_uuid"],
+        "required": [
+          "registered_at",
+          "produced_quantity",
+          "welder_uuid",
+          "product_uuid"
+        ],
         "properties": {
           "registered_at": { "type": "string", "format": "date-time" },
           "produced_quantity": { "type": "integer" },
@@ -2260,7 +2350,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/DeliverProductionOrder" }
+              "schema": {
+                "$ref": "#/components/schemas/DeliverProductionOrder"
+              }
             }
           }
         },
@@ -2709,7 +2801,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/AssistantsPORegisters" }
+                  "items": {
+                    "$ref": "#/components/schemas/AssistantsPORegisters"
+                  }
                 }
               }
             }
@@ -2734,9 +2828,16 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["production_order_uuid", "assistant_uuid", "assistant_as"],
+                "required": [
+                  "production_order_uuid",
+                  "assistant_uuid",
+                  "assistant_as"
+                ],
                 "properties": {
-                  "production_order_uuid": { "type": "string", "format": "uuid" },
+                  "production_order_uuid": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
                   "assistant_uuid": { "type": "string", "format": "uuid" },
                   "assistant_as": { "type": "string" }
                 }
@@ -2765,9 +2866,16 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": ["production_order_uuid", "assistant_uuid", "assistant_as"],
+                "required": [
+                  "production_order_uuid",
+                  "assistant_uuid",
+                  "assistant_as"
+                ],
                 "properties": {
-                  "production_order_uuid": { "type": "string", "format": "uuid" },
+                  "production_order_uuid": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
                   "assistant_uuid": { "type": "string", "format": "uuid" },
                   "assistant_as": { "type": "string" }
                 }
@@ -3019,7 +3127,10 @@
                   "producedQuantity"
                 ],
                 "properties": {
-                  "production_order_uuid": { "type": "string", "format": "uuid" },
+                  "production_order_uuid": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
                   "product_quantity_title": { "type": "string" },
                   "event": { "type": "string" },
                   "inStockIncrementQuantity": { "type": "integer" },
@@ -3530,7 +3641,9 @@
           "required": true,
           "content": {
             "application/json": {
-              "schema": { "$ref": "#/components/schemas/CreateWeldersActivities" },
+              "schema": {
+                "$ref": "#/components/schemas/CreateWeldersActivities"
+              },
               "example": {
                 "registered_at": "2026-05-12T10:30:00.000Z",
                 "produced_quantity": 50,
